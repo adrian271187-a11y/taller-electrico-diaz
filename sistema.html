@@ -48,9 +48,9 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--negro);color:v
 .sidebar-footer{padding:12px 8px;border-top:1px solid var(--line);}
 .btn-logout{width:100%;padding:9px;background:transparent;border:1px solid var(--line2);border-radius:8px;color:var(--gris);font-size:0.82rem;cursor:pointer;transition:all 0.2s;}
 .btn-logout:hover{border-color:var(--rojo);color:var(--rojo2);}
-.main{margin-left:220px;padding:24px;min-height:100vh;position:relative;}
+.main{margin-left:220px;padding:24px 32px;min-height:100vh;position:relative;}
 .main-bg{position:fixed;top:0;left:220px;right:0;bottom:0;background-size:cover;background-position:center;z-index:0;transition:background-image 0.5s;}
-.main-overlay{position:fixed;top:0;left:220px;right:0;bottom:0;background:linear-gradient(to right,rgba(0,0,0,0.6) 30%,rgba(0,0,0,0.1) 100%);pointer-events:none;z-index:1;}
+.main-overlay{position:fixed;top:0;left:220px;right:0;bottom:0;background:rgba(0,0,0,0.35);pointer-events:none;z-index:1;}
 .main > *{position:relative;z-index:2;}
 .main > *{position:relative;z-index:1;}
 .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
@@ -59,7 +59,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--negro);color:v
 
 /* CARDS STATS */
 .stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:24px;}
-.stat-card{background:var(--negro2);border:1px solid var(--line);border-radius:12px;padding:18px 20px;}
+.stat-card{background:rgba(17,17,17,0.82);border:1px solid var(--line);border-radius:12px;padding:18px 20px;backdrop-filter:blur(4px);}
 .stat-label{font-size:0.72rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--gris);margin-bottom:8px;}
 .stat-val{font-size:2rem;font-weight:800;}
 .stat-val.dorado{color:var(--dorado);}
@@ -68,7 +68,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--negro);color:v
 .stat-sub{font-size:0.75rem;color:var(--gris);margin-top:4px;}
 
 /* PANELES */
-.panel{background:var(--negro2);border:1px solid var(--line);border-radius:12px;padding:20px;margin-bottom:20px;}
+.panel{background:rgba(17,17,17,0.82);border:1px solid var(--line);border-radius:12px;padding:20px;margin-bottom:20px;backdrop-filter:blur(4px);}
 .panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
 .panel-title{font-size:1rem;font-weight:700;}
 .screen{display:none;}
