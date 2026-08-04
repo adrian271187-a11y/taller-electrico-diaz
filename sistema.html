@@ -18,6 +18,8 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--negro);color:var(--blanco);min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;background:url('logo-negro.jpg') center center no-repeat;background-size:520px;opacity:0.04;pointer-events:none;z-index:0;filter:grayscale(100%) invert(1);}
+.sidebar,.main,.login-wrap,.modal-wrap{position:relative;z-index:1;}
 
 /* LOGIN */
 .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse 60% 80% at 50% 50%,rgba(192,33,42,0.08),transparent 70%),var(--negro);}
