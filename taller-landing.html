@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Taller Eléctrico Automotriz Díaz | Cartago, Costa Rica</title>
+<meta name="description" content="Especialistas en electricidad y electrónica automotriz. Diagnósticos computarizados, reparación de fallas eléctricas, servicio a domicilio y rescate en carretera. Cartago, Costa Rica.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Barlow+Condensed:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --negro:#0A0A0A;--negro2:#111111;--negro3:#1A1A1A;
+  --dorado:#C9A84C;--dorado2:#E8C96A;--dorado-dim:#7A6228;
+  --rojo:#C0212A;--rojo2:#E02530;
+  --blanco:#F5F5F0;--gris:#888880;--line:rgba(201,168,76,0.2);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Barlow',sans-serif;background:var(--negro);color:var(--blanco);overflow-x:hidden;}
+
+.topbar{background:var(--rojo);padding:8px 24px;display:flex;justify-content:center;gap:32px;flex-wrap:wrap;}
+.topbar a{color:#fff;text-decoration:none;font-size:0.82rem;font-weight:600;letter-spacing:0.04em;display:flex;align-items:center;gap:6px;}
+.topbar a:hover{color:var(--dorado2);}
+
+nav{position:sticky;top:0;z-index:100;background:rgba(10,10,10,0.96);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:0 32px;}
+.nav-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:64px;}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:0.08em;color:var(--dorado);text-decoration:none;}
+.nav-logo span{color:var(--rojo);}
+.nav-links{display:flex;gap:28px;list-style:none;}
+.nav-links a{color:var(--gris);text-decoration:none;font-size:0.85rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;transition:color 0.2s;}
+.nav-links a:hover{color:var(--dorado);}
+.nav-cta{background:var(--rojo);color:#fff;padding:9px 20px;border-radius:4px;font-size:0.82rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;transition:background 0.2s;}
+.nav-cta:hover{background:var(--rojo2);}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px;}
+.hamburger span{width:24px;height:2px;background:var(--dorado);display:block;}
+.mobile-menu{display:none;flex-direction:column;background:var(--negro2);border-top:1px solid var(--line);padding:20px 32px;gap:16px;}
+.mobile-menu a{color:var(--blanco);text-decoration:none;font-size:1rem;font-weight:600;border-bottom:1px solid var(--line);padding-bottom:12px;}
+.mobile-menu.open{display:flex;}
+
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:80px 24px;}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 60% 80% at 70% 50%,rgba(192,33,42,0.12) 0%,transparent 60%),radial-gradient(ellipse 40% 60% at 20% 80%,rgba(201,168,76,0.06) 0%,transparent 50%),linear-gradient(160deg,#0A0A0A 0%,#111111 50%,#0f0a00 100%);}
+.circuit-lines{position:absolute;inset:0;opacity:0.05;background-image:linear-gradient(var(--dorado) 1px,transparent 1px),linear-gradient(90deg,var(--dorado) 1px,transparent 1px);background-size:60px 60px;}
+.hero-inner{max-width:1100px;margin:0 auto;position:relative;z-index:2;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;}
+.hero-eyebrow{font-family:'Barlow Condensed',sans-serif;font-size:0.82rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--dorado);margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+.hero-eyebrow::before{content:'';width:32px;height:2px;background:var(--rojo);}
+.hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(3rem,7vw,5.5rem);line-height:0.95;letter-spacing:0.02em;margin-bottom:12px;}
+.hero-title .dorado{color:var(--dorado);}
+.hero-title .rojo{color:var(--rojo);}
+.hero-sub{font-family:'Barlow Condensed',sans-serif;font-size:1.2rem;font-weight:500;color:var(--gris);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:24px;}
+.hero-desc{font-size:1rem;color:#aaa;line-height:1.7;max-width:420px;margin-bottom:36px;}
+.hero-btns{display:flex;gap:14px;flex-wrap:wrap;}
+.btn-primary{background:var(--rojo);color:#fff;padding:14px 28px;border-radius:4px;font-size:0.9rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;transition:all 0.2s;display:inline-flex;align-items:center;gap:8px;}
+.btn-primary:hover{background:var(--rojo2);transform:translateY(-1px);}
+.btn-secondary{background:transparent;color:var(--dorado);padding:14px 28px;border-radius:4px;border:1px solid var(--dorado-dim);font-size:0.9rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;transition:all 0.2s;}
+.btn-secondary:hover{background:rgba(201,168,76,0.08);border-color:var(--dorado);}
+.hero-badge{background:var(--negro3);border:1px solid var(--line);border-radius:12px;padding:32px;display:flex;flex-direction:column;gap:20px;}
+.badge-item{display:flex;align-items:center;gap:16px;padding-bottom:20px;border-bottom:1px solid var(--line);}
+.badge-item:last-child{border-bottom:none;padding-bottom:0;}
+.badge-icon{width:44px;height:44px;background:rgba(192,33,42,0.15);border:1px solid rgba(192,33,42,0.3);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.3rem;}
+.badge-text strong{display:block;font-size:0.95rem;font-weight:700;color:var(--blanco);}
+.badge-text span{font-size:0.8rem;color:var(--gris);}
+.scroll-indicator{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--gris);font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;}
+.scroll-line{width:1px;height:40px;background:linear-gradient(var(--dorado),transparent);animation:scrollpulse 1.8s ease-in-out infinite;}
+@keyframes scrollpulse{0%,100%{opacity:0.3;}50%{opacity:1;}}
+
+section{padding:90px 24px;}
+.section-inner{max-width:1100px;margin:0 auto;}
+.section-eyebrow{font-family:'Barlow Condensed',sans-serif;font-size:0.78rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--dorado);margin-bottom:10px;}
+.section-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.2rem,5vw,3.5rem);line-height:1;letter-spacing:0.02em;margin-bottom:16px;}
+.section-title span{color:var(--rojo);}
+.section-desc{font-size:1rem;color:#aaa;line-height:1.7;max-width:540px;}
+.divider{width:48px;height:3px;background:var(--rojo);margin:16px 0 40px;}
+
+#servicios{background:var(--negro2);}
+.servicios-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-top:48px;}
+.servicio-card{background:var(--negro2);padding:28px 24px;transition:background 0.2s;position:relative;overflow:hidden;}
+.servicio-card::before{content:'';position:absolute;top:0;left:0;width:3px;height:0;background:var(--rojo);transition:height 0.3s;}
+.servicio-card:hover{background:var(--negro3);}
+.servicio-card:hover::before{height:100%;}
+.svc-icon{font-size:2rem;margin-bottom:14px;display:block;}
+.svc-name{font-family:'Barlow Condensed',sans-serif;font-size:1.15rem;font-weight:700;letter-spacing:0.04em;color:var(--blanco);margin-bottom:8px;}
+.svc-desc{font-size:0.85rem;color:var(--gris);line-height:1.6;}
+.svc-tag{display:inline-block;margin-top:12px;padding:3px 10px;background:rgba(192,33,42,0.15);border:1px solid rgba(192,33,42,0.3);border-radius:20px;font-size:0.72rem;font-weight:600;color:var(--rojo);letter-spacing:0.06em;text-transform:uppercase;}
+
+.rescate-banner{background:linear-gradient(135deg,var(--rojo) 0%,#8B0000 100%);border-radius:10px;padding:48px 40px;display:flex;align-items:center;justify-content:space-between;gap:32px;flex-wrap:wrap;margin-top:48px;position:relative;overflow:hidden;}
+.rescate-banner::after{content:'⚡';position:absolute;right:40px;top:50%;transform:translateY(-50%);font-size:8rem;opacity:0.06;pointer-events:none;}
+.rescate-text h3{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:0.04em;margin-bottom:8px;}
+.rescate-text p{font-size:0.95rem;opacity:0.85;max-width:480px;line-height:1.6;}
+.rescate-btn{background:#fff;color:var(--rojo);padding:14px 28px;border-radius:4px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;font-size:0.9rem;white-space:nowrap;flex-shrink:0;transition:all 0.2s;}
+.rescate-btn:hover{background:var(--dorado2);color:var(--negro);}
+
+#nosotros{background:var(--negro);}
+.razones-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:24px;margin-top:48px;}
+.razon-card{background:var(--negro3);border:1px solid var(--line);border-radius:8px;padding:28px 24px;text-align:center;transition:border-color 0.2s,transform 0.2s;}
+.razon-card:hover{border-color:var(--dorado-dim);transform:translateY(-3px);}
+.razon-num{font-family:'Bebas Neue',sans-serif;font-size:3rem;color:var(--dorado);opacity:0.3;line-height:1;margin-bottom:8px;}
+.razon-title{font-family:'Barlow Condensed',sans-serif;font-size:1.05rem;font-weight:700;letter-spacing:0.04em;margin-bottom:8px;}
+.razon-desc{font-size:0.85rem;color:var(--gris);line-height:1.6;}
+
+#vehiculos{background:var(--negro2);}
+.marcas-grid{display:flex;flex-wrap:wrap;gap:12px;margin-top:36px;}
+.marca-pill{padding:8px 20px;background:var(--negro3);border:1px solid var(--line);border-radius:40px;font-size:0.85rem;font-weight:600;color:var(--gris);letter-spacing:0.04em;transition:all 0.2s;}
+.marca-pill:hover{border-color:var(--dorado-dim);color:var(--dorado);}
+.tipos-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:40px;}
+.tipo-item{display:flex;align-items:center;gap:12px;font-size:0.9rem;color:#bbb;}
+.tipo-item::before{content:'';width:8px;height:8px;background:var(--dorado);border-radius:50%;flex-shrink:0;}
+
+#contacto{background:var(--negro);}
+.contacto-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;margin-top:48px;}
+.info-block{display:flex;flex-direction:column;gap:24px;}
+.info-item{display:flex;gap:16px;align-items:flex-start;}
+.info-icon{width:44px;height:44px;background:rgba(201,168,76,0.1);border:1px solid var(--line);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
+.info-label{font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--dorado);margin-bottom:4px;}
+.info-value{font-size:0.95rem;color:var(--blanco);font-weight:600;}
+.info-value a{color:var(--blanco);text-decoration:none;}
+.info-value a:hover{color:var(--dorado);}
+.info-sub{font-size:0.82rem;color:var(--gris);margin-top:2px;}
+.mapa-box{background:var(--negro3);border:1px solid var(--line);border-radius:8px;overflow:hidden;height:320px;}
+.mapa-box iframe{width:100%;height:100%;border:none;filter:grayscale(50%);}
+.horario-table{width:100%;border-collapse:collapse;}
+.horario-table tr{border-bottom:1px solid var(--line);}
+.horario-table td{padding:10px 0;font-size:0.88rem;}
+.horario-table td:first-child{color:var(--gris);}
+.horario-table td:last-child{color:var(--blanco);font-weight:600;text-align:right;}
+.horario-table tr.hoy td{color:var(--dorado);}
+
+.cta-final{background:linear-gradient(135deg,var(--negro3),var(--negro2));border-top:1px solid var(--line);padding:80px 24px;text-align:center;}
+.cta-final h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,5vw,3.5rem);letter-spacing:0.04em;margin-bottom:12px;}
+.cta-final h2 span{color:var(--dorado);}
+.cta-final p{color:var(--gris);font-size:1rem;margin-bottom:32px;}
+.cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+
+footer{background:var(--negro);border-top:1px solid var(--line);padding:32px 24px;text-align:center;}
+.footer-logo{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:0.08em;color:var(--dorado);margin-bottom:8px;}
+.footer-logo span{color:var(--rojo);}
+.footer-copy{font-size:0.78rem;color:var(--gris);}
+
+/* ---- GALERÍA ---- */
+#galeria{background:var(--negro);}
+.galeria-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:48px;}
+@media(max-width:900px){.galeria-grid{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:600px){.galeria-grid{grid-template-columns:repeat(2,1fr);}}
+.gal-item{position:relative;aspect-ratio:1;overflow:hidden;border-radius:4px;cursor:pointer;background:var(--negro3);}
+.gal-item img{width:100%;height:100%;object-fit:cover;transition:transform 0.4s,filter 0.4s;filter:brightness(0.85);}
+.gal-item:hover img{transform:scale(1.06);filter:brightness(1);}
+.gal-item .gal-overlay{position:absolute;inset:0;background:rgba(192,33,42,0);display:flex;align-items:center;justify-content:center;transition:background 0.3s;opacity:0;}
+.gal-item:hover .gal-overlay{background:rgba(192,33,42,0.3);opacity:1;}
+.gal-overlay svg{color:#fff;width:32px;height:32px;}
+.lb{position:fixed;inset:0;background:rgba(0,0,0,0.92);display:none;align-items:center;justify-content:center;z-index:1000;padding:20px;}
+.lb.open{display:flex;}
+.lb img{max-width:90vw;max-height:88vh;border-radius:6px;box-shadow:0 20px 60px rgba(0,0,0,0.8);}
+.lb-close{position:fixed;top:20px;right:24px;color:#fff;font-size:2rem;cursor:pointer;background:none;border:none;line-height:1;z-index:1001;}
+.lb-prev,.lb-next{position:fixed;top:50%;transform:translateY(-50%);color:#fff;font-size:2.5rem;cursor:pointer;background:rgba(0,0,0,0.4);border:none;padding:12px 16px;border-radius:4px;z-index:1001;transition:background 0.2s;}
+.lb-prev{left:12px;}.lb-next{right:12px;}
+.lb-prev:hover,.lb-next:hover{background:rgba(192,33,42,0.6);}
+.wa-float{position:fixed;bottom:24px;right:24px;z-index:500;width:56px;height:56px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(37,211,102,0.4);transition:transform 0.2s;text-decoration:none;}
+.wa-float:hover{transform:scale(1.1);}
+
+@media(max-width:768px){
+  .hero-inner{grid-template-columns:1fr;}
+  .hero-badge{display:none;}
+  .contacto-grid{grid-template-columns:1fr;}
+  .tipos-grid{grid-template-columns:1fr;}
+  .nav-links,.nav-cta{display:none;}
+  .hamburger{display:flex;}
+  .rescate-banner{flex-direction:column;padding:32px 24px;text-align:center;}
+}
+@media(max-width:480px){section{padding:60px 20px;}.hero{padding:60px 20px;}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="tel:+50664578000">📞 (506) 6457-8000</a>
+  <a href="mailto:diaz.joseangel@icloud.com">✉️ diaz.joseangel@icloud.com</a>
+  <a href="https://wa.me/50664578000" target="_blank">💬 WhatsApp</a>
+</div>
+
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">DÍAZ<span>.</span></a>
+    <ul class="nav-links">
+      <li><a href="#servicios">Servicios</a></li><li><a href="#galeria">Galería</a></li>
+      <li><a href="#nosotros">Nosotros</a></li>
+      <li><a href="#vehiculos">Vehículos</a></li>
+      <li><a href="#contacto">Contacto</a></li>
+    </ul>
+    <a href="https://wa.me/50664578000?text=Hola,%20necesito%20información%20sobre%20sus%20servicios" target="_blank" class="nav-cta">Contactar</a>
+    <button class="hamburger" onclick="toggleMenu()" aria-label="Menú">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="#servicios" onclick="toggleMenu()">Servicios</a>
+    <a href="#galeria" onclick="toggleMenu()">Galería</a>
+    <a href="#nosotros" onclick="toggleMenu()">Nosotros</a>
+    <a href="#vehiculos" onclick="toggleMenu()">Vehículos</a>
+    <a href="#contacto" onclick="toggleMenu()">Contacto</a>
+    <a href="https://wa.me/50664578000" target="_blank">📲 WhatsApp</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="circuit-lines"></div>
+  <div class="hero-inner">
+    <div>
+      <div class="hero-eyebrow">Especialistas Multimarca · Cartago, CR</div>
+      <h1 class="hero-title">TALLER<br><span class="dorado">ELÉCTRICO</span><br><span class="rojo">AUTOMOTRIZ</span><br>DÍAZ</h1>
+      <p class="hero-sub">Electricidad y Electrónica · Gasolina & Diésel</p>
+      <p class="hero-desc">Diagnósticos computarizados de precisión, reparación de fallas eléctricas y servicio de rescate en carretera. Tu vehículo en manos de expertos.</p>
+      <div class="hero-btns">
+        <a href="https://wa.me/50664578000?text=Hola,%20necesito%20un%20diagnóstico%20para%20mi%20vehículo" target="_blank" class="btn-primary">📲 Agendar diagnóstico</a>
+        <a href="#servicios" class="btn-secondary">Ver servicios</a>
+      </div>
+    </div>
+    <div class="hero-badge">
+      <div class="badge-item">
+        <div class="badge-icon">⚡</div>
+        <div class="badge-text"><strong>Diagnóstico Computarizado</strong><span>Escáner OBD1 y OBD2 · Osciloscopio</span></div>
+      </div>
+      <div class="badge-item">
+        <div class="badge-icon">🔧</div>
+        <div class="badge-text"><strong>Reparación Especializada</strong><span>Alternadores, Arrancadores, Computadoras</span></div>
+      </div>
+      <div class="badge-item">
+        <div class="badge-icon">🚗</div>
+        <div class="badge-text"><strong>Servicio a Domicilio</strong><span>Rescate en carretera disponible</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-indicator"><div class="scroll-line"></div><span>Explorar</span></div>
+</section>
+
+<section id="servicios">
+  <div class="section-inner">
+    <div class="section-eyebrow">Lo que hacemos</div>
+    <h2 class="section-title">NUESTROS <span>SERVICIOS</span></h2>
+    <div class="divider"></div>
+    <p class="section-desc">Contamos con equipos de diagnóstico de última generación y experiencia en electricidad y electrónica automotriz multimarca.</p>
+    <div class="servicios-grid">
+      <div class="servicio-card"><span class="svc-icon">💻</span><div class="svc-name">Diagnósticos Computarizados</div><p class="svc-desc">Identificamos fallas eléctricas y electrónicas con precisión usando equipos de diagnóstico profesionales.</p><span class="svc-tag">OBD1 · OBD2</span></div>
+      <div class="servicio-card"><span class="svc-icon">📡</span><div class="svc-name">Servicio de Escáner</div><p class="svc-desc">Lectura y borrado de códigos de falla en todos los sistemas del vehículo: motor, transmisión, ABS, airbag y más.</p><span class="svc-tag">Multisistema</span></div>
+      <div class="servicio-card"><span class="svc-icon">⚡</span><div class="svc-name">Reparación de Fallas Eléctricas</div><p class="svc-desc">Diagnóstico y reparación de circuitos eléctricos, arneses, fusibles, relés y sistemas de carga.</p><span class="svc-tag">Gasolina & Diésel</span></div>
+      <div class="servicio-card"><span class="svc-icon">📊</span><div class="svc-name">Revisión con Osciloscopio</div><p class="svc-desc">Análisis de señales de sensores en tiempo real para detectar fallas intermitentes y problemas de rendimiento.</p><span class="svc-tag">Diagnóstico Avanzado</span></div>
+      <div class="servicio-card"><span class="svc-icon">🖥️</span><div class="svc-name">Reparación de Computadoras</div><p class="svc-desc">Reparación de ECU, TCM y módulos de control. Programación y codificación de unidades de control automotriz.</p><span class="svc-tag">ECU · TCM · BCM</span></div>
+      <div class="servicio-card"><span class="svc-icon">🔋</span><div class="svc-name">Alternadores y Arrancadores</div><p class="svc-desc">Reparación y reemplazo de alternadores y arrancadores. Diagnóstico completo del sistema eléctrico.</p><span class="svc-tag">Sistema de Carga</span></div>
+    </div>
+    <div class="rescate-banner">
+      <div class="rescate-text">
+        <h3>🚨 SERVICIO A DOMICILIO Y RESCATE EN CARRETERA</h3>
+        <p>¿Tu vehículo se quedó varado? Te atendemos donde estás. Rescate y atención en sitio para emergencias eléctricas.</p>
+      </div>
+      <a href="https://wa.me/50664578000?text=Necesito%20rescate%20en%20carretera%20urgente" target="_blank" class="rescate-btn">Llamar ahora</a>
+    </div>
+  </div>
+</section>
+
+<section id="nosotros">
+  <div class="section-inner">
+    <div class="section-eyebrow">Por qué elegirnos</div>
+    <h2 class="section-title">EXPERTOS EN <span>CADA DETALLE</span></h2>
+    <div class="divider"></div>
+    <div class="razones-grid">
+      <div class="razon-card"><div class="razon-num">01</div><div class="razon-title">Diagnóstico de Precisión</div><p class="razon-desc">Equipos profesionales que identifican fallas exactas, sin adivinar ni cobrar de más.</p></div>
+      <div class="razon-card"><div class="razon-num">02</div><div class="razon-title">Multimarca</div><p class="razon-desc">Trabajamos con vehículos de gasolina y diésel de todas las marcas y modelos del mercado.</p></div>
+      <div class="razon-card"><div class="razon-num">03</div><div class="razon-title">Transparencia Total</div><p class="razon-desc">Te explicamos cada diagnóstico y presupuesto antes de iniciar cualquier trabajo.</p></div>
+      <div class="razon-card"><div class="razon-num">04</div><div class="razon-title">Disponibilidad</div><p class="razon-desc">Servicio a domicilio y rescate en carretera para cuando más nos necesitás.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="vehiculos">
+  <div class="section-inner">
+    <div class="section-eyebrow">Compatibilidad</div>
+    <h2 class="section-title">TODAS LAS <span>MARCAS</span></h2>
+    <div class="divider"></div>
+    <p class="section-desc">Especializados en vehículos de gasolina y diésel. Trabajamos con la gran mayoría de marcas del mercado costarricense.</p>
+    <div class="marcas-grid">
+      <div class="marca-pill">Toyota</div><div class="marca-pill">Honda</div><div class="marca-pill">Hyundai</div>
+      <div class="marca-pill">Kia</div><div class="marca-pill">Nissan</div><div class="marca-pill">Mazda</div>
+      <div class="marca-pill">Ford</div><div class="marca-pill">Chevrolet</div><div class="marca-pill">Volkswagen</div>
+      <div class="marca-pill">Mitsubishi</div><div class="marca-pill">Suzuki</div><div class="marca-pill">Isuzu</div>
+      <div class="marca-pill">BMW</div><div class="marca-pill">Mercedes-Benz</div><div class="marca-pill">Subaru</div>
+      <div class="marca-pill">Y más...</div>
+    </div>
+    <div class="tipos-grid">
+      <div class="tipo-item">Sedanes y Hatchbacks</div>
+      <div class="tipo-item">SUV y Pick-up</div>
+      <div class="tipo-item">Vehículos de carga liviana</div>
+      <div class="tipo-item">Microbuses y busetas</div>
+      <div class="tipo-item">Vehículos de gasolina</div>
+      <div class="tipo-item">Vehículos diésel</div>
+    </div>
+  </div>
+</section>
+
+<section id="contacto">
+  <div class="section-inner">
+    <div class="section-eyebrow">Encuéntranos</div>
+    <h2 class="section-title">CONTACTO Y <span>UBICACIÓN</span></h2>
+    <div class="divider"></div>
+    <div class="contacto-grid">
+      <div class="info-block">
+        <div class="info-item">
+          <div class="info-icon">📞</div>
+          <div><div class="info-label">Teléfono</div><div class="info-value"><a href="tel:+50664578000">(506) 6457-8000</a></div><div class="info-sub">Llamadas y WhatsApp</div></div>
+        </div>
+        <div class="info-item">
+          <div class="info-icon">📧</div>
+          <div><div class="info-label">Correo</div><div class="info-value"><a href="mailto:diaz.joseangel@icloud.com">diaz.joseangel@icloud.com</a></div></div>
+        </div>
+        <div class="info-item">
+          <div class="info-icon">📍</div>
+          <div><div class="info-label">Ubicación</div><div class="info-value">Cartago, La Unión, Concepción</div><div class="info-sub">Calle Naranjo, 100 metros al Norte</div></div>
+        </div>
+        <table class="horario-table">
+          <tr><td>Lunes – Viernes</td><td>7:00 am – 6:00 pm</td></tr>
+          <tr><td>Sábado</td><td>7:00 am – 12:00 pm</td></tr>
+          <tr><td>Domingo</td><td>Solo emergencias</td></tr>
+        </table>
+        <a href="https://wa.me/50664578000?text=Hola,%20quiero%20agendar%20una%20revisión" target="_blank" class="btn-primary" style="width:fit-content">📲 Escribir por WhatsApp</a>
+      </div>
+      <div>
+        <div class="mapa-box">
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3930.8!2d-83.9987!3d9.8960!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8fa0e329292b04c7%3A0x0!2zQ29uY2VwY2nDs24sIExhIFVuaW9uLCBDYXJ0YWdv!5e0!3m2!1ses!2scr!4v1" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+        <p style="margin-top:12px;font-size:0.8rem;color:var(--gris);">📍 Cartago, La Unión, Concepción · Calle Naranjo, 100 m Norte</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id=galeria>
+  <div class=section-inner>
+    <div class=section-eyebrow>Nuestro trabajo</div>
+    <h2 class="section-title">GALERÍA DE <span>TRABAJOS</span></h2>
+    <div class="divider"></div>
+    <p class="section-desc">Diagnósticos, reparaciones y trabajos realizados en el taller. Cada vehículo recibe atención especializada.</p>
+    <div class="galeria-grid">
+      <div class="gal-item" onclick="openLb(0)"><img src="foto1.jpeg" alt="Chevrolet Camaro diagnóstico" loading="lazy"><div class="gal-overlay"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 3l2.3 2.3-2.89 2.87 1.42 1.42L18.7 6.7 21 9V3h-6zM3 9l2.3-2.3 2.87 2.89 1.42-1.42L6.7 5.3 9 3H3v6zm6 12l-2.3-2.3 2.89-2.87-1.42-1.42L5.3 17.3 3 15v6h6zm12-6l-2.3 2.3-2.87-2.89-1.42 1.42 2.89 2.87L15 21h6v-6z"/></svg></div></div>
+      <div class="gal-item" onclick="openLb(1)"><img src="foto2.jpeg" alt="Diagnóstico computarizado" loading="lazy"><div class="gal-overlay"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 3l2.3 2.3-2.89 2.87 1.42 1.42L18.7 6.7 21 9V3h-6zM3 9l2.3-2.3 2.87 2.89 1.42-1.42L6.7 5.3 9 3H3v6zm6 12l-2.3-2.3 2.89-2.87-1.42-1.42L5.3 17.3 3 15v6h6zm12-6l-2.3 2.3-2.87-2.89-1.42 1.42 2.89 2.87L15 21h6v-6z"/></svg></div></div>
+      <div class="gal-item" onclick="openLb(2)"><img src="foto3.jpeg" alt="Escáner OBD diagnóstico" loading="lazy"><div class="gal-overlay"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 3l2.3 2.3-2.89 2.87 1.42 1.42L18.7 6.7 21 9V3h-6zM3 9l2.3-2.3 2.87 2.89 1.42-1.42L6.7 5.3 9 3H3v6zm6 12l-2.3-2.3 2.89-2.87-1.42-1.42L5.3 17.3 3 15v6h6zm12-6l-2.3 2.3-2.87-2.89-1.42 1.42 2.89 2.87L15 21h6v-6z"/></svg></div></div>
+      <div class="gal-item" onclick="openLb(3)"><img src="foto4.jpeg" alt="Diagnóstico LAUNCH X-431" loading="lazy"><div class="gal-overlay"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 3l2.3 2.3-2.89 2.87 1.42 1.42L18.7 6.7 21 9V3h-6zM3 9l2.3-2.3 2.87 2.89 1.42-1.42L6.7 5.3 9 3H3v6zm6 12l-2.3-2.3 2.89-2.87-1.42-1.42L5.3 17.3 3 15v6h6zm12-6l-2.3 2.3-2.87-2.89-1.42 1.42 2.89 2.87L15 21h6v-6z"/></svg></div></div>
+      <div class="gal-item" onclick="openLb(4)"><img src="foto5.jpeg" alt="Diagrama eléctrico motor" loading="lazy"><div class="gal-overlay"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 3l2.3 2.3-2.89 2.87 1.42 1.42L18.7 6.7 21 9V3h-6zM3 9l2.3-2.3 2.87 2.89 1.42-1.42L6.7 5.3 9 3H3v6zm6 12l-2.3-2.3 2.89-2.87-1.42-1.42L5.3 17.3 3 15v6h6zm12-6l-2.3 2.3-2.87-2.89-1.42 1.42 2.89 2.87L15 21h6v-6z"/></svg></div></div>
+      <div class="gal-item" onclick="openLb(5)"><img src="foto6.jpeg" alt="Toyota BZ4X diagnóstico" loading="lazy"><div class="gal-overlay"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 3l2.3 2.3-2.89 2.87 1.42 1.42L18.7 6.7 21 9V3h-6zM3 9l2.3-2.3 2.87 2.89 1.42-1.42L6.7 5.3 9 3H3v6zm6 12l-2.3-2.3 2.89-2.87-1.42-1.42L5.3 17.3 3 15v6h6zm12-6l-2.3 2.3-2.87-2.89-1.42 1.42 2.89 2.87L15 21h6v-6z"/></svg></div></div>
+      <div class="gal-item" onclick="openLb(6)"><img src="foto7.jpeg" alt="Alternador instalado" loading="lazy"><div class="gal-overlay"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 3l2.3 2.3-2.89 2.87 1.42 1.42L18.7 6.7 21 9V3h-6zM3 9l2.3-2.3 2.87 2.89 1.42-1.42L6.7 5.3 9 3H3v6zm6 12l-2.3-2.3 2.89-2.87-1.42-1.42L5.3 17.3 3 15v6h6zm12-6l-2.3 2.3-2.87-2.89-1.42 1.42 2.89 2.87L15 21h6v-6z"/></svg></div></div>
+      <div class="gal-item" onclick="openLb(7)"><img src="foto8.jpeg" alt="Escáner profesional" loading="lazy"><div class="gal-overlay"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 3l2.3 2.3-2.89 2.87 1.42 1.42L18.7 6.7 21 9V3h-6zM3 9l2.3-2.3 2.87 2.89 1.42-1.42L6.7 5.3 9 3H3v6zm6 12l-2.3-2.3 2.89-2.87-1.42-1.42L5.3 17.3 3 15v6h6zm12-6l-2.3 2.3-2.87-2.89-1.42 1.42 2.89 2.87L15 21h6v-6z"/></svg></div></div>
+      <div class="gal-item" onclick="openLb(8)"><img src="foto9.jpeg" alt="Diagnóstico Toyota" loading="lazy"><div class="gal-overlay"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 3l2.3 2.3-2.89 2.87 1.42 1.42L18.7 6.7 21 9V3h-6zM3 9l2.3-2.3 2.87 2.89 1.42-1.42L6.7 5.3 9 3H3v6zm6 12l-2.3-2.3 2.89-2.87-1.42-1.42L5.3 17.3 3 15v6h6zm12-6l-2.3 2.3-2.87-2.89-1.42 1.42 2.89 2.87L15 21h6v-6z"/></svg></div></div>
+      <div class="gal-item" onclick="openLb(9)"><img src="foto10.jpeg" alt="Alternador nuevo" loading="lazy"><div class="gal-overlay"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 3l2.3 2.3-2.89 2.87 1.42 1.42L18.7 6.7 21 9V3h-6zM3 9l2.3-2.3 2.87 2.89 1.42-1.42L6.7 5.3 9 3H3v6zm6 12l-2.3-2.3 2.89-2.87-1.42-1.42L5.3 17.3 3 15v6h6zm12-6l-2.3 2.3-2.87-2.89-1.42 1.42 2.89 2.87L15 21h6v-6z"/></svg></div></div>
+      <div class="gal-item" onclick="openLb(10)"><img src="foto11.jpeg" alt="Reparación alternador" loading="lazy"><div class="gal-overlay"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 3l2.3 2.3-2.89 2.87 1.42 1.42L18.7 6.7 21 9V3h-6zM3 9l2.3-2.3 2.87 2.89 1.42-1.42L6.7 5.3 9 3H3v6zm6 12l-2.3-2.3 2.89-2.87-1.42-1.42L5.3 17.3 3 15v6h6zm12-6l-2.3 2.3-2.87-2.89-1.42 1.42 2.89 2.87L15 21h6v-6z"/></svg></div></div>
+      <div class="gal-item" onclick="openLb(11)"><img src="foto12.jpeg" alt="Motor alternador instalado" loading="lazy"><div class="gal-overlay"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 3l2.3 2.3-2.89 2.87 1.42 1.42L18.7 6.7 21 9V3h-6zM3 9l2.3-2.3 2.87 2.89 1.42-1.42L6.7 5.3 9 3H3v6zm6 12l-2.3-2.3 2.89-2.87-1.42-1.42L5.3 17.3 3 15v6h6zm12-6l-2.3 2.3-2.87-2.89-1.42 1.42 2.89 2.87L15 21h6v-6z"/></svg></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- LIGHTBOX -->
+<div class="lb" id="lb" onclick="if(event.target===this)closeLb()">
+  <button class="lb-close" onclick="closeLb()">✕</button>
+  <button class="lb-prev" onclick="lbNav(-1)">‹</button>
+  <img id="lb-img" src="" alt="">
+  <button class="lb-next" onclick="lbNav(1)">›</button>
+</div>
+
+<div class="cta-final">
+  <h2>¿TU VEHÍCULO TIENE <span>FALLAS ELÉCTRICAS?</span></h2>
+  <p>Contáctanos ahora y agendá tu diagnóstico. Atención rápida y profesional.</p>
+  <div class="cta-btns">
+    <a href="https://wa.me/50664578000?text=Hola,%20necesito%20un%20diagnóstico" target="_blank" class="btn-primary">📲 WhatsApp</a>
+    <a href="tel:+50664578000" class="btn-secondary">📞 Llamar</a>
+  </div>
+</div>
+
+<footer>
+  <div style="max-width:1100px;margin:0 auto;">
+    <div class="footer-logo">TALLER DÍAZ<span>.</span></div>
+    <p class="footer-copy">© 2026 Taller Eléctrico Automotriz Díaz · Cartago, La Unión, Costa Rica · Todos los derechos reservados</p>
+  </div>
+</footer>
+
+<a href="https://wa.me/50664578000?text=Hola,%20necesito%20información" target="_blank" class="wa-float" aria-label="WhatsApp">
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
+
+<script>
+const LB_IMGS = ['foto1.jpeg','foto2.jpeg','foto3.jpeg','foto4.jpeg','foto5.jpeg','foto6.jpeg','foto7.jpeg','foto8.jpeg','foto9.jpeg','foto10.jpeg','foto11.jpeg','foto12.jpeg'];
+let lbCurrent = 0;
+function openLb(i){lbCurrent=i;document.getElementById('lb-img').src=LB_IMGS[i];document.getElementById('lb').classList.add('open');document.body.style.overflow='hidden';}
+function closeLb(){document.getElementById('lb').classList.remove('open');document.body.style.overflow='';}
+function lbNav(dir){lbCurrent=(lbCurrent+dir+LB_IMGS.length)%LB_IMGS.length;document.getElementById('lb-img').src=LB_IMGS[lbCurrent];}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLb();if(e.key==='ArrowRight')lbNav(1);if(e.key==='ArrowLeft')lbNav(-1);});
+function toggleMenu(){document.getElementById('mobile-menu').classList.toggle('open');}
+const hoy=new Date().getDay();
+document.querySelectorAll('.horario-table tr').forEach((tr,i)=>{
+  if((hoy>=1&&hoy<=5&&i===0)||(hoy===6&&i===1)||(hoy===0&&i===2))tr.classList.add('hoy');
+});
+</script>
+</body>
+</html>
