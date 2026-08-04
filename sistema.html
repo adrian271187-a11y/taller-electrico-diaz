@@ -18,7 +18,7 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--negro);color:var(--blanco);min-height:100vh;}
-body::before{content:'';position:fixed;inset:0;background:url('logo-negro.jpg') center center no-repeat;background-size:520px;opacity:0.04;pointer-events:none;z-index:0;filter:grayscale(100%) invert(1);}
+
 .sidebar,.main,.login-wrap,.modal-wrap{position:relative;z-index:1;}
 
 /* LOGIN */
@@ -49,7 +49,7 @@ body::before{content:'';position:fixed;inset:0;background:url('logo-negro.jpg') 
 .btn-logout{width:100%;padding:9px;background:transparent;border:1px solid var(--line2);border-radius:8px;color:var(--gris);font-size:0.82rem;cursor:pointer;transition:all 0.2s;}
 .btn-logout:hover{border-color:var(--rojo);color:var(--rojo2);}
 .main{margin-left:220px;padding:24px;min-height:100vh;background-size:cover;background-position:center;background-attachment:fixed;}
-.main-overlay{position:fixed;top:0;left:220px;right:0;bottom:0;background:rgba(10,10,10,0.86);pointer-events:none;z-index:0;}
+.main-overlay{position:fixed;top:0;left:220px;right:0;bottom:0;background:rgba(0,0,0,0.45);pointer-events:none;z-index:0;}
 .main > *{position:relative;z-index:1;}
 .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
 .page-title{font-size:1.4rem;font-weight:700;}
