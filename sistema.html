@@ -192,6 +192,11 @@ tr:hover td{background:rgba(255,255,255,0.03);color:var(--blanco);}
 .mt8{margin-top:8px;}
 .gap8{display:flex;gap:8px;flex-wrap:wrap;}
 
+.chk-item{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:0.82rem;color:rgba(255,255,255,0.7);border:1px solid transparent;transition:all 0.15s;}
+.chk-item:hover{background:rgba(255,255,255,0.04);border-color:var(--line3);}
+.chk-item input[type="checkbox"]{accent-color:var(--verde);width:14px;height:14px;flex-shrink:0;}
+.chk-item input[type="checkbox"]:checked + *,.chk-item:has(input:checked){color:var(--verde);}
+
 /* SCROLLBAR */
 ::-webkit-scrollbar{width:5px;height:5px;}
 ::-webkit-scrollbar-track{background:transparent;}
@@ -257,6 +262,9 @@ tr:hover td{background:rgba(255,255,255,0.03);color:var(--blanco);}
       </div>
       <div class="nav-item" onclick="goTo('reparaciones')">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z"/></svg>Reparaciones
+      </div>
+      <div class="nav-item" onclick="goTo('ordenes')">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm-1 7V3.5L18.5 9H13zm-2 8H7v-2h4v2zm4-4H7v-2h8v2zm0-4H7V7h8v2z"/></svg>Órdenes
       </div>
       <div class="nav-item" onclick="goTo('facturacion')">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg>Facturación
@@ -488,6 +496,32 @@ tr:hover td{background:rgba(255,255,255,0.03);color:var(--blanco);}
       </div>
     </div>
 
+    <!-- ÓRDENES DE TRABAJO -->
+    <div class="screen" id="screen-ordenes">
+      <div class="topbar">
+        <h2 class="page-title">Órdenes <span style="color:var(--dorado);">de Trabajo</span></h2>
+        <button class="btn btn-primary" onclick="openModal('modal-orden')">+ Nueva orden</button>
+      </div>
+      <div class="panel">
+        <div class="search-bar">
+          <input type="text" id="ord-search" placeholder="Buscar por cliente, placa o servicio..." oninput="renderOrdenes()">
+          <select id="ord-filtro" onchange="renderOrdenes()">
+            <option value="">Todos</option>
+            <option value="abierta">Abierta</option>
+            <option value="proceso">En proceso</option>
+            <option value="lista">Lista</option>
+            <option value="entregada">Entregada</option>
+          </select>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>#OT</th><th>Tipo</th><th>Cliente</th><th>Vehículo/Moto</th><th>Placa</th><th>Servicio</th><th>Estado</th><th>Fecha</th><th>Acciones</th></tr></thead>
+            <tbody id="ordenes-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
   </div><!-- /main -->
 </div><!-- /app -->
 
@@ -706,6 +740,118 @@ tr:hover td{background:rgba(255,255,255,0.03);color:var(--blanco);}
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal('modal-proveedor')">Cancelar</button>
       <button class="btn btn-primary" id="btn-guardar-proveedor" onclick="guardarProveedor()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL ORDEN DE TRABAJO ===== -->
+<div class="modal-wrap" id="modal-orden">
+  <div class="modal" style="max-width:700px;">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-orden-title">Nueva Orden de Trabajo</span>
+      <button class="modal-close" onclick="closeModal('modal-orden')">✕</button>
+    </div>
+
+    <!-- Tipo de vehículo -->
+    <div style="display:flex;gap:12px;margin-bottom:16px;">
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:10px 18px;border-radius:8px;border:1px solid var(--line3);background:rgba(255,255,255,0.03);flex:1;justify-content:center;transition:all 0.2s;" id="label-tipo-carro">
+        <input type="radio" name="ord-tipo-vehiculo" value="carro" id="ord-tipo-carro" onchange="toggleTipoVehiculo()" checked style="accent-color:var(--dorado);"> 🚗 Automóvil
+      </label>
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:10px 18px;border-radius:8px;border:1px solid var(--line3);background:rgba(255,255,255,0.03);flex:1;justify-content:center;transition:all 0.2s;" id="label-tipo-moto">
+        <input type="radio" name="ord-tipo-vehiculo" value="moto" id="ord-tipo-moto" onchange="toggleTipoVehiculo()" style="accent-color:var(--dorado);"> 🏍️ Motocicleta
+      </label>
+    </div>
+
+    <div class="form-grid">
+      <!-- Info cliente -->
+      <div class="form-group"><label>Cliente</label><select id="ord-cliente" onchange="autoFillVehiculoOrden()"><option value="">Seleccionar...</option></select></div>
+      <div class="form-group"><label>Vehículo / Moto</label><select id="ord-vehiculo"><option value="">Seleccionar...</option></select></div>
+      <div class="form-group"><label>Placa</label><input type="text" id="ord-placa" placeholder="ABC-123"></div>
+      <div class="form-group"><label>Marca / Modelo</label><input type="text" id="ord-marca-modelo" placeholder="Toyota Corolla / Honda CB500"></div>
+      <div class="form-group"><label>Año</label><input type="number" id="ord-anio" placeholder="2020"></div>
+      <div class="form-group"><label>Color</label><input type="text" id="ord-color" placeholder="Blanco"></div>
+      <div class="form-group"><label>Km actuales</label><input type="number" id="ord-km" placeholder="0"></div>
+      <div class="form-group"><label>Combustible</label>
+        <select id="ord-combustible">
+          <option value="gasolina">Gasolina</option><option value="diesel">Diésel</option><option value="hibrido">Híbrido</option><option value="electrico">Eléctrico</option>
+        </select>
+      </div>
+      <div class="form-group form-full"><label>Servicio solicitado</label><input type="text" id="ord-servicio" placeholder="Diagnóstico eléctrico, revisión de frenos..."></div>
+      <div class="form-group form-full"><label>Observaciones del cliente</label><textarea id="ord-obs-cliente" placeholder="Lo que el cliente reporta..."></textarea></div>
+    </div>
+
+    <!-- CHECKLIST ENTRADA -->
+    <div style="margin:16px 0 8px;">
+      <div class="panel-title" style="margin-bottom:12px;">📋 Checklist de Entrada</div>
+
+      <!-- Checklist CARRO -->
+      <div id="checklist-carro">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+          <label class="chk-item"><input type="checkbox" id="ck-luces-del"> Luces delanteras</label>
+          <label class="chk-item"><input type="checkbox" id="ck-luces-tra"> Luces traseras</label>
+          <label class="chk-item"><input type="checkbox" id="ck-parabrisas"> Parabrisas</label>
+          <label class="chk-item"><input type="checkbox" id="ck-espejos"> Espejos</label>
+          <label class="chk-item"><input type="checkbox" id="ck-llanta-rep"> Llanta de repuesto</label>
+          <label class="chk-item"><input type="checkbox" id="ck-gato"> Gato hidráulico</label>
+          <label class="chk-item"><input type="checkbox" id="ck-bateria"> Batería</label>
+          <label class="chk-item"><input type="checkbox" id="ck-frenos"> Frenos OK</label>
+          <label class="chk-item"><input type="checkbox" id="ck-aceite"> Nivel de aceite OK</label>
+          <label class="chk-item"><input type="checkbox" id="ck-agua"> Nivel de agua OK</label>
+          <label class="chk-item"><input type="checkbox" id="ck-radio"> Radio / pantalla</label>
+          <label class="chk-item"><input type="checkbox" id="ck-documentos"> Documentos en orden</label>
+          <label class="chk-item"><input type="checkbox" id="ck-llantas-ok"> Llantas en buen estado</label>
+          <label class="chk-item"><input type="checkbox" id="ck-carroceria"> Carrocería sin daños</label>
+        </div>
+      </div>
+
+      <!-- Checklist MOTO -->
+      <div id="checklist-moto" style="display:none;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+          <label class="chk-item"><input type="checkbox" id="ck-m-luces-del"> Luces delanteras</label>
+          <label class="chk-item"><input type="checkbox" id="ck-m-luces-tra"> Luces traseras</label>
+          <label class="chk-item"><input type="checkbox" id="ck-m-freno-del"> Freno delantero</label>
+          <label class="chk-item"><input type="checkbox" id="ck-m-freno-tra"> Freno trasero</label>
+          <label class="chk-item"><input type="checkbox" id="ck-m-llanta-del"> Llanta delantera OK</label>
+          <label class="chk-item"><input type="checkbox" id="ck-m-llanta-tra"> Llanta trasera OK</label>
+          <label class="chk-item"><input type="checkbox" id="ck-m-cadena"> Cadena / transmisión</label>
+          <label class="chk-item"><input type="checkbox" id="ck-m-aceite"> Nivel de aceite OK</label>
+          <label class="chk-item"><input type="checkbox" id="ck-m-bateria"> Batería</label>
+          <label class="chk-item"><input type="checkbox" id="ck-m-espejos"> Espejos</label>
+          <label class="chk-item"><input type="checkbox" id="ck-m-carenado"> Carenado sin daños</label>
+          <label class="chk-item"><input type="checkbox" id="ck-m-documentos"> Documentos en orden</label>
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-top:10px;">
+        <label>Daños / observaciones de entrada</label>
+        <textarea id="ord-danos-entrada" placeholder="Rayones, golpes, faltantes observados al recibir..."></textarea>
+      </div>
+    </div>
+
+    <div class="form-grid" style="margin-top:8px;">
+      <div class="form-group"><label>Fecha entrada</label><input type="date" id="ord-fecha-entrada"></div>
+      <div class="form-group"><label>Hora entrada</label><input type="time" id="ord-hora-entrada"></div>
+      <div class="form-group"><label>Mecánico asignado</label>
+        <select id="ord-mecanico">
+          <option value="Meca1">Meca1</option>
+          <option value="Meca2">Meca2</option>
+          <option value="Meca3">Meca3</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Estado</label>
+        <select id="ord-estado">
+          <option value="abierta">Abierta</option>
+          <option value="proceso">En proceso</option>
+          <option value="lista">Lista</option>
+          <option value="entregada">Entregada</option>
+        </select>
+      </div>
+      <div class="form-group form-full"><label>Trabajos a realizar</label><textarea id="ord-trabajos" placeholder="Lista de trabajos que se van a realizar..."></textarea></div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-orden')">Cancelar</button>
+      <button class="btn btn-primary" id="btn-guardar-orden" onclick="guardarOrden()">Guardar orden</button>
     </div>
   </div>
 </div>
@@ -958,6 +1104,7 @@ function goTo(screen){
   if(screen==='agenda')renderCitas();
   if(screen==='facturacion')renderFacturas();
   if(screen==='proveedores')renderProveedores();
+  if(screen==='ordenes'){loadClientesSelect('ord-cliente');renderOrdenes();}
   if(screen==='estadisticas')renderEstadisticas();
   if(screen==='historial')renderHistorial();
 }
@@ -978,7 +1125,11 @@ async function initApp(){
   document.getElementById('main-bg').style.backgroundImage="url('foto13.jpg')";
   document.getElementById('dash-fecha').textContent=new Date().toLocaleDateString('es-CR',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
   const hoy=new Date().toISOString().split('T')[0];
-  ['rep-fecha','cita-fecha','fac-fecha'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=hoy;});
+  const ahora=new Date();
+  const horaActual=ahora.getHours().toString().padStart(2,'0')+':'+ahora.getMinutes().toString().padStart(2,'0');
+  const elHoraEnt=document.getElementById('ord-hora-entrada');
+  if(elHoraEnt)elHoraEnt.value=horaActual;
+  ['rep-fecha','cita-fecha','fac-fecha','ord-fecha-entrada'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=hoy;});
 
   // Cargar contraseñas de mecánicos desde Firestore
   await cargarPasswordsFirestore();
@@ -990,6 +1141,7 @@ async function initApp(){
   db.collection('citas').orderBy('fecha').onSnapshot(s=>{citas=[];s.forEach(d=>citas.push({id:d.id,...d.data()}));if(document.getElementById('screen-agenda').classList.contains('active'))renderCitas();});
   db.collection('facturas').orderBy('createdAt','desc').onSnapshot(s=>{facturas=[];s.forEach(d=>facturas.push({id:d.id,...d.data()}));if(document.getElementById('screen-facturacion').classList.contains('active'))renderFacturas();});
   db.collection('proveedores').orderBy('nombre').onSnapshot(s=>{proveedores=[];s.forEach(d=>proveedores.push({id:d.id,...d.data()}));if(document.getElementById('screen-proveedores').classList.contains('active'))renderProveedores();});
+  db.collection('ordenes').orderBy('createdAt','desc').onSnapshot(s=>{ordenes=[];s.forEach(d=>ordenes.push({id:d.id,...d.data()}));if(document.getElementById('screen-ordenes').classList.contains('active'))renderOrdenes();});
   db.collection('movimientos').orderBy('timestamp','desc').limit(200).onSnapshot(s=>{movimientos=[];s.forEach(d=>movimientos.push({id:d.id,...d.data()}));if(document.getElementById('screen-historial').classList.contains('active'))renderHistorial();});
 }
 
@@ -1621,6 +1773,311 @@ async function confirmarResetPass(){
     errEl.style.display = 'block';
     console.error(e);
   }
+}
+
+// =================== ÓRDENES DE TRABAJO ===================
+let ordenes = [];
+
+function toggleTipoVehiculo(){
+  const tipo = document.querySelector('input[name="ord-tipo-vehiculo"]:checked')?.value;
+  const esMoto = tipo === 'moto';
+  document.getElementById('checklist-carro').style.display = esMoto ? 'none' : 'block';
+  document.getElementById('checklist-moto').style.display = esMoto ? 'block' : 'none';
+}
+
+function autoFillVehiculoOrden(){
+  const cliId = document.getElementById('ord-cliente').value;
+  const sel = document.getElementById('ord-vehiculo');
+  sel.innerHTML = '<option value="">Seleccionar...</option>' +
+    vehiculos.filter(v => v.clienteId === cliId).map(v =>
+      `<option value="${v.id}">${v.placa} · ${v.marca} ${v.modelo}</option>`
+    ).join('');
+  sel.onchange = function(){
+    const v = vehiculos.find(x => x.id === sel.value);
+    if(v){
+      document.getElementById('ord-placa').value = v.placa || '';
+      document.getElementById('ord-marca-modelo').value = (v.marca||'') + ' ' + (v.modelo||'');
+      document.getElementById('ord-anio').value = v.anio || '';
+      document.getElementById('ord-color').value = v.color || '';
+      document.getElementById('ord-km').value = v.km || '';
+      document.getElementById('ord-combustible').value = v.combustible || 'gasolina';
+    }
+  };
+}
+
+function getChecklist(){
+  const tipo = document.querySelector('input[name="ord-tipo-vehiculo"]:checked')?.value || 'carro';
+  if(tipo === 'carro'){
+    return {
+      lucesDelanteras: document.getElementById('ck-luces-del').checked,
+      lucesTraseras: document.getElementById('ck-luces-tra').checked,
+      parabrisas: document.getElementById('ck-parabrisas').checked,
+      espejos: document.getElementById('ck-espejos').checked,
+      llantaRepuesto: document.getElementById('ck-llanta-rep').checked,
+      gato: document.getElementById('ck-gato').checked,
+      bateria: document.getElementById('ck-bateria').checked,
+      frenos: document.getElementById('ck-frenos').checked,
+      aceite: document.getElementById('ck-aceite').checked,
+      agua: document.getElementById('ck-agua').checked,
+      radio: document.getElementById('ck-radio').checked,
+      documentos: document.getElementById('ck-documentos').checked,
+      llantasOk: document.getElementById('ck-llantas-ok').checked,
+      carroceria: document.getElementById('ck-carroceria').checked,
+    };
+  } else {
+    return {
+      lucesDelanteras: document.getElementById('ck-m-luces-del').checked,
+      lucesTraseras: document.getElementById('ck-m-luces-tra').checked,
+      frenoDelantero: document.getElementById('ck-m-freno-del').checked,
+      frenoTrasero: document.getElementById('ck-m-freno-tra').checked,
+      llantaDelantera: document.getElementById('ck-m-llanta-del').checked,
+      llantaTrasera: document.getElementById('ck-m-llanta-tra').checked,
+      cadena: document.getElementById('ck-m-cadena').checked,
+      aceite: document.getElementById('ck-m-aceite').checked,
+      bateria: document.getElementById('ck-m-bateria').checked,
+      espejos: document.getElementById('ck-m-espejos').checked,
+      carenado: document.getElementById('ck-m-carenado').checked,
+      documentos: document.getElementById('ck-m-documentos').checked,
+    };
+  }
+}
+
+async function guardarOrden(){
+  const cli = clientes.find(c => c.id === document.getElementById('ord-cliente').value);
+  const servicio = document.getElementById('ord-servicio').value.trim();
+  if(!servicio){ alert('El servicio es requerido.'); return; }
+
+  const tipo = document.querySelector('input[name="ord-tipo-vehiculo"]:checked')?.value || 'carro';
+  const hoy = new Date();
+  const numOT = 'OT-' + String(ordenes.length + 1).padStart(4,'0');
+
+  const data = {
+    numeroOT: numOT,
+    tipoVehiculo: tipo,
+    clienteId: cli?.id || '',
+    clienteNombre: cli?.nombre || '—',
+    clienteTel: cli?.tel || '',
+    vehiculoId: document.getElementById('ord-vehiculo').value,
+    placa: document.getElementById('ord-placa').value.trim().toUpperCase(),
+    marcaModelo: document.getElementById('ord-marca-modelo').value.trim(),
+    anio: document.getElementById('ord-anio').value,
+    color: document.getElementById('ord-color').value.trim(),
+    km: parseInt(document.getElementById('ord-km').value) || 0,
+    combustible: document.getElementById('ord-combustible').value,
+    servicio,
+    obsCliente: document.getElementById('ord-obs-cliente').value.trim(),
+    trabajos: document.getElementById('ord-trabajos').value.trim(),
+    mecanico: document.getElementById('ord-mecanico').value,
+    estado: document.getElementById('ord-estado').value,
+    fechaEntrada: document.getElementById('ord-fecha-entrada').value,
+    horaEntrada: document.getElementById('ord-hora-entrada').value,
+    danosEntrada: document.getElementById('ord-danos-entrada').value.trim(),
+    checklistEntrada: getChecklist(),
+    checklistSalida: {},
+    creadoPor: currentUser?.nombre || '—',
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  };
+
+  try{
+    const btn = document.getElementById('btn-guardar-orden');
+    btn.disabled = true; btn.textContent = 'Guardando...';
+    await db.collection('ordenes').add(data);
+    await registrarMovimiento('crear','ordenes',`Nueva OT: ${data.servicio}`,`${data.clienteNombre} · ${data.placa}`);
+    closeModal('modal-orden');
+    btn.disabled = false; btn.textContent = 'Guardar orden';
+  }catch(e){
+    alert('Error al guardar. Intente de nuevo.');
+    console.error(e);
+    document.getElementById('btn-guardar-orden').disabled = false;
+    document.getElementById('btn-guardar-orden').textContent = 'Guardar orden';
+  }
+}
+
+function renderOrdenes(){
+  const q = (document.getElementById('ord-search')||{value:''}).value.toLowerCase();
+  const f = (document.getElementById('ord-filtro')||{value:''}).value;
+  let data = ordenes.filter(o => {
+    const mq = !q || (o.clienteNombre||'').toLowerCase().includes(q) || (o.placa||'').toLowerCase().includes(q) || (o.servicio||'').toLowerCase().includes(q);
+    const mf = !f || o.estado === f;
+    return mq && mf;
+  });
+  const tbody = document.getElementById('ordenes-body');
+  const estadoBadge = {abierta:'pendiente',proceso:'proceso',lista:'listo',entregada:'entregado'};
+  tbody.innerHTML = data.length ? data.map(o => `<tr>
+    <td class="fw700 text-dorado">${o.numeroOT||'—'}</td>
+    <td>${o.tipoVehiculo==='moto'?'🏍️ Moto':'🚗 Carro'}</td>
+    <td class="fw700">${o.clienteNombre||'—'}</td>
+    <td>${o.marcaModelo||'—'}</td>
+    <td><span class="tag">${o.placa||'—'}</span></td>
+    <td>${o.servicio||'—'}</td>
+    <td><span class="badge badge-${estadoBadge[o.estado]||'pendiente'}">${{abierta:'Abierta',proceso:'En proceso',lista:'Lista ✓',entregada:'Entregada'}[o.estado]||o.estado}</span></td>
+    <td class="text-gris">${o.fechaEntrada||'—'}</td>
+    <td>
+      <div class="tbl-acciones">
+        <button class="btn btn-sm btn-secondary btn-icon" title="Imprimir OT" onclick="imprimirOrden('${o.id}')">🖨️</button>
+        ${botonesAccion('ordenes',o.id,o.numeroOT||'orden')}
+      </div>
+    </td>
+  </tr>`).join('') : '<tr><td colspan="9"><div class="empty-state">Sin órdenes de trabajo</div></td></tr>';
+}
+
+function imprimirOrden(ordenId){
+  const o = ordenes.find(x => x.id === ordenId);
+  if(!o) return;
+  const esMoto = o.tipoVehiculo === 'moto';
+
+  const checkItems = esMoto ? [
+    ['Luces delanteras','lucesDelanteras'],['Luces traseras','lucesTraseras'],
+    ['Freno delantero','frenoDelantero'],['Freno trasero','frenoTrasero'],
+    ['Llanta delantera','llantaDelantera'],['Llanta trasera','llantaTrasera'],
+    ['Cadena/transmisión','cadena'],['Nivel de aceite','aceite'],
+    ['Batería','bateria'],['Espejos','espejos'],
+    ['Carenado sin daños','carenado'],['Documentos','documentos'],
+  ] : [
+    ['Luces delanteras','lucesDelanteras'],['Luces traseras','lucesTraseras'],
+    ['Parabrisas','parabrisas'],['Espejos','espejos'],
+    ['Llanta de repuesto','llantaRepuesto'],['Gato hidráulico','gato'],
+    ['Batería','bateria'],['Frenos OK','frenos'],
+    ['Nivel de aceite','aceite'],['Nivel de agua','agua'],
+    ['Radio/pantalla','radio'],['Documentos','documentos'],
+    ['Llantas OK','llantasOk'],['Carrocería sin daños','carroceria'],
+  ];
+
+  const chkEnt = o.checklistEntrada || {};
+  const chkSal = o.checklistSalida || {};
+
+  const filaCheck = (label, key) => `
+    <tr>
+      <td style="padding:6px 10px;border-bottom:1px solid #f0f0f0;font-size:13px;">${label}</td>
+      <td style="text-align:center;border-bottom:1px solid #f0f0f0;">
+        ${chkEnt[key] ? '<span style="color:#16a34a;font-size:16px;">✔</span>' : '<span style="color:#dc2626;font-size:16px;">✘</span>'}
+      </td>
+      <td style="text-align:center;border-bottom:1px solid #f0f0f0;">
+        ${chkSal[key] ? '<span style="color:#16a34a;font-size:16px;">✔</span>' : '<span style="color:#ccc;font-size:14px;">○</span>'}
+      </td>
+    </tr>`;
+
+  const ventana = window.open('', '_blank', 'width=850,height:1100');
+  ventana.document.write(`<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Orden de Trabajo ${o.numeroOT} - Taller Díaz</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:Arial,sans-serif;font-size:13px;color:#222;background:#fff;}
+.header{background:#1a1a1a;padding:20px 32px;display:flex;justify-content:space-between;align-items:center;}
+.logo{color:#C9A84C;font-size:22px;font-weight:900;letter-spacing:2px;}
+.logo-sub{color:#888;font-size:10px;margin-top:3px;letter-spacing:1px;}
+.ot-num{text-align:right;}
+.ot-num .num{color:#C9A84C;font-size:22px;font-weight:900;}
+.ot-num .fecha{color:#888;font-size:11px;margin-top:4px;}
+.body{padding:20px 32px;}
+.section{margin-bottom:18px;}
+.section-title{background:#f5f5f5;padding:7px 12px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#666;font-weight:700;border-left:3px solid #C9A84C;margin-bottom:10px;}
+.info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.info-item label{font-size:9px;color:#999;text-transform:uppercase;letter-spacing:1px;display:block;}
+.info-item span{font-size:13px;font-weight:600;color:#222;}
+table{width:100%;border-collapse:collapse;}
+th{background:#1a1a1a;color:#C9A84C;padding:8px 10px;font-size:10px;letter-spacing:1px;text-transform:uppercase;}
+.trabajos-box{background:#fffbeb;border:1px solid #fde68a;border-radius:6px;padding:12px;min-height:80px;font-size:13px;line-height:1.6;white-space:pre-wrap;}
+.obs-box{background:#f9f9f9;border:1px solid #eee;border-radius:6px;padding:10px;min-height:50px;font-size:12px;color:#555;white-space:pre-wrap;}
+.firmas{display:flex;gap:24px;margin-top:24px;}
+.firma-box{flex:1;text-align:center;}
+.firma-line{border-top:1px solid #999;margin-top:48px;padding-top:8px;font-size:10px;color:#666;letter-spacing:1px;text-transform:uppercase;}
+.badge-estado{display:inline-block;padding:3px 12px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+.badge-abierta{background:#fef9c3;color:#ca8a04;}
+.badge-proceso{background:#fee2e2;color:#dc2626;}
+.badge-lista{background:#dcfce7;color:#16a34a;}
+.badge-entregada{background:#f3f4f6;color:#6b7280;}
+.no-print{text-align:center;padding:20px;background:#f0f0f0;margin-top:10px;}
+@media print{.no-print{display:none;}body{-webkit-print-color-adjust:exact;print-color-adjust:exact;}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div>
+    <div class="logo">⚡ TALLER DÍAZ</div>
+    <div class="logo-sub">Taller Eléctrico Automotriz · Costa Rica</div>
+  </div>
+  <div class="ot-num">
+    <div class="num">${o.numeroOT}</div>
+    <div class="fecha">${esMoto?'🏍️ Motocicleta':'🚗 Automóvil'} · ${o.fechaEntrada||'—'} ${o.horaEntrada||''}</div>
+    <div style="margin-top:6px;"><span class="badge-estado badge-${o.estado||'abierta'}">${{abierta:'Abierta',proceso:'En proceso',lista:'Lista',entregada:'Entregada'}[o.estado]||o.estado}</span></div>
+  </div>
+</div>
+
+<div class="body">
+  <div class="section">
+    <div class="section-title">Datos del cliente</div>
+    <div class="info-grid">
+      <div class="info-item"><label>Nombre</label><span>${o.clienteNombre||'—'}</span></div>
+      <div class="info-item"><label>Teléfono</label><span>${o.clienteTel||'—'}</span></div>
+      <div class="info-item"><label>Mecánico asignado</label><span>${o.mecanico||'—'}</span></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Datos del ${esMoto?'moto':'vehículo'}</div>
+    <div class="info-grid">
+      <div class="info-item"><label>Placa</label><span>${o.placa||'—'}</span></div>
+      <div class="info-item"><label>Marca / Modelo</label><span>${o.marcaModelo||'—'}</span></div>
+      <div class="info-item"><label>Año</label><span>${o.anio||'—'}</span></div>
+      <div class="info-item"><label>Color</label><span>${o.color||'—'}</span></div>
+      <div class="info-item"><label>Kilometraje</label><span>${Number(o.km||0).toLocaleString()} km</span></div>
+      <div class="info-item"><label>Combustible</label><span>${o.combustible||'—'}</span></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Servicio solicitado</div>
+    <div class="obs-box">${o.servicio||'—'}</div>
+  </div>
+
+  ${o.obsCliente ? `<div class="section"><div class="section-title">Observaciones del cliente</div><div class="obs-box">${o.obsCliente}</div></div>` : ''}
+
+  <div class="section">
+    <div class="section-title">Trabajos a realizar</div>
+    <div class="trabajos-box">${o.trabajos||'Por definir...'}</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Checklist de inspección</div>
+    <table>
+      <thead>
+        <tr>
+          <th style="text-align:left;">Ítem</th>
+          <th style="text-align:center;width:100px;">Entrada</th>
+          <th style="text-align:center;width:100px;">Salida</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${checkItems.map(([label, key]) => filaCheck(label, key)).join('')}
+      </tbody>
+    </table>
+  </div>
+
+  ${o.danosEntrada ? `<div class="section"><div class="section-title">Daños / observaciones de entrada</div><div class="obs-box">${o.danosEntrada}</div></div>` : ''}
+
+  <div class="section">
+    <div class="section-title">Observaciones de salida</div>
+    <div class="obs-box" style="min-height:70px;">${o.obsSalida||''}</div>
+  </div>
+
+  <div class="firmas">
+    <div class="firma-box"><div class="firma-line">Firma del cliente — Entrada</div></div>
+    <div class="firma-box"><div class="firma-line">Firma del mecánico</div></div>
+    <div class="firma-box"><div class="firma-line">Firma del cliente — Salida</div></div>
+  </div>
+</div>
+
+<div class="no-print">
+  <button onclick="window.print()" style="padding:12px 32px;background:#C9A84C;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;">🖨️ Imprimir / Guardar PDF</button>
+  <button onclick="window.close()" style="padding:12px 24px;background:#666;color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer;margin-left:10px;">Cerrar</button>
+</div>
+</body></html>`);
+  ventana.document.close();
+  ventana.focus();
 }
 
 // =================== TOGGLE TIPO CLIENTE CITA ===================
