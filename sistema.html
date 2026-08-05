@@ -1678,6 +1678,198 @@ function enviarFacturaCorreo(facturaId){
   setTimeout(()=>document.getElementById('enviar-fac-correo').focus(), 100);
 }
 
+// ── Genera el HTML de la factura (mismo que imprimirFactura pero sin abrir ventana) ──
+function generarHTMLFactura(f){
+  const num = 'F-' + String(facturas.indexOf(f)+1).padStart(4,'0');
+  const cliente = clientes.find(c => c.id === f.clienteId);
+  const estadoColor={pagada:'#16a34a',pendiente:'#ca8a04',parcial:'#2563eb'};
+  const estadoLabel={pagada:'PAGADA',pendiente:'PENDIENTE',parcial:'PAGO PARCIAL'};
+  const ec = estadoColor[f.estado||'pendiente']||'#666';
+  // Obtener el logo en base64 desde la factura imprimible (mismo src que usa imprimirFactura)
+  const logoSrc = document.querySelector('#screen-facturacion img[alt="Logo Díaz"]')?.src || '';
+  return `<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',Arial,sans-serif;font-size:12px;color:#1a1a1a;background:#fff;}
+.page{width:780px;padding:20px;background:#fff;}
+.header{display:flex;justify-content:space-between;align-items:stretch;border:2.5px solid #1a1a1a;border-radius:10px 10px 0 0;overflow:hidden;}
+.header-brand{background:#1a1a1a;padding:16px 24px;display:flex;align-items:center;gap:18px;min-width:310px;}
+.brand-name{color:#C9A84C;font-size:21px;font-weight:900;letter-spacing:2px;text-transform:uppercase;}
+.brand-sub{color:#777;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;margin-top:3px;}
+.brand-contact{color:#555;font-size:9px;margin-top:8px;line-height:1.6;}
+.header-fac{flex:1;padding:16px 22px;background:#fafafa;border-left:2.5px solid #1a1a1a;display:flex;flex-direction:column;justify-content:space-between;}
+.fac-top{display:flex;justify-content:space-between;align-items:flex-start;}
+.fac-lbl{font-size:9px;color:#999;text-transform:uppercase;letter-spacing:1.5px;font-weight:700;}
+.fac-num{font-size:32px;font-weight:900;letter-spacing:3px;color:#1a1a1a;line-height:1.1;}
+.fac-badge{display:inline-block;margin-top:8px;padding:4px 16px;border-radius:20px;font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:${ec};border:2px solid ${ec};background:${ec}18;}
+.fac-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.fac-meta-item label{font-size:8.5px;color:#999;text-transform:uppercase;letter-spacing:1px;font-weight:700;display:block;margin-bottom:2px;}
+.fac-meta-item span{font-size:12px;font-weight:700;color:#1a1a1a;}
+.body{border:2.5px solid #1a1a1a;border-top:none;border-radius:0 0 10px 10px;overflow:hidden;}
+.sec{border-bottom:1px solid #e8e8e8;}
+.sec:last-child{border-bottom:none;}
+.sec-head{background:linear-gradient(90deg,#1a1a1a,#2a2a2a);padding:7px 16px;display:flex;align-items:center;gap:8px;}
+.sec-icon{font-size:13px;}
+.sec-title{font-size:9.5px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:#C9A84C;}
+.pad{padding:14px 18px;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0;}
+.field{padding:8px 14px;border-right:1px solid #eee;border-bottom:1px solid #eee;}
+.field:last-child{border-right:none;}
+.field-label{font-size:8px;color:#aaa;text-transform:uppercase;letter-spacing:1.2px;font-weight:700;margin-bottom:3px;}
+.field-value{font-size:12.5px;font-weight:700;color:#1a1a1a;}
+.desc-box{background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;padding:12px;font-size:12px;line-height:1.7;color:#374151;white-space:pre-wrap;min-height:50px;}
+table.cobros{width:100%;border-collapse:collapse;}
+table.cobros thead tr{background:#1a1a1a;}
+table.cobros th{color:#C9A84C;font-size:9.5px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;padding:9px 16px;text-align:left;}
+table.cobros th:last-child{text-align:right;}
+table.cobros td{padding:10px 16px;border-bottom:1px solid #f0f0f0;font-size:13px;color:#374151;}
+table.cobros td:last-child{text-align:right;font-weight:700;color:#1a1a1a;}
+.total-row td{background:#1a1a1a!important;color:#C9A84C!important;font-size:15px;font-weight:900;padding:12px 16px;border-bottom:none;}
+.notas-box{background:#fffbeb;border:1px solid #fde68a;border-radius:6px;padding:12px;font-size:11.5px;color:#92400e;line-height:1.6;}
+.firmas{background:#f8f8f8;padding:18px 20px;}
+.firmas-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;}
+.firma{text-align:center;}
+.firma-line{border-top:2px solid #1a1a1a;margin-top:48px;padding-top:8px;}
+.firma-name{font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#1a1a1a;}
+.firma-sub{font-size:8px;color:#999;margin-top:2px;}
+.footer{margin-top:10px;display:flex;justify-content:space-between;align-items:center;}
+.footer-txt{font-size:8.5px;color:#bbb;}
+.agradecimiento{text-align:center;margin:12px 0 6px;font-size:11px;color:#999;letter-spacing:0.5px;}
+</style></head><body>
+<div class="page">
+<div class="header">
+  <div class="header-brand">
+    ${logoSrc ? `<img src="${logoSrc}" style="width:110px;height:110px;border-radius:50%;object-fit:cover;flex-shrink:0;" alt="Logo Díaz"/>` : ''}
+    <div>
+      <div class="brand-name">Díaz</div>
+      <div class="brand-sub">Eléctricidad y Electrónica Automotriz</div>
+      <div class="brand-contact">📍 Cartago, La Unión, Concepción<br>📞 (506) 6457-8000</div>
+    </div>
+  </div>
+  <div class="header-fac">
+    <div class="fac-top">
+      <div class="fac-meta">
+        <div class="fac-meta-item"><label>Fecha</label><span>${f.fecha||'—'}</span></div>
+        <div class="fac-meta-item"><label>Estado de pago</label><span style="color:${ec};">${estadoLabel[f.estado||'pendiente']}</span></div>
+        <div class="fac-meta-item"><label>Creado por</label><span>${f.creadoPor||'—'}</span></div>
+        <div class="fac-meta-item"><label>Número</label><span>${num}</span></div>
+      </div>
+      <div style="text-align:right;">
+        <div class="fac-lbl">Factura</div>
+        <div class="fac-num">${num}</div>
+        <div><span class="fac-badge">${estadoLabel[f.estado||'pendiente']}</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="body">
+  <div class="sec">
+    <div class="sec-head"><span class="sec-icon">👤</span><span class="sec-title">Datos del Cliente</span></div>
+    <div class="grid2">
+      <div class="field" style="border-bottom:none;"><div class="field-label">Nombre completo</div><div class="field-value">${f.clienteNombre||'—'}</div></div>
+      <div class="field" style="border-bottom:none;border-right:none;"><div class="field-label">Teléfono</div><div class="field-value">${cliente?.tel||'—'}</div></div>
+    </div>
+  </div>
+  <div class="sec">
+    <div class="sec-head"><span class="sec-icon">📝</span><span class="sec-title">Descripción de Servicios</span></div>
+    <div class="pad"><div class="desc-box">${f.descripcion||'Sin descripción'}</div></div>
+  </div>
+  <div class="sec">
+    <div class="sec-head"><span class="sec-icon">💰</span><span class="sec-title">Detalle de Cobro</span></div>
+    <table class="cobros">
+      <thead><tr><th>Concepto</th><th>Monto</th></tr></thead>
+      <tbody>
+        <tr><td>Mano de obra</td><td>₡${Number(f.manoObra||0).toLocaleString('es-CR')}</td></tr>
+        <tr><td>Repuestos y materiales</td><td>₡${Number(f.repuestos||0).toLocaleString('es-CR')}</td></tr>
+        <tr><td>Otros cargos</td><td>₡${Number(f.otros||0).toLocaleString('es-CR')}</td></tr>
+        <tr class="total-row"><td>TOTAL A PAGAR</td><td>₡${Number(f.total||0).toLocaleString('es-CR')}</td></tr>
+      </tbody>
+    </table>
+  </div>
+  ${f.notas?`<div class="sec"><div class="sec-head"><span class="sec-icon">📌</span><span class="sec-title">Notas</span></div><div class="pad"><div class="notas-box">${f.notas}</div></div></div>`:''}
+  <div class="firmas">
+    <div class="firmas-grid">
+      <div class="firma"><div class="firma-line"><div class="firma-name">Técnico Responsable</div><div class="firma-sub">Taller Eléctrico Díaz</div></div></div>
+      <div class="firma"><div class="firma-line"><div class="firma-name">Firma del Cliente</div><div class="firma-sub">${f.clienteNombre||'—'}</div></div></div>
+    </div>
+  </div>
+</div>
+<div class="agradecimiento">¡Gracias por confiar en Taller Eléctrico Automotriz Díaz!</div>
+<div class="footer">
+  <span class="footer-txt">Taller Eléctrico Automotriz Díaz · (506) 6457-8000</span>
+  <span class="footer-txt">${num} · ${f.fecha||''}</span>
+</div>
+</div></body></html>`;
+}
+
+// ── Convierte HTML a PDF base64 usando una ventana oculta + html2canvas + jsPDF ──
+async function htmlAPDFBase64(htmlContent){
+  // Cargar jsPDF y html2canvas dinámicamente si no están cargados
+  if(!window.jspdf){
+    await new Promise((res,rej)=>{
+      const s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+      s.onload = res; s.onerror = rej;
+      document.head.appendChild(s);
+    });
+  }
+  if(!window.html2canvas){
+    await new Promise((res,rej)=>{
+      const s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+      s.onload = res; s.onerror = rej;
+      document.head.appendChild(s);
+    });
+  }
+
+  // Crear iframe oculto para renderizar el HTML
+  return new Promise((resolve, reject) => {
+    const iframe = document.createElement('iframe');
+    iframe.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:820px;height:1100px;border:none;visibility:hidden;';
+    document.body.appendChild(iframe);
+
+    iframe.onload = async () => {
+      try {
+        const iDoc = iframe.contentDocument || iframe.contentWindow.document;
+        // Esperar a que las imágenes carguen
+        const imgs = iDoc.querySelectorAll('img');
+        await Promise.all(Array.from(imgs).map(img => new Promise(r => {
+          if(img.complete) r();
+          else { img.onload = r; img.onerror = r; }
+        })));
+
+        const canvas = await html2canvas(iDoc.body, {
+          scale: 2,
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: '#ffffff',
+          width: 820,
+          windowWidth: 820
+        });
+
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+        const imgData = canvas.toDataURL('image/jpeg', 0.92);
+        const pdfW = pdf.internal.pageSize.getWidth();
+        const pdfH = (canvas.height * pdfW) / canvas.width;
+        pdf.addImage(imgData, 'JPEG', 0, 0, pdfW, pdfH);
+
+        const base64 = pdf.output('datauristring').split(',')[1];
+        document.body.removeChild(iframe);
+        resolve(base64);
+      } catch(e) {
+        document.body.removeChild(iframe);
+        reject(e);
+      }
+    };
+
+    iframe.contentDocument.open();
+    iframe.contentDocument.write(htmlContent);
+    iframe.contentDocument.close();
+  });
+}
+
 async function confirmarEnvioFactura(){
   const correo = document.getElementById('enviar-fac-correo').value.trim();
   const errEl = document.getElementById('enviar-fac-err');
@@ -1695,8 +1887,19 @@ async function confirmarEnvioFactura(){
   if(!facturaParaEnviar){ return; }
 
   loadEl.style.display = 'block';
+  loadEl.textContent = '⏳ Generando PDF...';
 
   try {
+    // 1. Generar HTML de la factura
+    const htmlFactura = generarHTMLFactura(facturaParaEnviar);
+
+    // 2. Convertir a PDF base64
+    const pdfBase64 = await htmlAPDFBase64(htmlFactura);
+
+    loadEl.textContent = '⏳ Enviando correo...';
+
+    // 3. Enviar al servidor con el PDF adjunto
+    const num = 'F-' + String(facturas.indexOf(facturaParaEnviar)+1).padStart(4,'0');
     const response = await fetch(CLOUD_RUN_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -1709,7 +1912,9 @@ async function confirmarEnvioFactura(){
         otros: facturaParaEnviar.otros || 0,
         total: facturaParaEnviar.total || 0,
         fecha: facturaParaEnviar.fecha || '',
-        notas: facturaParaEnviar.notas || ''
+        notas: facturaParaEnviar.notas || '',
+        pdfBase64: pdfBase64,
+        pdfNombre: `Factura-${num}-TallerDiaz.pdf`
       })
     });
 
@@ -1729,7 +1934,7 @@ async function confirmarEnvioFactura(){
     }
   } catch(e) {
     loadEl.style.display = 'none';
-    errEl.textContent = 'Error de conexión. Intente de nuevo.';
+    errEl.textContent = 'Error generando PDF. Intente de nuevo.';
     errEl.style.display = 'block';
   }
 }
