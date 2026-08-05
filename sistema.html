@@ -607,14 +607,48 @@ tr:hover td{background:rgba(255,255,255,0.03);color:var(--blanco);}
       <button class="modal-close" onclick="closeModal('modal-cita')">✕</button>
     </div>
     <div class="form-grid">
-      <div class="form-group"><label>Cliente</label><select id="cita-cliente"><option value="">Seleccionar...</option></select></div>
-      <div class="form-group"><label>Servicio</label><input type="text" id="cita-servicio" placeholder="Diagnóstico, revisión..."></div>
+      <!-- Tipo de cliente -->
+      <div class="form-group form-full">
+        <label>Tipo de cliente</label>
+        <div style="display:flex;gap:10px;margin-top:4px;">
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.85rem;text-transform:none;letter-spacing:0;color:var(--blanco);">
+            <input type="radio" name="cita-tipo-cli" value="registrado" id="cita-tipo-reg" onchange="toggleTipoCliente()" checked style="accent-color:var(--dorado);width:14px;height:14px;">
+            Cliente registrado
+          </label>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.85rem;text-transform:none;letter-spacing:0;color:var(--blanco);">
+            <input type="radio" name="cita-tipo-cli" value="manual" id="cita-tipo-man" onchange="toggleTipoCliente()" style="accent-color:var(--dorado);width:14px;height:14px;">
+            Ingresar manualmente
+          </label>
+        </div>
+      </div>
+      <!-- Cliente registrado -->
+      <div class="form-group form-full" id="cita-cli-select-wrap">
+        <label>Cliente</label>
+        <select id="cita-cliente"><option value="">Seleccionar cliente...</option></select>
+      </div>
+      <!-- Cliente manual -->
+      <div class="form-group" id="cita-cli-nombre-wrap" style="display:none;">
+        <label>Nombre del cliente</label>
+        <input type="text" id="cita-cli-nombre" placeholder="Nombre completo...">
+      </div>
+      <div class="form-group" id="cita-cli-tel-wrap" style="display:none;">
+        <label>Teléfono</label>
+        <input type="text" id="cita-cli-tel" placeholder="6000-0000">
+      </div>
+      <!-- Servicio -->
+      <div class="form-group form-full">
+        <label>Servicio solicitado</label>
+        <input type="text" id="cita-servicio" placeholder="Ej. Diagnóstico eléctrico, revisión de alternador...">
+      </div>
       <div class="form-group"><label>Fecha</label><input type="date" id="cita-fecha"></div>
       <div class="form-group"><label>Hora</label><input type="time" id="cita-hora"></div>
-      <div class="form-group form-full"><label>Notas</label><textarea id="cita-notas" placeholder="Detalles de la cita..."></textarea></div>
+      <div class="form-group form-full"><label>Notas adicionales</label><textarea id="cita-notas" placeholder="Detalles de la cita, observaciones..."></textarea></div>
       <div class="form-group"><label>Estado</label>
         <select id="cita-estado">
-          <option value="pendiente">Pendiente</option><option value="confirmada">Confirmada</option><option value="completada">Completada</option><option value="cancelada">Cancelada</option>
+          <option value="pendiente">Pendiente</option>
+          <option value="confirmada">Confirmada</option>
+          <option value="completada">Completada</option>
+          <option value="cancelada">Cancelada</option>
         </select>
       </div>
     </div>
@@ -1122,7 +1156,11 @@ function renderCitas(){
   tbody.innerHTML=citas.length?citas.map(c=>`<tr>
     <td class="fw700">${c.fecha||'—'}</td>
     <td>${c.hora||'—'}</td>
-    <td>${c.clienteNombre||'—'}</td>
+    <td>
+      <div class="fw700">${c.clienteNombre||'—'}</div>
+      ${c.clienteTel?`<div class="text-gris" style="font-size:0.75rem;">${c.clienteTel}</div>`:''}
+      ${c.tipoCliente==='manual'?'<span class="tag" style="font-size:0.62rem;">Manual</span>':''}
+    </td>
     <td>${c.servicio||'—'}</td>
     <td class="text-gris">${c.notas||'—'}</td>
     <td><span class="badge badge-${c.estado==='confirmada'?'listo':c.estado==='cancelada'?'entregado':'pendiente'}">${badgeLabel(c.estado)}</span></td>
@@ -1195,11 +1233,51 @@ async function guardarRepuesto(){
 }
 
 async function guardarCita(){
-  const cli=clientes.find(c=>c.id===document.getElementById('cita-cliente').value);
-  const data={clienteId:cli?.id||'',clienteNombre:cli?.nombre||'—',servicio:document.getElementById('cita-servicio').value,fecha:document.getElementById('cita-fecha').value,hora:document.getElementById('cita-hora').value,notas:document.getElementById('cita-notas').value,estado:document.getElementById('cita-estado').value,creadoPor:currentUser?.nombre||'—',createdAt:firebase.firestore.FieldValue.serverTimestamp()};
+  const tipoCliente = document.querySelector('input[name="cita-tipo-cli"]:checked').value;
+  let clienteNombre = '—';
+  let clienteId = '';
+  let clienteTel = '';
+
+  if(tipoCliente === 'registrado'){
+    const cli = clientes.find(c => c.id === document.getElementById('cita-cliente').value);
+    clienteNombre = cli?.nombre || '—';
+    clienteId = cli?.id || '';
+    clienteTel = cli?.tel || '';
+  } else {
+    clienteNombre = document.getElementById('cita-cli-nombre').value.trim() || '—';
+    clienteTel = document.getElementById('cita-cli-tel').value.trim() || '';
+    clienteId = '';
+  }
+
+  const servicio = document.getElementById('cita-servicio').value.trim();
+  if(!servicio){ alert('El servicio es requerido.'); return; }
+  if(clienteNombre === '—'){ alert('El nombre del cliente es requerido.'); return; }
+
+  const data = {
+    clienteId,
+    clienteNombre,
+    clienteTel,
+    tipoCliente,
+    servicio,
+    fecha: document.getElementById('cita-fecha').value,
+    hora: document.getElementById('cita-hora').value,
+    notas: document.getElementById('cita-notas').value,
+    estado: document.getElementById('cita-estado').value,
+    creadoPor: currentUser?.nombre || '—',
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  };
+
   await db.collection('citas').add(data);
   await registrarMovimiento('crear','agenda',`Nueva cita: ${data.servicio}`,`Cliente: ${data.clienteNombre} · ${data.fecha}`);
   closeModal('modal-cita');
+
+  // Limpiar campos
+  document.getElementById('cita-servicio').value = '';
+  document.getElementById('cita-notas').value = '';
+  document.getElementById('cita-cli-nombre').value = '';
+  document.getElementById('cita-cli-tel').value = '';
+  document.getElementById('cita-tipo-reg').checked = true;
+  toggleTipoCliente();
 }
 
 async function guardarFactura(){
@@ -1496,6 +1574,15 @@ async function confirmarResetPass(){
     errEl.style.display = 'block';
     console.error(e);
   }
+}
+
+// =================== TOGGLE TIPO CLIENTE CITA ===================
+function toggleTipoCliente(){
+  const tipo = document.querySelector('input[name="cita-tipo-cli"]:checked')?.value;
+  const esManual = tipo === 'manual';
+  document.getElementById('cita-cli-select-wrap').style.display = esManual ? 'none' : 'block';
+  document.getElementById('cita-cli-nombre-wrap').style.display = esManual ? 'block' : 'none';
+  document.getElementById('cita-cli-tel-wrap').style.display = esManual ? 'block' : 'none';
 }
 
 // =================== HELPERS SELECTS ===================
