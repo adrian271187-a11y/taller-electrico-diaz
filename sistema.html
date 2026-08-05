@@ -901,6 +901,103 @@ tr:hover td{background:rgba(255,255,255,0.03);color:var(--blanco);}
   </div>
 </div>
 
+<!-- ===== MODALES DE EDICIÓN ===== -->
+
+<!-- Edit Cliente -->
+<div class="modal-wrap" id="modal-edit-cliente"><div class="modal"><div class="modal-header"><span class="modal-title">Editar Cliente</span><button class="modal-close" onclick="closeModal('modal-edit-cliente')">✕</button></div>
+<div class="form-grid">
+  <div class="form-group"><label>Nombre</label><input type="text" id="ec-nombre"></div>
+  <div class="form-group"><label>Teléfono</label><input type="text" id="ec-tel"></div>
+  <div class="form-group"><label>Correo</label><input type="email" id="ec-correo"></div>
+  <div class="form-group"><label>Cédula</label><input type="text" id="ec-cedula"></div>
+  <div class="form-group form-full"><label>Dirección</label><input type="text" id="ec-dir"></div>
+  <div class="form-group form-full"><label>Notas</label><textarea id="ec-notas"></textarea></div>
+</div>
+<div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('modal-edit-cliente')">Cancelar</button><button class="btn btn-primary" onclick="guardarEditCliente()">Guardar</button></div>
+</div></div>
+
+<!-- Edit Vehículo -->
+<div class="modal-wrap" id="modal-edit-vehiculo"><div class="modal"><div class="modal-header"><span class="modal-title">Editar Vehículo</span><button class="modal-close" onclick="closeModal('modal-edit-vehiculo')">✕</button></div>
+<div class="form-grid">
+  <div class="form-group"><label>Placa</label><input type="text" id="ev-placa"></div>
+  <div class="form-group"><label>Marca</label><input type="text" id="ev-marca"></div>
+  <div class="form-group"><label>Modelo</label><input type="text" id="ev-modelo"></div>
+  <div class="form-group"><label>Año</label><input type="number" id="ev-anio"></div>
+  <div class="form-group"><label>Color</label><input type="text" id="ev-color"></div>
+  <div class="form-group"><label>Motor</label><input type="text" id="ev-motor"></div>
+  <div class="form-group"><label>Combustible</label><select id="ev-combustible"><option value="gasolina">Gasolina</option><option value="diesel">Diésel</option><option value="hibrido">Híbrido</option><option value="electrico">Eléctrico</option></select></div>
+  <div class="form-group"><label>Km</label><input type="number" id="ev-km"></div>
+  <div class="form-group form-full"><label>Observaciones</label><textarea id="ev-obs"></textarea></div>
+</div>
+<div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('modal-edit-vehiculo')">Cancelar</button><button class="btn btn-primary" onclick="guardarEditVehiculo()">Guardar</button></div>
+</div></div>
+
+<!-- Edit Repuesto -->
+<div class="modal-wrap" id="modal-edit-repuesto"><div class="modal"><div class="modal-header"><span class="modal-title">Editar Repuesto</span><button class="modal-close" onclick="closeModal('modal-edit-repuesto')">✕</button></div>
+<div class="form-grid">
+  <div class="form-group"><label>Código</label><input type="text" id="er-codigo"></div>
+  <div class="form-group"><label>Nombre</label><input type="text" id="er-nombre"></div>
+  <div class="form-group"><label>Stock</label><input type="number" id="er-stock"></div>
+  <div class="form-group"><label>Stock mínimo</label><input type="number" id="er-minimo"></div>
+  <div class="form-group"><label>Precio costo (₡)</label><input type="number" id="er-costo"></div>
+  <div class="form-group"><label>Precio venta (₡)</label><input type="number" id="er-venta"></div>
+  <div class="form-group"><label>Ubicación</label><input type="text" id="er-ubic"></div>
+  <div class="form-group form-full"><label>Descripción</label><textarea id="er-desc"></textarea></div>
+</div>
+<div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('modal-edit-repuesto')">Cancelar</button><button class="btn btn-primary" onclick="guardarEditRepuesto()">Guardar</button></div>
+</div></div>
+
+<!-- Edit Cita -->
+<div class="modal-wrap" id="modal-edit-cita"><div class="modal"><div class="modal-header"><span class="modal-title">Editar Cita</span><button class="modal-close" onclick="closeModal('modal-edit-cita')">✕</button></div>
+<div class="form-grid">
+  <div class="form-group form-full"><label>Servicio</label><input type="text" id="eci-servicio"></div>
+  <div class="form-group"><label>Fecha</label><input type="date" id="eci-fecha"></div>
+  <div class="form-group"><label>Hora</label><input type="time" id="eci-hora"></div>
+  <div class="form-group"><label>Estado</label><select id="eci-estado"><option value="pendiente">Pendiente</option><option value="confirmada">Confirmada</option><option value="completada">Completada</option><option value="cancelada">Cancelada</option></select></div>
+  <div class="form-group form-full"><label>Notas</label><textarea id="eci-notas"></textarea></div>
+</div>
+<div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('modal-edit-cita')">Cancelar</button><button class="btn btn-primary" onclick="guardarEditCita()">Guardar</button></div>
+</div></div>
+
+<!-- Edit Factura -->
+<div class="modal-wrap" id="modal-edit-factura"><div class="modal"><div class="modal-header"><span class="modal-title">Editar Factura</span><button class="modal-close" onclick="closeModal('modal-edit-factura')">✕</button></div>
+<div class="form-grid">
+  <div class="form-group form-full"><label>Descripción</label><textarea id="ef-desc"></textarea></div>
+  <div class="form-group"><label>Mano de obra (₡)</label><input type="number" id="ef-mano" oninput="calcTotalEdit()"></div>
+  <div class="form-group"><label>Repuestos (₡)</label><input type="number" id="ef-repuestos" oninput="calcTotalEdit()"></div>
+  <div class="form-group"><label>Otros (₡)</label><input type="number" id="ef-otros" oninput="calcTotalEdit()"></div>
+  <div class="form-group"><label>Total (₡)</label><input type="number" id="ef-total" readonly style="color:var(--dorado);font-weight:700;"></div>
+  <div class="form-group"><label>Estado</label><select id="ef-estado"><option value="pendiente">Pendiente</option><option value="pagada">Pagada</option><option value="parcial">Pago parcial</option></select></div>
+  <div class="form-group form-full"><label>Notas</label><input type="text" id="ef-notas"></div>
+</div>
+<div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('modal-edit-factura')">Cancelar</button><button class="btn btn-primary" onclick="guardarEditFactura()">Guardar</button></div>
+</div></div>
+
+<!-- Edit Proveedor -->
+<div class="modal-wrap" id="modal-edit-proveedor"><div class="modal"><div class="modal-header"><span class="modal-title">Editar Proveedor</span><button class="modal-close" onclick="closeModal('modal-edit-proveedor')">✕</button></div>
+<div class="form-grid">
+  <div class="form-group"><label>Nombre</label><input type="text" id="ep-nombre"></div>
+  <div class="form-group"><label>Contacto</label><input type="text" id="ep-contacto"></div>
+  <div class="form-group"><label>Teléfono</label><input type="text" id="ep-tel"></div>
+  <div class="form-group"><label>Correo</label><input type="email" id="ep-correo"></div>
+  <div class="form-group form-full"><label>Dirección</label><input type="text" id="ep-dir"></div>
+  <div class="form-group form-full"><label>Notas</label><textarea id="ep-notas"></textarea></div>
+</div>
+<div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('modal-edit-proveedor')">Cancelar</button><button class="btn btn-primary" onclick="guardarEditProveedor()">Guardar</button></div>
+</div></div>
+
+<!-- Edit Orden -->
+<div class="modal-wrap" id="modal-edit-orden"><div class="modal"><div class="modal-header"><span class="modal-title">Editar Orden de Trabajo</span><button class="modal-close" onclick="closeModal('modal-edit-orden')">✕</button></div>
+<div class="form-grid">
+  <div class="form-group form-full"><label>Servicio</label><input type="text" id="eo-servicio"></div>
+  <div class="form-group form-full"><label>Trabajos a realizar</label><textarea id="eo-trabajos"></textarea></div>
+  <div class="form-group"><label>Estado</label><select id="eo-estado"><option value="abierta">Abierta</option><option value="proceso">En proceso</option><option value="lista">Lista</option><option value="entregada">Entregada</option></select></div>
+  <div class="form-group"><label>Mecánico asignado</label><select id="eo-mecanico"><option value="Meca1">Meca1</option><option value="Meca2">Meca2</option><option value="Meca3">Meca3</option></select></div>
+  <div class="form-group form-full"><label>Observaciones de salida</label><textarea id="eo-obs-salida"></textarea></div>
+</div>
+<div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('modal-edit-orden')">Cancelar</button><button class="btn btn-primary" onclick="guardarEditOrden()">Guardar</button></div>
+</div></div>
+
 <!-- ===== MODAL RESET CONTRASEÑA ===== -->
 <div class="modal-wrap" id="modal-reset-pass">
   <div class="modal modal-auth">
@@ -1211,34 +1308,35 @@ function accionEliminar(col, id, nombre){
   );
 }
 
-// =================== EDITAR REPARACIÓN ===================
-let editRepId=null;
+// =================== EDITAR REGISTROS ===================
+let editId=null;
+let editCol=null;
+
 function accionEditar(col, id){
-  if(col==='reparaciones'){
-    const rep=reps.find(r=>r.id===id);
-    if(!rep)return;
-    pedirAuth(
-      `editar la reparación de ${rep.clienteNombre||'cliente'}`,
-      ()=>{
-        editRepId=id;
-        document.getElementById('edit-rep-servicio').value=rep.servicio||'';
-        document.getElementById('edit-rep-estado').value=rep.estado||'pendiente';
-        document.getElementById('edit-rep-mano').value=rep.manoObra||0;
-        document.getElementById('edit-rep-notas').value=rep.notas||'';
-        document.getElementById('edit-rep-desc').value=rep.descripcion||'';
-        openModal('modal-edit-rep');
-      }
-    );
-  } else {
-    // Para otros módulos: mensaje simple
-    if(currentUser && currentUser.rol!=='admin'){
-      pedirAuth(`editar este registro en ${col}`,()=>{
-        alert('Edición autorizada. Funcionalidad completa disponible próximamente para este módulo.');
-      });
-    } else {
-      alert('Edición completa disponible próximamente para este módulo.');
-    }
-  }
+  pedirAuth(`editar este registro`, ()=>{
+    editId=id; editCol=col;
+    if(col==='reparaciones') abrirEditRep(id);
+    else if(col==='clientes') abrirEditCliente(id);
+    else if(col==='vehiculos') abrirEditVehiculo(id);
+    else if(col==='repuestos') abrirEditRepuesto(id);
+    else if(col==='citas') abrirEditCita(id);
+    else if(col==='facturas') abrirEditFactura(id);
+    else if(col==='proveedores') abrirEditProveedor(id);
+    else if(col==='ordenes') abrirEditOrden(id);
+  });
+}
+
+// ---- EDITAR REPARACIÓN ----
+let editRepId=null;
+function abrirEditRep(id){
+  const rep=reps.find(r=>r.id===id); if(!rep)return;
+  editRepId=id;
+  document.getElementById('edit-rep-servicio').value=rep.servicio||'';
+  document.getElementById('edit-rep-estado').value=rep.estado||'pendiente';
+  document.getElementById('edit-rep-mano').value=rep.manoObra||0;
+  document.getElementById('edit-rep-notas').value=rep.notas||'';
+  document.getElementById('edit-rep-desc').value=rep.descripcion||'';
+  openModal('modal-edit-rep');
 }
 
 async function guardarEditRep(){
@@ -2146,6 +2244,143 @@ function calcTotal(){
   const r=parseFloat(document.getElementById('fac-repuestos').value)||0;
   const o=parseFloat(document.getElementById('fac-otros').value)||0;
   document.getElementById('fac-total').value=m+r+o;
+}
+
+// =================== EDITAR CLIENTES ===================
+function abrirEditCliente(id){
+  const c=clientes.find(x=>x.id===id); if(!c)return;
+  document.getElementById('ec-nombre').value=c.nombre||'';
+  document.getElementById('ec-tel').value=c.tel||'';
+  document.getElementById('ec-correo').value=c.correo||'';
+  document.getElementById('ec-cedula').value=c.cedula||'';
+  document.getElementById('ec-dir').value=c.direccion||'';
+  document.getElementById('ec-notas').value=c.notas||'';
+  openModal('modal-edit-cliente');
+}
+async function guardarEditCliente(){
+  const data={nombre:document.getElementById('ec-nombre').value.trim(),tel:document.getElementById('ec-tel').value.trim(),correo:document.getElementById('ec-correo').value.trim(),cedula:document.getElementById('ec-cedula').value.trim(),direccion:document.getElementById('ec-dir').value.trim(),notas:document.getElementById('ec-notas').value.trim(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
+  if(!data.nombre){alert('El nombre es requerido.');return;}
+  await db.collection('clientes').doc(editId).update(data);
+  registrarMovimiento('editar','clientes',`Cliente editado: ${data.nombre}`,'');
+  closeModal('modal-edit-cliente');
+}
+
+// =================== EDITAR VEHÍCULO ===================
+function abrirEditVehiculo(id){
+  const v=vehiculos.find(x=>x.id===id); if(!v)return;
+  document.getElementById('ev-placa').value=v.placa||'';
+  document.getElementById('ev-marca').value=v.marca||'';
+  document.getElementById('ev-modelo').value=v.modelo||'';
+  document.getElementById('ev-anio').value=v.anio||'';
+  document.getElementById('ev-color').value=v.color||'';
+  document.getElementById('ev-motor').value=v.motor||'';
+  document.getElementById('ev-combustible').value=v.combustible||'gasolina';
+  document.getElementById('ev-km').value=v.km||0;
+  document.getElementById('ev-obs').value=v.observaciones||'';
+  openModal('modal-edit-vehiculo');
+}
+async function guardarEditVehiculo(){
+  const data={placa:document.getElementById('ev-placa').value.trim().toUpperCase(),marca:document.getElementById('ev-marca').value.trim(),modelo:document.getElementById('ev-modelo').value.trim(),anio:document.getElementById('ev-anio').value,color:document.getElementById('ev-color').value.trim(),motor:document.getElementById('ev-motor').value.trim(),combustible:document.getElementById('ev-combustible').value,km:parseInt(document.getElementById('ev-km').value)||0,observaciones:document.getElementById('ev-obs').value.trim(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
+  await db.collection('vehiculos').doc(editId).update(data);
+  registrarMovimiento('editar','vehiculos',`Vehículo editado: ${data.placa}`,'');
+  closeModal('modal-edit-vehiculo');
+}
+
+// =================== EDITAR REPUESTO ===================
+function abrirEditRepuesto(id){
+  const r=repuestos.find(x=>x.id===id); if(!r)return;
+  document.getElementById('er-codigo').value=r.codigo||'';
+  document.getElementById('er-nombre').value=r.nombre||'';
+  document.getElementById('er-stock').value=r.stock||0;
+  document.getElementById('er-minimo').value=r.minimo||1;
+  document.getElementById('er-costo').value=r.costo||0;
+  document.getElementById('er-venta').value=r.venta||0;
+  document.getElementById('er-ubic').value=r.ubicacion||'';
+  document.getElementById('er-desc').value=r.descripcion||'';
+  openModal('modal-edit-repuesto');
+}
+async function guardarEditRepuesto(){
+  const data={codigo:document.getElementById('er-codigo').value.trim(),nombre:document.getElementById('er-nombre').value.trim(),stock:parseInt(document.getElementById('er-stock').value)||0,minimo:parseInt(document.getElementById('er-minimo').value)||1,costo:parseFloat(document.getElementById('er-costo').value)||0,venta:parseFloat(document.getElementById('er-venta').value)||0,ubicacion:document.getElementById('er-ubic').value.trim(),descripcion:document.getElementById('er-desc').value.trim(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
+  await db.collection('repuestos').doc(editId).update(data);
+  registrarMovimiento('editar','repuestos',`Repuesto editado: ${data.nombre}`,'');
+  closeModal('modal-edit-repuesto');
+}
+
+// =================== EDITAR CITA ===================
+function abrirEditCita(id){
+  const c=citas.find(x=>x.id===id); if(!c)return;
+  document.getElementById('eci-servicio').value=c.servicio||'';
+  document.getElementById('eci-fecha').value=c.fecha||'';
+  document.getElementById('eci-hora').value=c.hora||'';
+  document.getElementById('eci-notas').value=c.notas||'';
+  document.getElementById('eci-estado').value=c.estado||'pendiente';
+  openModal('modal-edit-cita');
+}
+async function guardarEditCita(){
+  const data={servicio:document.getElementById('eci-servicio').value.trim(),fecha:document.getElementById('eci-fecha').value,hora:document.getElementById('eci-hora').value,notas:document.getElementById('eci-notas').value.trim(),estado:document.getElementById('eci-estado').value,updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
+  await db.collection('citas').doc(editId).update(data);
+  registrarMovimiento('editar','agenda',`Cita editada: ${data.servicio}`,'');
+  closeModal('modal-edit-cita');
+}
+
+// =================== EDITAR FACTURA ===================
+function abrirEditFactura(id){
+  const f=facturas.find(x=>x.id===id); if(!f)return;
+  document.getElementById('ef-desc').value=f.descripcion||'';
+  document.getElementById('ef-mano').value=f.manoObra||0;
+  document.getElementById('ef-repuestos').value=f.repuestos||0;
+  document.getElementById('ef-otros').value=f.otros||0;
+  document.getElementById('ef-total').value=f.total||0;
+  document.getElementById('ef-estado').value=f.estado||'pendiente';
+  document.getElementById('ef-notas').value=f.notas||'';
+  openModal('modal-edit-factura');
+}
+async function guardarEditFactura(){
+  const data={descripcion:document.getElementById('ef-desc').value.trim(),manoObra:parseFloat(document.getElementById('ef-mano').value)||0,repuestos:parseFloat(document.getElementById('ef-repuestos').value)||0,otros:parseFloat(document.getElementById('ef-otros').value)||0,total:parseFloat(document.getElementById('ef-total').value)||0,estado:document.getElementById('ef-estado').value,notas:document.getElementById('ef-notas').value.trim(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
+  await db.collection('facturas').doc(editId).update(data);
+  registrarMovimiento('editar','facturas',`Factura editada`,'');
+  closeModal('modal-edit-factura');
+}
+function calcTotalEdit(){
+  const m=parseFloat(document.getElementById('ef-mano').value)||0;
+  const r=parseFloat(document.getElementById('ef-repuestos').value)||0;
+  const o=parseFloat(document.getElementById('ef-otros').value)||0;
+  document.getElementById('ef-total').value=m+r+o;
+}
+
+// =================== EDITAR PROVEEDOR ===================
+function abrirEditProveedor(id){
+  const p=proveedores.find(x=>x.id===id); if(!p)return;
+  document.getElementById('ep-nombre').value=p.nombre||'';
+  document.getElementById('ep-contacto').value=p.contacto||'';
+  document.getElementById('ep-tel').value=p.tel||'';
+  document.getElementById('ep-correo').value=p.correo||'';
+  document.getElementById('ep-dir').value=p.direccion||'';
+  document.getElementById('ep-notas').value=p.notas||'';
+  openModal('modal-edit-proveedor');
+}
+async function guardarEditProveedor(){
+  const data={nombre:document.getElementById('ep-nombre').value.trim(),contacto:document.getElementById('ep-contacto').value.trim(),tel:document.getElementById('ep-tel').value.trim(),correo:document.getElementById('ep-correo').value.trim(),direccion:document.getElementById('ep-dir').value.trim(),notas:document.getElementById('ep-notas').value.trim(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
+  await db.collection('proveedores').doc(editId).update(data);
+  registrarMovimiento('editar','proveedores',`Proveedor editado: ${data.nombre}`,'');
+  closeModal('modal-edit-proveedor');
+}
+
+// =================== EDITAR ORDEN ===================
+function abrirEditOrden(id){
+  const o=ordenes.find(x=>x.id===id); if(!o)return;
+  document.getElementById('eo-servicio').value=o.servicio||'';
+  document.getElementById('eo-trabajos').value=o.trabajos||'';
+  document.getElementById('eo-estado').value=o.estado||'abierta';
+  document.getElementById('eo-mecanico').value=o.mecanico||'Meca1';
+  document.getElementById('eo-obs-salida').value=o.obsSalida||'';
+  openModal('modal-edit-orden');
+}
+async function guardarEditOrden(){
+  const data={servicio:document.getElementById('eo-servicio').value.trim(),trabajos:document.getElementById('eo-trabajos').value.trim(),estado:document.getElementById('eo-estado').value,mecanico:document.getElementById('eo-mecanico').value,obsSalida:document.getElementById('eo-obs-salida').value.trim(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
+  await db.collection('ordenes').doc(editId).update(data);
+  registrarMovimiento('editar','ordenes',`Orden editada: ${data.servicio}`,'');
+  closeModal('modal-edit-orden');
 }
 
 // =================== RESTAURAR SESIÓN ===================
