@@ -1198,38 +1198,65 @@ async function guardarRep(){
   const veh=vehiculos.find(v=>v.id===document.getElementById('rep-vehiculo').value);
   const data={clienteId:cli?.id||'',clienteNombre:cli?.nombre||'—',vehiculoId:veh?.id||'',vehiculo:veh?`${veh.marca} ${veh.modelo}`:'—',placa:veh?.placa||'—',servicio:document.getElementById('rep-servicio').value,descripcion:document.getElementById('rep-desc').value,fecha:document.getElementById('rep-fecha').value,manoObra:parseFloat(document.getElementById('rep-mano').value)||0,estado:document.getElementById('rep-estado').value,notas:document.getElementById('rep-notas').value,creadoPor:currentUser?.nombre||'—',createdAt:firebase.firestore.FieldValue.serverTimestamp()};
   if(!data.servicio){alert('El servicio es requerido.');return;}
-  await db.collection('reparaciones').add(data);
-  await registrarMovimiento('crear','reparaciones',`Nueva reparación: ${data.servicio}`,`Cliente: ${data.clienteNombre}`);
-  closeModal('modal-rep');
-  ['rep-servicio','rep-desc','rep-mano','rep-notas'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  try{
+    const btn=document.getElementById('btn-guardar-rep');
+    btn.disabled=true; btn.textContent='Guardando...';
+    await db.collection('reparaciones').add(data);
+    await registrarMovimiento('crear','reparaciones',`Nueva reparación: ${data.servicio}`,`Cliente: ${data.clienteNombre}`);
+    closeModal('modal-rep');
+    ['rep-servicio','rep-desc','rep-mano','rep-notas'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+    document.getElementById('rep-cliente').value='';
+    document.getElementById('rep-vehiculo').value='';
+    document.getElementById('rep-estado').value='pendiente';
+    btn.disabled=false; btn.textContent='Guardar';
+  }catch(e){alert('Error al guardar. Intente de nuevo.');console.error(e);document.getElementById('btn-guardar-rep').disabled=false;document.getElementById('btn-guardar-rep').textContent='Guardar';}
 }
 
 async function guardarCliente(){
-  const data={nombre:document.getElementById('cli-nombre').value,tel:document.getElementById('cli-tel').value,correo:document.getElementById('cli-correo').value,cedula:document.getElementById('cli-cedula').value,direccion:document.getElementById('cli-dir').value,notas:document.getElementById('cli-notas').value,creadoPor:currentUser?.nombre||'—',createdAt:firebase.firestore.FieldValue.serverTimestamp()};
+  const data={nombre:document.getElementById('cli-nombre').value.trim(),tel:document.getElementById('cli-tel').value.trim(),correo:document.getElementById('cli-correo').value.trim(),cedula:document.getElementById('cli-cedula').value.trim(),direccion:document.getElementById('cli-dir').value.trim(),notas:document.getElementById('cli-notas').value.trim(),creadoPor:currentUser?.nombre||'—',createdAt:firebase.firestore.FieldValue.serverTimestamp()};
   if(!data.nombre){alert('El nombre es requerido.');return;}
-  await db.collection('clientes').add(data);
-  await registrarMovimiento('crear','clientes',`Nuevo cliente: ${data.nombre}`,`Tel: ${data.tel||'—'}`);
-  closeModal('modal-cliente');
-  ['cli-nombre','cli-tel','cli-correo','cli-cedula','cli-dir','cli-notas'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  try{
+    const btn=document.getElementById('btn-guardar-cliente');
+    btn.disabled=true; btn.textContent='Guardando...';
+    await db.collection('clientes').add(data);
+    await registrarMovimiento('crear','clientes',`Nuevo cliente: ${data.nombre}`,`Tel: ${data.tel||'—'}`);
+    closeModal('modal-cliente');
+    ['cli-nombre','cli-tel','cli-correo','cli-cedula','cli-dir','cli-notas'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+    btn.disabled=false; btn.textContent='Guardar';
+  }catch(e){alert('Error al guardar. Intente de nuevo.');console.error(e);document.getElementById('btn-guardar-cliente').disabled=false;document.getElementById('btn-guardar-cliente').textContent='Guardar';}
 }
 
 async function guardarVehiculo(){
   const cli=clientes.find(c=>c.id===document.getElementById('veh-cliente').value);
-  const data={clienteId:cli?.id||'',clienteNombre:cli?.nombre||'—',placa:document.getElementById('veh-placa').value,marca:document.getElementById('veh-marca').value,modelo:document.getElementById('veh-modelo').value,anio:document.getElementById('veh-anio').value,color:document.getElementById('veh-color').value,motor:document.getElementById('veh-motor').value,combustible:document.getElementById('veh-combustible').value,vin:document.getElementById('veh-vin').value,km:parseInt(document.getElementById('veh-km').value)||0,observaciones:document.getElementById('veh-obs').value,creadoPor:currentUser?.nombre||'—',createdAt:firebase.firestore.FieldValue.serverTimestamp()};
+  const data={clienteId:cli?.id||'',clienteNombre:cli?.nombre||'—',placa:document.getElementById('veh-placa').value.trim().toUpperCase(),marca:document.getElementById('veh-marca').value.trim(),modelo:document.getElementById('veh-modelo').value.trim(),anio:document.getElementById('veh-anio').value,color:document.getElementById('veh-color').value.trim(),motor:document.getElementById('veh-motor').value.trim(),combustible:document.getElementById('veh-combustible').value,vin:document.getElementById('veh-vin').value.trim(),km:parseInt(document.getElementById('veh-km').value)||0,observaciones:document.getElementById('veh-obs').value.trim(),creadoPor:currentUser?.nombre||'—',createdAt:firebase.firestore.FieldValue.serverTimestamp()};
   if(!data.placa){alert('La placa es requerida.');return;}
-  await db.collection('vehiculos').add(data);
-  await registrarMovimiento('crear','vehiculos',`Nuevo vehículo: ${data.placa}`,`${data.marca} ${data.modelo} · ${data.clienteNombre}`);
-  closeModal('modal-vehiculo');
-  ['veh-placa','veh-marca','veh-modelo','veh-anio','veh-color','veh-motor','veh-vin','veh-km','veh-obs'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  if(!data.marca){alert('La marca es requerida.');return;}
+  try{
+    const btn=document.getElementById('btn-guardar-vehiculo');
+    btn.disabled=true; btn.textContent='Guardando...';
+    await db.collection('vehiculos').add(data);
+    await registrarMovimiento('crear','vehiculos',`Nuevo vehículo: ${data.placa}`,`${data.marca} ${data.modelo} · ${data.clienteNombre}`);
+    closeModal('modal-vehiculo');
+    ['veh-placa','veh-marca','veh-modelo','veh-anio','veh-color','veh-motor','veh-vin','veh-km','veh-obs'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+    document.getElementById('veh-cliente').value='';
+    btn.disabled=false; btn.textContent='Guardar';
+  }catch(e){alert('Error al guardar. Intente de nuevo.');console.error(e);document.getElementById('btn-guardar-vehiculo').disabled=false;document.getElementById('btn-guardar-vehiculo').textContent='Guardar';}
 }
 
 async function guardarRepuesto(){
   const prov=proveedores.find(p=>p.id===document.getElementById('rp-proveedor').value);
-  const data={codigo:document.getElementById('rp-codigo').value,nombre:document.getElementById('rp-nombre').value,stock:parseInt(document.getElementById('rp-stock').value)||0,minimo:parseInt(document.getElementById('rp-minimo').value)||1,costo:parseFloat(document.getElementById('rp-costo').value)||0,venta:parseFloat(document.getElementById('rp-venta').value)||0,proveedorId:prov?.id||'',proveedorNombre:prov?.nombre||'—',ubicacion:document.getElementById('rp-ubic').value,descripcion:document.getElementById('rp-desc').value,creadoPor:currentUser?.nombre||'—',createdAt:firebase.firestore.FieldValue.serverTimestamp()};
+  const data={codigo:document.getElementById('rp-codigo').value.trim(),nombre:document.getElementById('rp-nombre').value.trim(),stock:parseInt(document.getElementById('rp-stock').value)||0,minimo:parseInt(document.getElementById('rp-minimo').value)||1,costo:parseFloat(document.getElementById('rp-costo').value)||0,venta:parseFloat(document.getElementById('rp-venta').value)||0,proveedorId:prov?.id||'',proveedorNombre:prov?.nombre||'—',ubicacion:document.getElementById('rp-ubic').value.trim(),descripcion:document.getElementById('rp-desc').value.trim(),creadoPor:currentUser?.nombre||'—',createdAt:firebase.firestore.FieldValue.serverTimestamp()};
   if(!data.nombre){alert('El nombre es requerido.');return;}
-  await db.collection('repuestos').add(data);
-  await registrarMovimiento('crear','repuestos',`Nuevo repuesto: ${data.nombre}`,`Stock: ${data.stock}`);
-  closeModal('modal-repuesto');
+  try{
+    const btn=document.getElementById('btn-guardar-repuesto');
+    btn.disabled=true; btn.textContent='Guardando...';
+    await db.collection('repuestos').add(data);
+    await registrarMovimiento('crear','repuestos',`Nuevo repuesto: ${data.nombre}`,`Stock: ${data.stock}`);
+    closeModal('modal-repuesto');
+    ['rp-codigo','rp-nombre','rp-stock','rp-minimo','rp-costo','rp-venta','rp-ubic','rp-desc'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+    document.getElementById('rp-proveedor').value='';
+    btn.disabled=false; btn.textContent='Guardar';
+  }catch(e){alert('Error al guardar. Intente de nuevo.');console.error(e);document.getElementById('btn-guardar-repuesto').disabled=false;document.getElementById('btn-guardar-repuesto').textContent='Guardar';}
 }
 
 async function guardarCita(){
@@ -1267,33 +1294,53 @@ async function guardarCita(){
     createdAt: firebase.firestore.FieldValue.serverTimestamp()
   };
 
-  await db.collection('citas').add(data);
-  await registrarMovimiento('crear','agenda',`Nueva cita: ${data.servicio}`,`Cliente: ${data.clienteNombre} · ${data.fecha}`);
-  closeModal('modal-cita');
-
-  // Limpiar campos
-  document.getElementById('cita-servicio').value = '';
-  document.getElementById('cita-notas').value = '';
-  document.getElementById('cita-cli-nombre').value = '';
-  document.getElementById('cita-cli-tel').value = '';
-  document.getElementById('cita-tipo-reg').checked = true;
-  toggleTipoCliente();
+  try{
+    const btn=document.getElementById('btn-guardar-cita');
+    btn.disabled=true; btn.textContent='Guardando...';
+    await db.collection('citas').add(data);
+    await registrarMovimiento('crear','agenda',`Nueva cita: ${data.servicio}`,`Cliente: ${data.clienteNombre} · ${data.fecha}`);
+    closeModal('modal-cita');
+    document.getElementById('cita-servicio').value='';
+    document.getElementById('cita-notas').value='';
+    document.getElementById('cita-cli-nombre').value='';
+    document.getElementById('cita-cli-tel').value='';
+    document.getElementById('cita-cliente').value='';
+    document.getElementById('cita-tipo-reg').checked=true;
+    toggleTipoCliente();
+    btn.disabled=false; btn.textContent='Guardar';
+  }catch(e){alert('Error al guardar. Intente de nuevo.');console.error(e);document.getElementById('btn-guardar-cita').disabled=false;document.getElementById('btn-guardar-cita').textContent='Guardar';}
 }
 
 async function guardarFactura(){
   const cli=clientes.find(c=>c.id===document.getElementById('fac-cliente').value);
-  const data={clienteId:cli?.id||'',clienteNombre:cli?.nombre||'—',fecha:document.getElementById('fac-fecha').value||new Date().toISOString().split('T')[0],descripcion:document.getElementById('fac-desc').value,manoObra:parseFloat(document.getElementById('fac-mano').value)||0,repuestos:parseFloat(document.getElementById('fac-repuestos').value)||0,otros:parseFloat(document.getElementById('fac-otros').value)||0,total:parseFloat(document.getElementById('fac-total').value)||0,estado:document.getElementById('fac-estado').value,notas:document.getElementById('fac-notas').value,creadoPor:currentUser?.nombre||'—',createdAt:firebase.firestore.FieldValue.serverTimestamp()};
-  await db.collection('facturas').add(data);
-  await registrarMovimiento('crear','facturas',`Nueva factura: ${data.clienteNombre}`,`Total: ₡${data.total.toLocaleString()}`);
-  closeModal('modal-factura');
+  const data={clienteId:cli?.id||'',clienteNombre:cli?.nombre||'—',fecha:document.getElementById('fac-fecha').value||new Date().toISOString().split('T')[0],descripcion:document.getElementById('fac-desc').value.trim(),manoObra:parseFloat(document.getElementById('fac-mano').value)||0,repuestos:parseFloat(document.getElementById('fac-repuestos').value)||0,otros:parseFloat(document.getElementById('fac-otros').value)||0,total:parseFloat(document.getElementById('fac-total').value)||0,estado:document.getElementById('fac-estado').value,notas:document.getElementById('fac-notas').value.trim(),creadoPor:currentUser?.nombre||'—',createdAt:firebase.firestore.FieldValue.serverTimestamp()};
+  if(!data.clienteNombre||data.clienteNombre==='—'){alert('Seleccioná un cliente.');return;}
+  if(!data.descripcion){alert('La descripción es requerida.');return;}
+  try{
+    const btn=document.getElementById('btn-guardar-factura');
+    btn.disabled=true; btn.textContent='Guardando...';
+    await db.collection('facturas').add(data);
+    await registrarMovimiento('crear','facturas',`Nueva factura: ${data.clienteNombre}`,`Total: ₡${data.total.toLocaleString()}`);
+    closeModal('modal-factura');
+    ['fac-desc','fac-mano','fac-repuestos','fac-otros','fac-total','fac-notas'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+    document.getElementById('fac-cliente').value='';
+    document.getElementById('fac-estado').value='pendiente';
+    btn.disabled=false; btn.textContent='Guardar';
+  }catch(e){alert('Error al guardar. Intente de nuevo.');console.error(e);document.getElementById('btn-guardar-factura').disabled=false;document.getElementById('btn-guardar-factura').textContent='Guardar';}
 }
 
 async function guardarProveedor(){
-  const data={nombre:document.getElementById('prov-nombre').value,contacto:document.getElementById('prov-contacto').value,tel:document.getElementById('prov-tel').value,correo:document.getElementById('prov-correo').value,direccion:document.getElementById('prov-dir').value,notas:document.getElementById('prov-notas').value,creadoPor:currentUser?.nombre||'—',createdAt:firebase.firestore.FieldValue.serverTimestamp()};
+  const data={nombre:document.getElementById('prov-nombre').value.trim(),contacto:document.getElementById('prov-contacto').value.trim(),tel:document.getElementById('prov-tel').value.trim(),correo:document.getElementById('prov-correo').value.trim(),direccion:document.getElementById('prov-dir').value.trim(),notas:document.getElementById('prov-notas').value.trim(),creadoPor:currentUser?.nombre||'—',createdAt:firebase.firestore.FieldValue.serverTimestamp()};
   if(!data.nombre){alert('El nombre es requerido.');return;}
-  await db.collection('proveedores').add(data);
-  await registrarMovimiento('crear','proveedores',`Nuevo proveedor: ${data.nombre}`,`Tel: ${data.tel||'—'}`);
-  closeModal('modal-proveedor');
+  try{
+    const btn=document.getElementById('btn-guardar-proveedor');
+    btn.disabled=true; btn.textContent='Guardando...';
+    await db.collection('proveedores').add(data);
+    await registrarMovimiento('crear','proveedores',`Nuevo proveedor: ${data.nombre}`,`Tel: ${data.tel||'—'}`);
+    closeModal('modal-proveedor');
+    ['prov-nombre','prov-contacto','prov-tel','prov-correo','prov-dir','prov-notas'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+    btn.disabled=false; btn.textContent='Guardar';
+  }catch(e){alert('Error al guardar. Intente de nuevo.');console.error(e);document.getElementById('btn-guardar-proveedor').disabled=false;document.getElementById('btn-guardar-proveedor').textContent='Guardar';}
 }
 
 // =================== ESTADÍSTICAS ===================
