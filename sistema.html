@@ -167,9 +167,9 @@ body{
 .main{
   margin-left:240px;
   width:calc(100vw - 240px);
-  padding-top:16px;
-  padding-right:16px;
-  padding-bottom:5vh;
+  padding-top:0;
+  padding-right:0;
+  padding-bottom:0;
   padding-left:0;
   min-height:100vh;position:relative;z-index:5;
   box-sizing:border-box;
@@ -179,7 +179,7 @@ body{
 
 .topbar{
   display:flex;align-items:center;justify-content:space-between;
-  margin-bottom:12px;padding-bottom:12px;padding-left:0;
+  margin-bottom:16px;padding:20px 20px 16px 20px;
   border-bottom:1px solid var(--line);width:100%;
 }
 .page-title{
@@ -222,8 +222,8 @@ body{
 .panel{
   background:var(--glass);
   border:1px solid var(--line);
-  border-radius:0 var(--r2) var(--r2) 0;
-  padding:20px 20px;margin-bottom:8px;width:100%;box-sizing:border-box;
+  border-radius:0;
+  padding:0;margin-bottom:4px;width:100%;box-sizing:border-box;
   backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
   box-shadow:var(--shadow);
   position:relative;overflow:hidden;
@@ -235,7 +235,7 @@ body{
 .panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
 .panel-title{font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;}
 .screen{display:none;width:100%;box-sizing:border-box;}
-.screen.active{display:flex;flex-direction:column;width:100%;box-sizing:border-box;min-height:calc(100vh - 48px);padding-bottom:5vh;}
+.screen.active{display:flex;flex-direction:column;width:100%;box-sizing:border-box;height:100vh;}
 
 /* ── BOTONES ── */
 .btn{
@@ -261,7 +261,7 @@ body{
 .btn-sm{padding:5px 12px;font-size:0.75rem;}
 
 /* ── TABLA ── */
-.tbl-wrap{overflow-x:auto;}
+.tbl-wrap{overflow-x:auto;padding:0 20px 20px 20px;}
 table{width:100%;border-collapse:collapse;font-size:0.83rem;}
 th{
   text-align:left;padding:10px 14px;
@@ -330,7 +330,7 @@ tr:hover td{background:rgba(255,255,255,0.03);color:var(--blanco);}
 .modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:22px;padding-top:18px;border-top:1px solid var(--line);}
 
 /* ── BUSQUEDA ── */
-.search-bar{display:flex;gap:10px;margin-bottom:18px;}
+.search-bar{display:flex;gap:10px;margin-bottom:18px;padding:16px 20px 0 20px;}
 .search-bar input{
   flex:1;padding:10px 14px;
   background:rgba(255,255,255,0.04);
