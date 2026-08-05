@@ -1007,6 +1007,7 @@ function doLogin(){
   const usr=USUARIOS[u];
   if(usr && p===usr.pass){
     currentUser={nombre:u, rol:usr.rol, display:usr.display};
+    sessionStorage.setItem('tallerDiazUser', JSON.stringify(currentUser));
     document.getElementById('login-wrap').style.display='none';
     document.getElementById('app').style.display='flex';
     document.getElementById('sidebar-user-name').textContent=u;
@@ -1024,6 +1025,7 @@ function doLogin(){
 function doLogout(){
   registrarMovimiento('login','sistema','—','Cierre de sesión');
   currentUser=null;
+  sessionStorage.removeItem('tallerDiazUser');
   document.getElementById('app').style.display='none';
   document.getElementById('login-wrap').style.display='flex';
   document.getElementById('login-user').value='';
@@ -2148,6 +2150,29 @@ function calcTotal(){
   const o=parseFloat(document.getElementById('fac-otros').value)||0;
   document.getElementById('fac-total').value=m+r+o;
 }
+
+// =================== RESTAURAR SESIÓN ===================
+(function restaurarSesion(){
+  const saved = sessionStorage.getItem('tallerDiazUser');
+  if(!saved) return;
+  try{
+    const usr = JSON.parse(saved);
+    if(!usr || !usr.nombre || !USUARIOS[usr.nombre]) return;
+    // Verificar que el usuario sigue existiendo
+    currentUser = usr;
+    document.getElementById('login-wrap').style.display='none';
+    document.getElementById('app').style.display='flex';
+    document.getElementById('sidebar-user-name').textContent = usr.nombre;
+    document.getElementById('sidebar-user-role').textContent = usr.display;
+    document.getElementById('sidebar-user-badge').innerHTML = usr.rol==='admin'
+      ? '<span class="sidebar-user-badge badge-admin">Admin</span>'
+      : '<span class="sidebar-user-badge badge-meca">Mecánico</span>';
+    document.querySelectorAll('.admin-only').forEach(el=>el.style.display=usr.rol==='admin'?'flex':'none');
+    initApp();
+  }catch(e){
+    sessionStorage.removeItem('tallerDiazUser');
+  }
+})();
 
 function loadClientesSelect(selectId=''){
   const ids=selectId?[selectId]:['rep-cliente','cita-cliente','fac-cliente'];
