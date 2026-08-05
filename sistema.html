@@ -165,15 +165,18 @@ body{
 
 /* ── MAIN ── */
 .main{
-  margin-left:240px;padding:28px 28px 28px 32px;
+  margin-left:240px;
+  width:calc(100vw - 240px);
+  padding:24px 20px 24px 24px;
   min-height:100vh;position:relative;z-index:5;
+  box-sizing:border-box;
 }
 .main > *{position:relative;z-index:2;}
 
 .topbar{
   display:flex;align-items:center;justify-content:space-between;
   margin-bottom:28px;padding-bottom:20px;
-  border-bottom:1px solid var(--line);
+  border-bottom:1px solid var(--line);width:100%;
 }
 .page-title{
   font-family:'Barlow Condensed',sans-serif;
@@ -216,7 +219,7 @@ body{
   background:var(--glass);
   border:1px solid var(--line);
   border-radius:var(--r2);
-  padding:28px 32px;margin-bottom:24px;
+  padding:28px 32px;margin-bottom:24px;width:100%;box-sizing:border-box;
   backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
   box-shadow:var(--shadow);
   position:relative;overflow:hidden;
@@ -227,8 +230,8 @@ body{
 }
 .panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
 .panel-title{font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;}
-.screen{display:none;width:100%;}
-.screen.active{display:block;width:100%;}
+.screen{display:none;width:100%;box-sizing:border-box;}
+.screen.active{display:block;width:100%;box-sizing:border-box;}
 
 /* ── BOTONES ── */
 .btn{
