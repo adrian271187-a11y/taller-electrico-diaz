@@ -26,6 +26,8 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Inter',system-ui,sans-serif;background:var(--negro);color:var(--blanco);min-height:100vh;-webkit-font-smoothing:antialiased;}
+input[type="date"],input[type="time"]{color-scheme:dark;}
+input[type="date"]::-webkit-calendar-picker-indicator,input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(1);opacity:0.6;cursor:pointer;}
 
 /* FONDO */
 .main-bg{position:fixed;inset:0;background-size:cover;background-position:center;background-color:var(--negro);z-index:0;transition:background-image 0.8s ease;}
@@ -138,6 +140,8 @@ tr:hover td{background:rgba(255,255,255,0.03);color:var(--blanco);}
 .form-group{display:flex;flex-direction:column;gap:5px;}
 .form-group label{font-size:0.65rem;letter-spacing:0.09em;text-transform:uppercase;color:var(--gris2);font-weight:600;}
 .form-group input,.form-group select,.form-group textarea{padding:10px 13px;background:rgba(255,255,255,0.04);border:1px solid var(--line3);border-radius:8px;color:var(--blanco);font-size:0.86rem;outline:none;font-family:'Inter',sans-serif;transition:border-color 0.2s,box-shadow 0.2s;}
+.form-group input[type="date"],.form-group input[type="time"]{color-scheme:dark;}
+.form-group input[type="date"]::-webkit-calendar-picker-indicator,.form-group input[type="time"]::-webkit-calendar-picker-indicator{filter:invert(1);opacity:0.7;cursor:pointer;}
 .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:rgba(201,168,76,0.4);box-shadow:0 0 0 3px rgba(201,168,76,0.07);}
 .form-group select option{background:var(--negro3);}
 .form-group textarea{resize:vertical;min-height:75px;}
@@ -668,6 +672,10 @@ tr:hover td{background:rgba(255,255,255,0.03);color:var(--blanco);}
       <div class="form-group" id="cita-cli-tel-wrap" style="display:none;">
         <label>Teléfono</label>
         <input type="text" id="cita-cli-tel" placeholder="6000-0000">
+      </div>
+      <div class="form-group form-full" id="cita-cli-correo-wrap" style="display:none;">
+        <label>Correo electrónico</label>
+        <input type="email" id="cita-cli-correo" placeholder="correo@cliente.com">
       </div>
       <!-- Servicio -->
       <div class="form-group form-full">
@@ -1311,6 +1319,7 @@ function renderCitas(){
     <td>
       <div class="fw700">${c.clienteNombre||'—'}</div>
       ${c.clienteTel?`<div class="text-gris" style="font-size:0.75rem;">${c.clienteTel}</div>`:''}
+      ${c.clienteCorreo?`<div class="text-gris" style="font-size:0.72rem;">${c.clienteCorreo}</div>`:''}
       ${c.tipoCliente==='manual'?'<span class="tag" style="font-size:0.62rem;">Manual</span>':''}
     </td>
     <td>${c.servicio||'—'}</td>
@@ -1436,6 +1445,7 @@ async function guardarCita(){
     clienteId,
     clienteNombre,
     clienteTel,
+    clienteCorreo: tipoCliente==='manual' ? (document.getElementById('cita-cli-correo').value.trim()||'') : (clientes.find(c=>c.id===document.getElementById('cita-cliente').value)?.correo||''),
     tipoCliente,
     servicio,
     fecha: document.getElementById('cita-fecha').value,
@@ -1448,19 +1458,20 @@ async function guardarCita(){
 
   try{
     const btn=document.getElementById('btn-guardar-cita');
-    btn.disabled=true; btn.textContent='Guardando...';
+    if(btn){btn.disabled=true; btn.textContent='Guardando...';}
     await db.collection('citas').add(data);
     await registrarMovimiento('crear','agenda',`Nueva cita: ${data.servicio}`,`Cliente: ${data.clienteNombre} · ${data.fecha}`);
     closeModal('modal-cita');
-    document.getElementById('cita-servicio').value='';
-    document.getElementById('cita-notas').value='';
-    document.getElementById('cita-cli-nombre').value='';
-    document.getElementById('cita-cli-tel').value='';
-    document.getElementById('cita-cliente').value='';
-    document.getElementById('cita-tipo-reg').checked=true;
-    toggleTipoCliente();
-    btn.disabled=false; btn.textContent='Guardar';
-  }catch(e){alert('Error al guardar. Intente de nuevo.');console.error(e);document.getElementById('btn-guardar-cita').disabled=false;document.getElementById('btn-guardar-cita').textContent='Guardar';}
+    ['cita-servicio','cita-notas','cita-cli-nombre','cita-cli-tel','cita-cli-correo'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+    const selCli=document.getElementById('cita-cliente');if(selCli)selCli.value='';
+    const radReg=document.getElementById('cita-tipo-reg');if(radReg){radReg.checked=true;toggleTipoCliente();}
+    if(btn){btn.disabled=false; btn.textContent='Guardar';}
+  }catch(e){
+    console.error('Error guardando cita:',e);
+    alert('Error al guardar: '+(e.message||'Intente de nuevo.'));
+    const btn=document.getElementById('btn-guardar-cita');
+    if(btn){btn.disabled=false;btn.textContent='Guardar';}
+  }
 }
 
 async function guardarFactura(){
@@ -2087,6 +2098,7 @@ function toggleTipoCliente(){
   document.getElementById('cita-cli-select-wrap').style.display = esManual ? 'none' : 'block';
   document.getElementById('cita-cli-nombre-wrap').style.display = esManual ? 'block' : 'none';
   document.getElementById('cita-cli-tel-wrap').style.display = esManual ? 'block' : 'none';
+  document.getElementById('cita-cli-correo-wrap').style.display = esManual ? 'block' : 'none';
 }
 
 // =================== HELPERS SELECTS ===================
