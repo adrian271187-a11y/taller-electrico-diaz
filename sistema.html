@@ -676,6 +676,31 @@ tr:hover td{background:rgba(255,255,255,0.03);color:var(--blanco);}
   </div>
 </div>
 
+<!-- ===== MODAL ENVIAR FACTURA POR CORREO ===== -->
+<div class="modal-wrap" id="modal-enviar-factura">
+  <div class="modal modal-auth">
+    <div class="modal-header">
+      <span class="modal-title">📧 Enviar Factura por Correo</span>
+      <button class="modal-close" onclick="closeModal('modal-enviar-factura')">✕</button>
+    </div>
+    <div class="auth-warning">
+      Se enviará la factura de <strong style="color:var(--dorado);" id="enviar-fac-cliente">—</strong> al correo del cliente.<br>
+      Verificá que el correo sea correcto antes de enviar.
+    </div>
+    <div class="form-group" style="margin-bottom:12px;">
+      <label>Correo del cliente</label>
+      <input type="email" id="enviar-fac-correo" placeholder="correo@cliente.com">
+    </div>
+    <div id="enviar-fac-err" style="color:var(--rojo2);font-size:0.8rem;margin-bottom:10px;display:none;"></div>
+    <div id="enviar-fac-ok" style="color:var(--verde);font-size:0.8rem;margin-bottom:10px;display:none;">✅ Factura enviada correctamente</div>
+    <div id="enviar-fac-loading" style="color:var(--dorado);font-size:0.8rem;margin-bottom:10px;display:none;">⏳ Enviando factura...</div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-enviar-factura')">Cancelar</button>
+      <button class="btn btn-success" onclick="confirmarEnvioFactura()">📧 Enviar</button>
+    </div>
+  </div>
+</div>
+
 <!-- ===== MODAL RESET CONTRASEÑA ===== -->
 <div class="modal-wrap" id="modal-reset-pass">
   <div class="modal modal-auth">
@@ -1114,7 +1139,7 @@ function renderFacturas(){
     <td class="text-gris">${(f.descripcion||'').substring(0,40)}${(f.descripcion||'').length>40?'...':''}</td>
     <td class="text-dorado fw700">₡${(f.total||0).toLocaleString()}</td>
     <td><span class="badge badge-${f.estado==='pagada'?'listo':f.estado==='parcial'?'proceso':'pendiente'}">${badgeLabel(f.estado)}</span></td>
-    <td>${botonesAccion('facturas',f.id,`factura ${f.clienteNombre||''}`)}</td>
+    <td><div class="tbl-acciones">${botonesAccion('facturas',f.id,`factura ${f.clienteNombre||''}`)}<button class="btn btn-sm btn-success btn-icon" title="Enviar por correo" onclick="enviarFacturaCorreo('${f.id}')">📧</button><button class="btn btn-sm btn-secondary btn-icon" title="Imprimir / PDF" onclick="imprimirFactura('${f.id}')">🖨️</button></div></td>
   </tr>`).join(''):'<tr><td colspan="7"><div class="empty-state">Sin facturas registradas</div></td></tr>';
 }
 
@@ -1204,6 +1229,207 @@ function renderEstadisticas(){
   reps.forEach(r=>{if(r.servicio)svcCount[r.servicio]=(svcCount[r.servicio]||0)+1;});
   const sorted=Object.entries(svcCount).sort((a,b)=>b[1]-a[1]).slice(0,8);
   document.getElementById('est-servicios').innerHTML=sorted.length?sorted.map(([s,c])=>`<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)"><span style="flex:1;font-size:0.88rem;">${s}</span><span class="badge badge-pendiente">${c} veces</span></div>`).join(''):'<div class="empty-state">Sin datos aún</div>';
+}
+
+// =================== ENVIAR FACTURA POR CORREO ===================
+const CLOUD_RUN_URL = 'https://enviar-factura-996058978834.us-central1.run.app';
+let facturaParaEnviar = null;
+
+function enviarFacturaCorreo(facturaId){
+  const factura = facturas.find(f => f.id === facturaId);
+  if(!factura) return;
+  facturaParaEnviar = factura;
+
+  document.getElementById('enviar-fac-cliente').textContent = factura.clienteNombre || '—';
+  document.getElementById('enviar-fac-err').style.display = 'none';
+  document.getElementById('enviar-fac-ok').style.display = 'none';
+  document.getElementById('enviar-fac-loading').style.display = 'none';
+
+  // Buscar correo del cliente automáticamente
+  const cliente = clientes.find(c => c.id === factura.clienteId);
+  document.getElementById('enviar-fac-correo').value = cliente?.correo || '';
+
+  document.getElementById('modal-enviar-factura').classList.add('open');
+  setTimeout(()=>document.getElementById('enviar-fac-correo').focus(), 100);
+}
+
+async function confirmarEnvioFactura(){
+  const correo = document.getElementById('enviar-fac-correo').value.trim();
+  const errEl = document.getElementById('enviar-fac-err');
+  const okEl = document.getElementById('enviar-fac-ok');
+  const loadEl = document.getElementById('enviar-fac-loading');
+
+  errEl.style.display = 'none';
+  okEl.style.display = 'none';
+
+  if(!correo || !correo.includes('@')){
+    errEl.textContent = 'Ingresá un correo válido.';
+    errEl.style.display = 'block'; return;
+  }
+
+  if(!facturaParaEnviar){ return; }
+
+  loadEl.style.display = 'block';
+
+  try {
+    const response = await fetch(CLOUD_RUN_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        correoCliente: correo,
+        nombreCliente: facturaParaEnviar.clienteNombre || '—',
+        descripcion: facturaParaEnviar.descripcion || '',
+        manoObra: facturaParaEnviar.manoObra || 0,
+        repuestos: facturaParaEnviar.repuestos || 0,
+        otros: facturaParaEnviar.otros || 0,
+        total: facturaParaEnviar.total || 0,
+        fecha: facturaParaEnviar.fecha || '',
+        notas: facturaParaEnviar.notas || ''
+      })
+    });
+
+    const data = await response.json();
+    loadEl.style.display = 'none';
+
+    if(data.ok){
+      okEl.style.display = 'block';
+      await registrarMovimiento('crear', 'facturas', `Factura enviada por correo a ${correo}`, `Cliente: ${facturaParaEnviar.clienteNombre}`);
+      setTimeout(()=>{
+        closeModal('modal-enviar-factura');
+        facturaParaEnviar = null;
+      }, 2000);
+    } else {
+      errEl.textContent = 'Error al enviar: ' + (data.error || 'intente de nuevo');
+      errEl.style.display = 'block';
+    }
+  } catch(e) {
+    loadEl.style.display = 'none';
+    errEl.textContent = 'Error de conexión. Intente de nuevo.';
+    errEl.style.display = 'block';
+  }
+}
+
+// =================== IMPRIMIR FACTURA PDF ===================
+function imprimirFactura(facturaId){
+  const f = facturas.find(x => x.id === facturaId);
+  if(!f) return;
+
+  const num = 'F-' + String(facturas.indexOf(f)+1).padStart(4,'0');
+  const cliente = clientes.find(c => c.id === f.clienteId);
+
+  const ventana = window.open('', '_blank', 'width=800,height=900');
+  ventana.document.write(`<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Factura ${num} - Taller Díaz</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:Arial,sans-serif;background:#fff;color:#222;font-size:14px;}
+  .header{background:#1a1a1a;padding:28px 36px;display:flex;align-items:center;justify-content:space-between;}
+  .header-logo{color:#C9A84C;font-size:26px;font-weight:900;letter-spacing:3px;}
+  .header-sub{color:#888;font-size:11px;margin-top:4px;letter-spacing:1px;}
+  .header-num{text-align:right;color:#888;font-size:12px;}
+  .header-num strong{color:#C9A84C;font-size:18px;display:block;}
+  .body{padding:32px 36px;}
+  .section{margin-bottom:24px;}
+  .section-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#999;border-bottom:1px solid #eee;padding-bottom:6px;margin-bottom:12px;}
+  .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .info-item label{font-size:10px;color:#999;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:3px;}
+  .info-item span{font-size:14px;color:#222;font-weight:600;}
+  .desc-box{background:#f9f9f9;border:1px solid #eee;border-radius:6px;padding:14px;font-size:13px;color:#444;line-height:1.6;}
+  table{width:100%;border-collapse:collapse;margin-top:8px;}
+  th{background:#f5f5f5;padding:10px 14px;text-align:left;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#777;font-weight:600;}
+  td{padding:10px 14px;border-bottom:1px solid #f0f0f0;font-size:13px;}
+  td:last-child{text-align:right;}
+  th:last-child{text-align:right;}
+  .total-row td{font-weight:900;font-size:16px;background:#fff;border-bottom:none;border-top:2px solid #C9A84C;padding-top:14px;}
+  .total-row td:last-child{color:#C9A84C;font-size:18px;}
+  .estado{display:inline-block;padding:3px 12px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+  .estado-pagada{background:#dcfce7;color:#16a34a;}
+  .estado-pendiente{background:#fef9c3;color:#ca8a04;}
+  .estado-parcial{background:#dbeafe;color:#2563eb;}
+  .notas{background:#fffbeb;border:1px solid #fde68a;border-radius:6px;padding:12px 14px;font-size:13px;color:#92400e;}
+  .footer{margin-top:32px;padding:20px 36px;background:#f9f9f9;border-top:1px solid #eee;display:flex;justify-content:space-between;align-items:center;}
+  .footer-left{font-size:11px;color:#999;}
+  .footer-right{font-size:11px;color:#999;text-align:right;}
+  .firma{margin-top:48px;display:flex;justify-content:space-between;}
+  .firma-box{text-align:center;flex:1;max-width:200px;}
+  .firma-line{border-top:1px solid #999;padding-top:8px;font-size:11px;color:#999;}
+  @media print{
+    body{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    .no-print{display:none;}
+  }
+</style>
+</head>
+<body>
+<div class="header">
+  <div>
+    <div class="header-logo">⚡ TALLER DÍAZ</div>
+    <div class="header-sub">Taller Eléctrico Automotriz · Costa Rica</div>
+  </div>
+  <div class="header-num">
+    <strong>${num}</strong>
+    Fecha: ${f.fecha || new Date().toLocaleDateString('es-CR')}
+  </div>
+</div>
+
+<div class="body">
+  <div class="section">
+    <div class="section-title">Información del cliente</div>
+    <div class="info-grid">
+      <div class="info-item"><label>Nombre</label><span>${f.clienteNombre || '—'}</span></div>
+      <div class="info-item"><label>Teléfono</label><span>${cliente?.tel || '—'}</span></div>
+      <div class="info-item"><label>Correo</label><span>${cliente?.correo || '—'}</span></div>
+      <div class="info-item"><label>Cédula</label><span>${cliente?.cedula || '—'}</span></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Descripción de servicios</div>
+    <div class="desc-box">${f.descripcion || 'Sin descripción'}</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Detalle de cobro</div>
+    <table>
+      <thead><tr><th>Concepto</th><th>Monto</th></tr></thead>
+      <tbody>
+        <tr><td>Mano de obra</td><td>₡${Number(f.manoObra||0).toLocaleString('es-CR')}</td></tr>
+        <tr><td>Repuestos</td><td>₡${Number(f.repuestos||0).toLocaleString('es-CR')}</td></tr>
+        <tr><td>Otros cargos</td><td>₡${Number(f.otros||0).toLocaleString('es-CR')}</td></tr>
+        <tr class="total-row"><td>TOTAL</td><td>₡${Number(f.total||0).toLocaleString('es-CR')}</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section" style="display:flex;align-items:center;gap:16px;">
+    <div><span class="section-title" style="border:none;margin:0;">Estado de pago: </span></div>
+    <span class="estado estado-${f.estado||'pendiente'}">${{pagada:'Pagada',pendiente:'Pendiente',parcial:'Pago parcial'}[f.estado||'pendiente']||f.estado}</span>
+  </div>
+
+  ${f.notas ? `<div class="section"><div class="section-title">Notas</div><div class="notas">${f.notas}</div></div>` : ''}
+
+  <div class="firma">
+    <div class="firma-box"><div class="firma-line">Firma del cliente</div></div>
+    <div class="firma-box"><div class="firma-line">Sello y firma del taller</div></div>
+  </div>
+</div>
+
+<div class="footer">
+  <div class="footer-left">Taller Eléctrico Automotriz Díaz · Costa Rica<br>facturacion.tallerdiaz@gmail.com</div>
+  <div class="footer-right">Generado el ${new Date().toLocaleDateString('es-CR')}<br>${num}</div>
+</div>
+
+<div class="no-print" style="text-align:center;padding:20px;background:#f0f0f0;">
+  <button onclick="window.print()" style="padding:12px 32px;background:#C9A84C;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;letter-spacing:1px;">🖨️ Imprimir / Guardar PDF</button>
+  <button onclick="window.close()" style="padding:12px 24px;background:#666;color:#fff;border:none;border-radius:8px;font-size:14px;cursor:pointer;margin-left:10px;">Cerrar</button>
+</div>
+
+</body>
+</html>`);
+  ventana.document.close();
+  ventana.focus();
 }
 
 // =================== RESET CONTRASEÑA ===================
