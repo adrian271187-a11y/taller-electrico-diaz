@@ -186,14 +186,14 @@ body{
 /* ── STAT CARDS ── */
 .stats-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(190px,1fr));
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
   gap:16px;margin-bottom:28px;
 }
 .stat-card{
   background:var(--glass);
   border:1px solid var(--line);
   border-radius:var(--r2);
-  padding:20px 22px;
+  padding:28px 28px;
   backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
   box-shadow:var(--shadow);
   transition:transform 0.2s,border-color 0.2s,box-shadow 0.2s;
@@ -204,8 +204,8 @@ body{
   background:linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent);
 }
 .stat-card:hover{transform:translateY(-2px);border-color:var(--dorado-glow);box-shadow:var(--shadow-gold);}
-.stat-label{font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gris2);margin-bottom:10px;font-weight:500;}
-.stat-val{font-family:'Barlow Condensed',sans-serif;font-size:2.6rem;font-weight:800;line-height:1;}
+.stat-label{font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gris2);margin-bottom:14px;font-weight:500;}
+.stat-val{font-family:'Barlow Condensed',sans-serif;font-size:3.2rem;font-weight:800;line-height:1;}
 .stat-val.dorado{color:var(--dorado);}
 .stat-val.rojo{color:var(--rojo2);}
 .stat-val.verde{color:var(--verde);}
@@ -216,7 +216,7 @@ body{
   background:var(--glass);
   border:1px solid var(--line);
   border-radius:var(--r2);
-  padding:22px 24px;margin-bottom:20px;
+  padding:28px 32px;margin-bottom:24px;
   backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
   box-shadow:var(--shadow);
   position:relative;overflow:hidden;
