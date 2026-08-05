@@ -15,371 +15,198 @@
   --rojo:#C0212A;--rojo2:#E02530;--rojo-dim:rgba(192,33,42,0.15);--rojo-glow:rgba(224,37,48,0.3);
   --verde:#22c55e;--verde-dim:rgba(34,197,94,0.12);
   --amarillo:#f59e0b;--amarillo-dim:rgba(245,158,11,0.12);
+  --azul:#3b82f6;--azul-dim:rgba(59,130,246,0.12);
   --blanco:#f0f0ec;--gris:#6b6b72;--gris2:#9898a0;
   --line:rgba(201,168,76,0.12);--line2:rgba(255,255,255,0.05);--line3:rgba(255,255,255,0.08);
   --glass:rgba(8,8,14,0.75);--glass2:rgba(10,10,18,0.65);
-  --blur:blur(24px);
-  --r:12px;--r2:16px;
+  --blur:blur(24px);--r:12px;--r2:16px;
   --shadow:0 8px 32px rgba(0,0,0,0.5),0 2px 8px rgba(0,0,0,0.3);
   --shadow-gold:0 0 0 1px rgba(201,168,76,0.2),0 8px 32px rgba(0,0,0,0.5);
 }
-
 *{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--negro);color:var(--blanco);min-height:100vh;-webkit-font-smoothing:antialiased;}
 
-body{
-  font-family:'Inter',system-ui,sans-serif;
-  background:var(--negro);
-  color:var(--blanco);
-  min-height:100vh;
-  -webkit-font-smoothing:antialiased;
-}
+/* FONDO */
+.main-bg{position:fixed;inset:0;background-size:cover;background-position:center;background-color:var(--negro);z-index:0;transition:background-image 0.8s ease;}
+.main-overlay{position:fixed;inset:0;background:linear-gradient(135deg,rgba(6,6,8,0.90) 0%,rgba(6,6,8,0.78) 55%,rgba(6,6,8,0.45) 100%);pointer-events:none;z-index:1;}
 
-/* ── FONDO ── */
-.main-bg{
-  position:fixed;inset:0;
-  background-size:cover;background-position:center;background-color:var(--negro);
-  z-index:0;
-  transition:background-image 0.8s ease;
-}
-.main-overlay{
-  position:fixed;inset:0;
-  background:linear-gradient(135deg,rgba(6,6,8,0.90) 0%,rgba(6,6,8,0.78) 55%,rgba(6,6,8,0.45) 100%);
-  pointer-events:none;z-index:1;
-}
-
-/* ── LOGIN ── */
-.login-wrap{
-  position:relative;z-index:10;
-  min-height:100vh;display:flex;align-items:center;justify-content:center;
-}
-.login-box{
-  background:var(--glass);
-  border:1px solid var(--line3);
-  border-radius:var(--r2);
-  padding:44px 40px;
-  width:100%;max-width:390px;
-  backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
-  box-shadow:var(--shadow);
-}
+/* LOGIN */
+.login-wrap{position:relative;z-index:10;min-height:100vh;display:flex;align-items:center;justify-content:center;}
+.login-box{background:var(--glass);border:1px solid var(--line3);border-radius:var(--r2);padding:44px 40px;width:100%;max-width:390px;backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);box-shadow:var(--shadow);}
 .login-logo{text-align:center;margin-bottom:32px;}
-.login-logo h1{
-  font-family:'Barlow Condensed',sans-serif;
-  font-size:2.2rem;font-weight:800;letter-spacing:0.06em;
-  color:var(--dorado);
-  text-transform:uppercase;
-}
+.login-logo h1{font-family:'Barlow Condensed',sans-serif;font-size:2.2rem;font-weight:800;letter-spacing:0.06em;color:var(--dorado);text-transform:uppercase;}
 .login-logo p{font-size:0.75rem;color:var(--gris);margin-top:6px;letter-spacing:0.05em;text-transform:uppercase;}
 .login-box label{display:block;font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gris2);margin:16px 0 6px;}
-.login-box input{
-  width:100%;padding:11px 14px;
-  background:rgba(255,255,255,0.04);
-  border:1px solid var(--line3);
-  border-radius:8px;color:var(--blanco);font-size:0.92rem;outline:none;
-  transition:border-color 0.2s,box-shadow 0.2s;
-  font-family:'Inter',sans-serif;
-}
+.login-box input{width:100%;padding:11px 14px;background:rgba(255,255,255,0.04);border:1px solid var(--line3);border-radius:8px;color:var(--blanco);font-size:0.92rem;outline:none;transition:border-color 0.2s,box-shadow 0.2s;font-family:'Inter',sans-serif;}
 .login-box input:focus{border-color:rgba(201,168,76,0.5);box-shadow:0 0 0 3px rgba(201,168,76,0.08);}
-.btn-login{
-  width:100%;padding:13px;
-  background:linear-gradient(135deg,var(--rojo),#9a1520);
-  color:#fff;border:none;border-radius:9px;
-  font-size:0.9rem;font-weight:700;cursor:pointer;margin-top:22px;
-  letter-spacing:0.06em;text-transform:uppercase;
-  box-shadow:0 4px 20px var(--rojo-glow);
-  transition:all 0.2s;font-family:'Inter',sans-serif;
-}
+.btn-login{width:100%;padding:13px;background:linear-gradient(135deg,var(--rojo),#9a1520);color:#fff;border:none;border-radius:9px;font-size:0.9rem;font-weight:700;cursor:pointer;margin-top:22px;letter-spacing:0.06em;text-transform:uppercase;box-shadow:0 4px 20px var(--rojo-glow);transition:all 0.2s;font-family:'Inter',sans-serif;}
 .btn-login:hover{transform:translateY(-1px);box-shadow:0 6px 28px var(--rojo-glow);}
 .login-err{color:var(--rojo2);font-size:0.8rem;margin-top:12px;text-align:center;display:none;}
 
-/* ── LAYOUT ── */
+/* LAYOUT */
 .app{display:none;min-height:100vh;flex-direction:row;}
-
-.sidebar{
-  width:240px;
-  background:rgba(6,6,10,0.92);
-  backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
-  border-right:1px solid var(--line);
-  position:fixed;top:0;left:0;height:100vh;
-  display:flex;flex-direction:column;z-index:50;
-  box-shadow:20px 0 60px rgba(0,0,0,0.95);
-}
-
-.sidebar-logo{
-  padding:24px 20px 20px;
-  border-bottom:1px solid var(--line);
-}
-.sidebar-logo-mark{
-  display:flex;align-items:center;gap:10px;margin-bottom:4px;
-}
-.sidebar-logo-icon{
-  width:34px;height:34px;border-radius:8px;
-  background:linear-gradient(135deg,var(--rojo),#8a1018);
-  display:flex;align-items:center;justify-content:center;
-  font-size:1rem;
-  box-shadow:0 2px 12px var(--rojo-glow);
-  flex-shrink:0;
-}
-.sidebar-logo span{
-  font-family:'Barlow Condensed',sans-serif;
-  font-size:1.3rem;font-weight:800;color:var(--dorado);
-  letter-spacing:0.06em;text-transform:uppercase;
-}
-.sidebar-logo small{font-size:0.65rem;color:var(--gris);letter-spacing:0.07em;text-transform:uppercase;}
-
-.sidebar-section{
-  padding:10px 12px 4px;
-  font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--gris);
-  margin-top:8px;
-}
-
-.sidebar-nav{flex:1;padding:10px 12px;overflow-y:auto;}
-.nav-item{
-  display:flex;align-items:center;gap:10px;
-  padding:9px 12px;border-radius:8px;cursor:pointer;
-  font-size:0.88rem;font-weight:500;color:var(--gris2);
-  transition:all 0.18s;margin-bottom:1px;
-  position:relative;
-}
+.sidebar{width:200px;background:rgba(6,6,10,0.92);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);border-right:1px solid var(--line);position:fixed;top:0;left:0;height:100vh;display:flex;flex-direction:column;z-index:50;box-shadow:20px 0 60px rgba(0,0,0,0.95);}
+.sidebar-logo{padding:20px 16px 16px;border-bottom:1px solid var(--line);}
+.sidebar-logo-mark{display:flex;align-items:center;gap:10px;margin-bottom:4px;}
+.sidebar-logo-icon{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--rojo),#8a1018);display:flex;align-items:center;justify-content:center;font-size:0.9rem;box-shadow:0 2px 12px var(--rojo-glow);flex-shrink:0;}
+.sidebar-logo span{font-family:'Barlow Condensed',sans-serif;font-size:1.2rem;font-weight:800;color:var(--dorado);letter-spacing:0.06em;text-transform:uppercase;}
+.sidebar-logo small{font-size:0.6rem;color:var(--gris);letter-spacing:0.07em;text-transform:uppercase;}
+.sidebar-section{padding:8px 12px 4px;font-size:0.58rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--gris);margin-top:6px;}
+.sidebar-nav{flex:1;padding:8px 10px;overflow-y:auto;}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;cursor:pointer;font-size:0.83rem;font-weight:500;color:var(--gris2);transition:all 0.18s;margin-bottom:1px;position:relative;}
 .nav-item:hover{background:rgba(255,255,255,0.05);color:var(--blanco);}
-.nav-item.active{
-  background:var(--rojo-dim);color:#ff6b6b;font-weight:600;
-  border-left:2px solid var(--rojo2);padding-left:10px;
-}
+.nav-item.active{background:var(--rojo-dim);color:#ff6b6b;font-weight:600;border-left:2px solid var(--rojo2);padding-left:8px;}
 .nav-item.active svg{opacity:1;}
-.nav-item svg{width:16px;height:16px;flex-shrink:0;opacity:0.6;}
+.nav-item svg{width:15px;height:15px;flex-shrink:0;opacity:0.6;}
 .nav-item:hover svg{opacity:1;}
+.sidebar-footer{padding:10px 10px 10px;}
 
-.sidebar-footer{
-  padding:12px 10px;
-  border-top:1px solid var(--line);
-}
-.btn-logout{
-  width:100%;padding:9px 12px;
-  background:transparent;border:1px solid var(--line2);
-  border-radius:8px;color:var(--gris);font-size:0.8rem;
-  cursor:pointer;transition:all 0.2s;
-  display:flex;align-items:center;gap:8px;
-  font-family:'Inter',sans-serif;
-}
+/* Usuario en sidebar */
+.sidebar-user{padding:10px 12px;margin-bottom:6px;border:1px solid var(--line);border-radius:8px;background:rgba(255,255,255,0.02);}
+.sidebar-user-name{font-size:0.78rem;font-weight:700;color:var(--blanco);}
+.sidebar-user-role{font-size:0.62rem;color:var(--gris);letter-spacing:0.06em;text-transform:uppercase;margin-top:2px;}
+.sidebar-user-badge{display:inline-block;padding:1px 7px;border-radius:4px;font-size:0.6rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;margin-top:4px;}
+.badge-admin{background:var(--dorado-dim);color:var(--dorado);border:1px solid rgba(201,168,76,0.2);}
+.badge-meca{background:var(--azul-dim);color:var(--azul);border:1px solid rgba(59,130,246,0.2);}
+
+.btn-logout{width:100%;padding:9px 12px;background:transparent;border:1px solid var(--line2);border-radius:8px;color:var(--gris);font-size:0.78rem;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:8px;font-family:'Inter',sans-serif;}
 .btn-logout:hover{border-color:rgba(224,37,48,0.4);color:var(--rojo2);background:var(--rojo-dim);}
 
-/* ── MAIN ── */
-.main{
-  margin-left:162px;
-  width:calc(100vw - 162px);
-  padding:16px 20px 32px 16px;
-  min-height:100vh;position:relative;z-index:5;
-  box-sizing:border-box;
-  display:flex;flex-direction:column;
-}
-.main > *{position:relative;z-index:2;}
-
-.topbar{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:16px 22px 14px;
-  border-bottom:1px solid rgba(255,255,255,0.06);width:100%;
-  margin-bottom:10px;
-}
-.page-title{
-  font-family:'Barlow Condensed',sans-serif;
-  font-size:1.6rem;font-weight:800;letter-spacing:0.06em;
-  text-transform:uppercase;color:var(--blanco);
-}
+/* MAIN */
+.main{margin-left:200px;width:calc(100vw - 200px);padding:16px 20px 32px 16px;min-height:100vh;position:relative;z-index:5;box-sizing:border-box;display:flex;flex-direction:column;}
+.main>*{position:relative;z-index:2;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 20px 12px;border-bottom:1px solid rgba(255,255,255,0.06);width:100%;margin-bottom:10px;}
+.page-title{font-family:'Barlow Condensed',sans-serif;font-size:1.5rem;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:var(--blanco);}
 .page-title span{color:var(--dorado);}
 .page-subtitle{font-size:0.75rem;color:var(--gris);letter-spacing:0.05em;margin-top:2px;}
 
-/* ── STAT CARDS ── */
-.stats-grid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:10px;margin-bottom:10px;
-}
-.stat-card{
-  background:rgba(10,11,16,0.90);
-  border:none;
-  border-bottom:2px solid rgba(201,168,76,0.4);
-  border-radius:8px;
-  padding:18px 20px 16px;
-  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-  box-shadow:0 2px 20px rgba(0,0,0,0.5),inset 0 0 40px rgba(201,168,76,0.02);
-  transition:all 0.2s;position:relative;overflow:hidden;
-}
-.stat-card::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent);
-}
+/* STAT CARDS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:10px;}
+.stat-card{background:rgba(10,11,16,0.90);border:none;border-bottom:2px solid rgba(201,168,76,0.4);border-radius:8px;padding:16px 18px 14px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 2px 20px rgba(0,0,0,0.5),inset 0 0 40px rgba(201,168,76,0.02);transition:all 0.2s;position:relative;overflow:hidden;}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent);}
 .stat-card:hover{border-bottom-color:var(--dorado2);box-shadow:0 4px 24px rgba(201,168,76,0.12),0 2px 20px rgba(0,0,0,0.5);}
-.stat-label{font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:8px;font-weight:500;}
-.stat-val{font-family:'Barlow Condensed',sans-serif;font-size:2.8rem;font-weight:800;line-height:1;letter-spacing:-0.02em;}
+.stat-label{font-size:0.6rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:8px;font-weight:500;}
+.stat-val{font-family:'Barlow Condensed',sans-serif;font-size:2.6rem;font-weight:800;line-height:1;letter-spacing:-0.02em;}
 .stat-val.dorado{color:var(--dorado);}
 .stat-val.rojo{color:var(--rojo2);}
 .stat-val.verde{color:var(--verde);}
-.stat-sub{font-size:0.72rem;color:var(--gris);margin-top:6px;}
+.stat-sub{font-size:0.7rem;color:var(--gris);margin-top:6px;}
 
-/* ── PANELES ── */
-.panel{
-  background:rgba(10,11,16,0.88);
-  border:1px solid rgba(255,255,255,0.07);
-  border-radius:10px;
-  padding:18px 22px;margin-bottom:10px;width:100%;box-sizing:border-box;
-  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
-  box-shadow:0 4px 24px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.04);
-  position:relative;overflow:hidden;flex:1;
-}
-.panel::before{
-  content:'';position:absolute;top:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.08),transparent);
-}
+/* PANELES */
+.panel{background:rgba(10,11,16,0.88);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:18px 22px;margin-bottom:10px;width:100%;box-sizing:border-box;backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);box-shadow:0 4px 24px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.04);position:relative;overflow:hidden;flex:1;}
+.panel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.08),transparent);}
 .panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
-.panel-title{font-family:'Barlow Condensed',sans-serif;font-size:0.95rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.7);}
+.panel-title{font-family:'Barlow Condensed',sans-serif;font-size:0.92rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.7);}
 .screen{display:none;width:100%;box-sizing:border-box;}
 .screen.active{display:flex;flex-direction:column;width:100%;box-sizing:border-box;flex:1;min-height:calc(100vh - 50px);}
 
-/* ── BOTONES ── */
-.btn{
-  padding:9px 18px;border-radius:8px;border:none;
-  font-size:0.8rem;font-weight:600;cursor:pointer;
-  transition:all 0.18s;display:inline-flex;align-items:center;gap:7px;
-  letter-spacing:0.04em;font-family:'Inter',sans-serif;
-}
-.btn-primary{
-  background:linear-gradient(135deg,var(--rojo),#9a1520);
-  color:#fff;
-  box-shadow:0 3px 14px var(--rojo-glow);
-}
+/* BOTONES */
+.btn{padding:9px 18px;border-radius:8px;border:none;font-size:0.8rem;font-weight:600;cursor:pointer;transition:all 0.18s;display:inline-flex;align-items:center;gap:7px;letter-spacing:0.04em;font-family:'Inter',sans-serif;}
+.btn-primary{background:linear-gradient(135deg,var(--rojo),#9a1520);color:#fff;box-shadow:0 3px 14px var(--rojo-glow);}
 .btn-primary:hover{transform:translateY(-1px);box-shadow:0 5px 20px var(--rojo-glow);}
-.btn-secondary{
-  background:rgba(255,255,255,0.05);
-  color:var(--gris2);
-  border:1px solid var(--line3);
-}
+.btn-secondary{background:rgba(255,255,255,0.05);color:var(--gris2);border:1px solid var(--line3);}
 .btn-secondary:hover{color:var(--blanco);border-color:rgba(255,255,255,0.15);background:rgba(255,255,255,0.08);}
 .btn-success{background:var(--verde-dim);color:var(--verde);border:1px solid rgba(34,197,94,0.25);}
 .btn-warning{background:var(--amarillo-dim);color:var(--amarillo);border:1px solid rgba(245,158,11,0.25);}
-.btn-sm{padding:5px 12px;font-size:0.75rem;}
+.btn-danger{background:var(--rojo-dim);color:var(--rojo2);border:1px solid rgba(192,33,42,0.25);}
+.btn-sm{padding:5px 11px;font-size:0.72rem;}
+.btn-icon{padding:5px 8px;font-size:0.8rem;}
 
-/* ── TABLA ── */
+/* TABLA */
 .tbl-wrap{overflow-x:auto;}
 table{width:100%;border-collapse:collapse;font-size:0.83rem;}
-th{
-  text-align:left;padding:8px 12px;
-  font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;
-  color:rgba(255,255,255,0.3);font-weight:600;
-  border-bottom:1px solid rgba(255,255,255,0.06);
-}
-td{
-  padding:10px 12px;
-  border-bottom:1px solid rgba(255,255,255,0.04);
-  color:rgba(255,255,255,0.65);vertical-align:middle;
-  font-size:0.84rem;
-}
+th{text-align:left;padding:8px 12px;font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.3);font-weight:600;border-bottom:1px solid rgba(255,255,255,0.06);}
+td{padding:9px 12px;border-bottom:1px solid rgba(255,255,255,0.04);color:rgba(255,255,255,0.65);vertical-align:middle;font-size:0.83rem;}
 tr:hover td{background:rgba(255,255,255,0.03);color:var(--blanco);}
-.badge{
-  padding:3px 10px;border-radius:20px;
-  font-size:0.68rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;
-}
+.badge{padding:3px 10px;border-radius:20px;font-size:0.66rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;}
 .badge-pendiente{background:var(--amarillo-dim);color:var(--amarillo);border:1px solid rgba(245,158,11,0.2);}
 .badge-proceso{background:var(--rojo-dim);color:var(--rojo2);border:1px solid rgba(192,33,42,0.2);}
 .badge-listo{background:var(--verde-dim);color:var(--verde);border:1px solid rgba(34,197,94,0.2);}
 .badge-entregado{background:rgba(100,100,100,0.1);color:var(--gris);border:1px solid rgba(255,255,255,0.06);}
+.badge-crear{background:var(--azul-dim);color:var(--azul);border:1px solid rgba(59,130,246,0.2);}
+.badge-editar{background:var(--amarillo-dim);color:var(--amarillo);border:1px solid rgba(245,158,11,0.2);}
+.badge-eliminar{background:var(--rojo-dim);color:var(--rojo2);border:1px solid rgba(192,33,42,0.2);}
 
-/* ── FORMULARIOS ── */
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+/* ACCIONES TABLE */
+.tbl-acciones{display:flex;gap:5px;flex-wrap:nowrap;}
+
+/* FORMULARIOS */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
 .form-grid.cols3{grid-template-columns:1fr 1fr 1fr;}
 .form-full{grid-column:1/-1;}
-.form-group{display:flex;flex-direction:column;gap:6px;}
-.form-group label{font-size:0.67rem;letter-spacing:0.09em;text-transform:uppercase;color:var(--gris2);font-weight:600;}
-.form-group input,.form-group select,.form-group textarea{
-  padding:10px 13px;
-  background:rgba(255,255,255,0.04);
-  border:1px solid var(--line3);
-  border-radius:8px;color:var(--blanco);font-size:0.86rem;outline:none;
-  font-family:'Inter',sans-serif;
-  transition:border-color 0.2s,box-shadow 0.2s;
-}
-.form-group input:focus,.form-group select:focus,.form-group textarea:focus{
-  border-color:rgba(201,168,76,0.4);
-  box-shadow:0 0 0 3px rgba(201,168,76,0.07);
-}
+.form-group{display:flex;flex-direction:column;gap:5px;}
+.form-group label{font-size:0.65rem;letter-spacing:0.09em;text-transform:uppercase;color:var(--gris2);font-weight:600;}
+.form-group input,.form-group select,.form-group textarea{padding:10px 13px;background:rgba(255,255,255,0.04);border:1px solid var(--line3);border-radius:8px;color:var(--blanco);font-size:0.86rem;outline:none;font-family:'Inter',sans-serif;transition:border-color 0.2s,box-shadow 0.2s;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:rgba(201,168,76,0.4);box-shadow:0 0 0 3px rgba(201,168,76,0.07);}
 .form-group select option{background:var(--negro3);}
-.form-group textarea{resize:vertical;min-height:80px;}
+.form-group textarea{resize:vertical;min-height:75px;}
 
-/* ── MODAL ── */
-.modal-wrap{
-  position:fixed;inset:0;
-  background:rgba(0,0,0,0.8);backdrop-filter:blur(6px);
-  display:none;align-items:flex-start;justify-content:center;
-  z-index:200;padding:40px 20px;overflow-y:auto;
-}
+/* MODAL */
+.modal-wrap{position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(6px);display:none;align-items:flex-start;justify-content:center;z-index:200;padding:40px 20px;overflow-y:auto;}
 .modal-wrap.open{display:flex;}
-.modal{
-  background:var(--negro2);
-  border:1px solid var(--line3);
-  border-radius:var(--r2);padding:30px;
-  width:100%;max-width:580px;
-  box-shadow:0 24px 80px rgba(0,0,0,0.7);
-}
-.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;}
-.modal-title{
-  font-family:'Barlow Condensed',sans-serif;
-  font-size:1.2rem;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;
-}
+.modal{background:var(--negro2);border:1px solid var(--line3);border-radius:var(--r2);padding:28px;width:100%;max-width:580px;box-shadow:0 24px 80px rgba(0,0,0,0.7);}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.modal-title{font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;}
 .modal-close{background:none;border:none;color:var(--gris);font-size:1.3rem;cursor:pointer;line-height:1;transition:color 0.15s;}
 .modal-close:hover{color:var(--blanco);}
-.modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:22px;padding-top:18px;border-top:1px solid var(--line);}
+.modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--line);}
 
-/* ── BUSQUEDA ── */
+/* MODAL AUTORIZACION ADMIN */
+.modal-auth{max-width:380px;}
+.modal-auth .modal-title{color:var(--dorado);}
+.auth-warning{background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.15);border-radius:8px;padding:12px 14px;margin-bottom:16px;font-size:0.82rem;color:rgba(255,255,255,0.7);line-height:1.5;}
+.auth-warning strong{color:var(--dorado);}
+
+/* BUSQUEDA */
 .search-bar{display:flex;gap:10px;margin-bottom:16px;}
-.search-bar input{
-  flex:1;padding:10px 14px;
-  background:rgba(255,255,255,0.04);
-  border:1px solid var(--line3);border-radius:8px;
-  color:var(--blanco);font-size:0.86rem;outline:none;
-  font-family:'Inter',sans-serif;
-  transition:border-color 0.2s;
-}
+.search-bar input{flex:1;padding:10px 14px;background:rgba(255,255,255,0.04);border:1px solid var(--line3);border-radius:8px;color:var(--blanco);font-size:0.86rem;outline:none;font-family:'Inter',sans-serif;transition:border-color 0.2s;}
 .search-bar input:focus{border-color:rgba(201,168,76,0.35);}
 .search-bar input::placeholder{color:var(--gris);}
+.search-bar select{padding:9px 12px;background:rgba(255,255,255,0.04);border:1px solid var(--line3);border-radius:8px;color:var(--blanco);font-size:0.85rem;outline:none;font-family:'Inter',sans-serif;}
+.search-bar select option{background:var(--negro3);}
 
-/* ── DETALLE REPARACION ── */
-.rep-header{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:20px;}
-.rep-field{background:rgba(255,255,255,0.03);border:1px solid var(--line);border-radius:10px;padding:14px 16px;}
-.rep-field-label{font-size:0.65rem;letter-spacing:0.09em;text-transform:uppercase;color:var(--gris);margin-bottom:5px;font-weight:600;}
-.rep-field-val{font-size:0.9rem;font-weight:600;color:var(--blanco);}
+/* HISTORIAL */
+.hist-item{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+.hist-item:last-child{border-bottom:none;}
+.hist-icon{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8rem;flex-shrink:0;margin-top:2px;}
+.hist-icon.crear{background:var(--azul-dim);border:1px solid rgba(59,130,246,0.2);}
+.hist-icon.editar{background:var(--amarillo-dim);border:1px solid rgba(245,158,11,0.2);}
+.hist-icon.eliminar{background:var(--rojo-dim);border:1px solid rgba(192,33,42,0.2);}
+.hist-icon.login{background:var(--verde-dim);border:1px solid rgba(34,197,94,0.2);}
+.hist-body{flex:1;}
+.hist-desc{font-size:0.84rem;color:var(--blanco);font-weight:500;}
+.hist-meta{font-size:0.72rem;color:var(--gris);margin-top:3px;}
+.hist-user{color:var(--dorado);font-weight:600;}
 
-/* ── MISC ── */
-.empty-state{text-align:center;padding:56px;color:var(--gris);}
-.empty-state svg{width:44px;height:44px;opacity:0.2;margin:0 auto 14px;display:block;}
+/* MISC */
+.empty-state{text-align:center;padding:48px;color:var(--gris);}
 .tag{padding:2px 9px;border-radius:4px;font-size:0.7rem;background:rgba(255,255,255,0.06);color:var(--gris2);font-weight:600;letter-spacing:0.04em;}
-.divider-line{border:none;border-top:1px solid var(--line);margin:18px 0;}
+.divider-line{border:none;border-top:1px solid var(--line);margin:16px 0;}
 .text-dorado{color:var(--dorado);}
 .text-rojo{color:var(--rojo2);}
 .text-verde{color:var(--verde);}
 .text-gris{color:var(--gris2);}
+.text-azul{color:var(--azul);}
 .fw700{font-weight:700;}
 .mt8{margin-top:8px;}
 .gap8{display:flex;gap:8px;flex-wrap:wrap;}
 
-/* ── SIDEBAR Z ── */
-.sidebar,.login-wrap,.modal-wrap{position:relative;}
-
-/* ── SCROLLBAR ── */
+/* SCROLLBAR */
 ::-webkit-scrollbar{width:5px;height:5px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:rgba(201,168,76,0.2);border-radius:10px;}
 ::-webkit-scrollbar-thumb:hover{background:rgba(201,168,76,0.4);}
 
-/* ── RESPONSIVE ── */
-.screen.active > .panel:last-child{flex:1;margin-bottom:0;}
-.screen.active > .stats-grid + .panel{flex:1;margin-bottom:0;}
-.screen.active > .panel:only-child{flex:1;margin-bottom:0;}
+/* RESPONSIVE */
+.screen.active>.panel:last-child{flex:1;margin-bottom:0;}
+.screen.active>.stats-grid+.panel{flex:1;margin-bottom:0;}
+.screen.active>.panel:only-child{flex:1;margin-bottom:0;}
 @media(max-width:1200px){.stats-grid{grid-template-columns:repeat(2,1fr);}}
 @media(max-width:768px){
   .sidebar{width:100%;height:auto;position:relative;}
   .main{margin-left:0;padding:20px 16px;}
   .form-grid{grid-template-columns:1fr;}
   .form-grid.cols3{grid-template-columns:1fr;}
-  .rep-header{grid-template-columns:1fr 1fr;}
   .stats-grid{grid-template-columns:1fr 1fr;}
 }
 </style>
@@ -388,15 +215,17 @@ tr:hover td{background:rgba(255,255,255,0.03);color:var(--blanco);}
 
 <!-- LOGIN -->
 <div class="login-wrap" id="login-wrap">
-  <div class="login-box">
+  <div class="main-bg" style="position:fixed;inset:0;background-size:cover;background-position:center;background-image:url('foto13.jpg');z-index:0;"></div>
+  <div class="main-overlay"></div>
+  <div class="login-box" style="position:relative;z-index:2;">
     <div class="login-logo">
       <h1>⚡ DÍAZ</h1>
       <p>Taller Eléctrico Automotriz · Sistema de Gestión</p>
     </div>
     <label>Usuario</label>
-    <input type="text" id="login-user" placeholder="Usuario">
+    <input type="text" id="login-user" placeholder="Usuario" autocomplete="username">
     <label>Contraseña</label>
-    <input type="password" id="login-pass" placeholder="Contraseña" onkeydown="if(event.key==='Enter')doLogin()">
+    <input type="password" id="login-pass" placeholder="Contraseña" onkeydown="if(event.key==='Enter')doLogin()" autocomplete="current-password">
     <button class="btn-login" onclick="doLogin()">Ingresar</button>
     <div class="login-err" id="login-err">Usuario o contraseña incorrectos</div>
   </div>
@@ -404,7 +233,6 @@ tr:hover td{background:rgba(255,255,255,0.03);color:var(--blanco);}
 
 <!-- APP -->
 <div class="app" id="app">
-  <!-- SIDEBAR -->
   <div class="sidebar">
     <div class="sidebar-logo">
       <div class="sidebar-logo-mark">
@@ -415,57 +243,60 @@ tr:hover td{background:rgba(255,255,255,0.03);color:var(--blanco);}
     </div>
     <nav class="sidebar-nav">
       <div class="nav-item active" onclick="goTo('dashboard')">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
-        Dashboard
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>Dashboard
       </div>
       <div class="nav-item" onclick="goTo('reparaciones')">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z"/></svg>
-        Reparaciones
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z"/></svg>Reparaciones
       </div>
       <div class="nav-item" onclick="goTo('clientes')">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
-        Clientes
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>Clientes
       </div>
       <div class="nav-item" onclick="goTo('vehiculos')">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/></svg>
-        Vehículos
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99z"/></svg>Vehículos
       </div>
       <div class="nav-item" onclick="goTo('repuestos')">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l7.59-7.59L21 8l-9 9z"/></svg>
-        Repuestos
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l7.59-7.59L21 8l-9 9z"/></svg>Repuestos
       </div>
       <div class="nav-item" onclick="goTo('agenda')">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
-        Agenda
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>Agenda
       </div>
       <div class="nav-item" onclick="goTo('facturacion')">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg>
-        Facturación
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg>Facturación
       </div>
       <div class="nav-item" onclick="goTo('proveedores')">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm13.5-9l1.96 2.5H17V9.5h2.5zm-1.5 9c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
-        Proveedores
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4z"/></svg>Proveedores
       </div>
       <div class="nav-item" onclick="goTo('estadisticas')">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
-        Estadísticas
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>Estadísticas
+      </div>
+      <div class="nav-item" onclick="goTo('historial')">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>Historial
+      </div>
+      <!-- Solo admin ve Usuarios -->
+      <div class="nav-item admin-only" onclick="goTo('usuarios')" style="display:none;">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 4c1.4 0 2.8 1.4 2.8 3S13.4 11 12 11 9.2 9.6 9.2 8s1.4-3 2.8-3zm0 12c-2.3 0-4.3-1.2-5.5-3 .03-1.85 3.7-2.86 5.5-2.86s5.47 1.01 5.5 2.86c-1.2 1.8-3.2 3-5.5 3z"/></svg>Usuarios
       </div>
     </nav>
     <div class="sidebar-footer">
+      <div class="sidebar-user" id="sidebar-user-info">
+        <div class="sidebar-user-name" id="sidebar-user-name">—</div>
+        <div class="sidebar-user-role" id="sidebar-user-role">—</div>
+        <div id="sidebar-user-badge"></div>
+      </div>
       <button class="btn-logout" onclick="doLogout()">⬡ Cerrar sesión</button>
     </div>
   </div>
 
   <div class="main-bg" id="main-bg"></div>
   <div class="main-overlay"></div>
-  <!-- MAIN -->
+
   <div class="main">
 
     <!-- DASHBOARD -->
     <div class="screen active" id="screen-dashboard">
       <div class="topbar">
-        <h2 class="page-title">Dashboard <span>⚡</span></h2>
-        <span id="dash-fecha" class="text-gris" style="font-size:0.85rem;"></span>
+        <div><h2 class="page-title">Dashboard <span>⚡</span></h2></div>
+        <span id="dash-fecha" class="text-gris" style="font-size:0.82rem;"></span>
       </div>
       <div class="stats-grid" id="dash-stats">
         <div class="stat-card"><div class="stat-label">Reparaciones activas</div><div class="stat-val dorado" id="st-activas">—</div></div>
@@ -488,12 +319,8 @@ tr:hover td{background:rgba(255,255,255,0.03);color:var(--blanco);}
       <div class="panel">
         <div class="search-bar">
           <input type="text" id="rep-search" placeholder="Buscar por cliente, vehículo o servicio..." oninput="renderReps()">
-          <select id="rep-filtro" onchange="renderReps()" style="padding:9px 12px;background:var(--negro3);border:1px solid var(--line2);border-radius:8px;color:var(--blanco);font-size:0.88rem;">
-            <option value="">Todos</option>
-            <option value="pendiente">Pendiente</option>
-            <option value="proceso">En proceso</option>
-            <option value="listo">Listo</option>
-            <option value="entregado">Entregado</option>
+          <select id="rep-filtro" onchange="renderReps()">
+            <option value="">Todos</option><option value="pendiente">Pendiente</option><option value="proceso">En proceso</option><option value="listo">Listo</option><option value="entregado">Entregado</option>
           </select>
         </div>
         <div class="tbl-wrap"><table><thead><tr><th>#</th><th>Cliente</th><th>Vehículo</th><th>Placa</th><th>Servicio</th><th>Estado</th><th>Fecha</th><th>Acciones</th></tr></thead><tbody id="reps-body"></tbody></table></div>
@@ -508,7 +335,7 @@ tr:hover td{background:rgba(255,255,255,0.03);color:var(--blanco);}
       </div>
       <div class="panel">
         <div class="search-bar"><input type="text" id="cli-search" placeholder="Buscar por nombre, teléfono o correo..." oninput="renderClientes()"></div>
-        <div class="tbl-wrap"><table><thead><tr><th>Nombre</th><th>Teléfono</th><th>Correo</th><th>Vehículos</th><th>Acciones</th></tr></thead><tbody id="clientes-body"></tbody></table></div>
+        <div class="tbl-wrap"><table><thead><tr><th>Nombre</th><th>Teléfono</th><th>Correo</th><th>Cédula</th><th>Acciones</th></tr></thead><tbody id="clientes-body"></tbody></table></div>
       </div>
     </div>
 
@@ -584,6 +411,58 @@ tr:hover td{background:rgba(255,255,255,0.03);color:var(--blanco);}
       </div>
     </div>
 
+    <!-- HISTORIAL DE MOVIMIENTOS -->
+    <div class="screen" id="screen-historial">
+      <div class="topbar">
+        <h2 class="page-title">Historial <span style="color:var(--dorado);">de Movimientos</span></h2>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <select id="hist-filtro-tipo" onchange="renderHistorial()" style="padding:8px 12px;background:rgba(255,255,255,0.04);border:1px solid var(--line3);border-radius:8px;color:var(--blanco);font-size:0.83rem;font-family:'Inter',sans-serif;">
+            <option value="">Todos los tipos</option>
+            <option value="crear">Crear</option>
+            <option value="editar">Editar</option>
+            <option value="eliminar">Eliminar</option>
+            <option value="login">Login</option>
+          </select>
+          <select id="hist-filtro-usuario" onchange="renderHistorial()" style="padding:8px 12px;background:rgba(255,255,255,0.04);border:1px solid var(--line3);border-radius:8px;color:var(--blanco);font-size:0.83rem;font-family:'Inter',sans-serif;">
+            <option value="">Todos los usuarios</option>
+            <option value="Jose">Jose (Admin)</option>
+            <option value="Meca1">Meca1</option>
+            <option value="Meca2">Meca2</option>
+            <option value="Meca3">Meca3</option>
+          </select>
+        </div>
+      </div>
+      <div class="panel" style="flex:1;">
+        <div id="historial-lista"><div class="empty-state">Sin movimientos registrados</div></div>
+      </div>
+    </div>
+
+    <!-- USUARIOS (solo admin) -->
+    <div class="screen" id="screen-usuarios">
+      <div class="topbar">
+        <h2 class="page-title">Usuarios <span style="color:var(--dorado);font-size:1rem;">· Solo Admin</span></h2>
+      </div>
+      <div class="panel">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Usuario</th><th>Rol</th><th>Permisos</th><th>Último acceso</th></tr></thead>
+            <tbody id="usuarios-body">
+              <tr><td class="fw700 text-dorado">Jose</td><td><span class="badge badge-admin">Administrador</span></td><td>Control total</td><td id="last-jose">—</td></tr>
+              <tr><td class="fw700 text-azul">Meca1</td><td><span class="badge badge-meca">Mecánico</span></td><td>Crear · Ver</td><td id="last-meca1">—</td></tr>
+              <tr><td class="fw700 text-azul">Meca2</td><td><span class="badge badge-meca">Mecánico</span></td><td>Crear · Ver</td><td id="last-meca2">—</td></tr>
+              <tr><td class="fw700 text-azul">Meca3</td><td><span class="badge badge-meca">Mecánico</span></td><td>Crear · Ver</td><td id="last-meca3">—</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="divider-line"></div>
+        <div style="background:var(--dorado-dim);border:1px solid var(--line);border-radius:8px;padding:14px 16px;font-size:0.82rem;color:rgba(255,255,255,0.7);line-height:1.6;">
+          <strong style="color:var(--dorado);">⚠ Política de permisos:</strong><br>
+          Los mecánicos (Meca1, Meca2, Meca3) pueden <strong style="color:var(--verde);">crear y ver</strong> registros en todos los módulos.<br>
+          Para <strong style="color:var(--amarillo);">modificar</strong> o <strong style="color:var(--rojo2);">eliminar</strong> cualquier registro, el sistema solicitará las credenciales del administrador (Jose).
+        </div>
+      </div>
+    </div>
+
   </div><!-- /main -->
 </div><!-- /app -->
 
@@ -593,7 +472,7 @@ tr:hover td{background:rgba(255,255,255,0.03);color:var(--blanco);}
 <div class="modal-wrap" id="modal-rep">
   <div class="modal">
     <div class="modal-header">
-      <span class="modal-title">Nueva Reparación</span>
+      <span class="modal-title" id="modal-rep-title">Nueva Reparación</span>
       <button class="modal-close" onclick="closeModal('modal-rep')">✕</button>
     </div>
     <div class="form-grid">
@@ -605,17 +484,14 @@ tr:hover td{background:rgba(255,255,255,0.03);color:var(--blanco);}
       <div class="form-group"><label>Costo mano de obra (₡)</label><input type="number" id="rep-mano" placeholder="0"></div>
       <div class="form-group"><label>Estado</label>
         <select id="rep-estado">
-          <option value="pendiente">Pendiente</option>
-          <option value="proceso">En proceso</option>
-          <option value="listo">Listo</option>
-          <option value="entregado">Entregado</option>
+          <option value="pendiente">Pendiente</option><option value="proceso">En proceso</option><option value="listo">Listo</option><option value="entregado">Entregado</option>
         </select>
       </div>
       <div class="form-group"><label>Notas internas</label><input type="text" id="rep-notas" placeholder="Notas adicionales..."></div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal('modal-rep')">Cancelar</button>
-      <button class="btn btn-primary" onclick="guardarRep()">Guardar</button>
+      <button class="btn btn-primary" id="btn-guardar-rep" onclick="guardarRep()">Guardar</button>
     </div>
   </div>
 </div>
@@ -624,7 +500,7 @@ tr:hover td{background:rgba(255,255,255,0.03);color:var(--blanco);}
 <div class="modal-wrap" id="modal-cliente">
   <div class="modal">
     <div class="modal-header">
-      <span class="modal-title">Nuevo Cliente</span>
+      <span class="modal-title" id="modal-cliente-title">Nuevo Cliente</span>
       <button class="modal-close" onclick="closeModal('modal-cliente')">✕</button>
     </div>
     <div class="form-grid">
@@ -637,7 +513,7 @@ tr:hover td{background:rgba(255,255,255,0.03);color:var(--blanco);}
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal('modal-cliente')">Cancelar</button>
-      <button class="btn btn-primary" onclick="guardarCliente()">Guardar</button>
+      <button class="btn btn-primary" id="btn-guardar-cliente" onclick="guardarCliente()">Guardar</button>
     </div>
   </div>
 </div>
@@ -646,7 +522,7 @@ tr:hover td{background:rgba(255,255,255,0.03);color:var(--blanco);}
 <div class="modal-wrap" id="modal-vehiculo">
   <div class="modal">
     <div class="modal-header">
-      <span class="modal-title">Nuevo Vehículo</span>
+      <span class="modal-title" id="modal-vehiculo-title">Nuevo Vehículo</span>
       <button class="modal-close" onclick="closeModal('modal-vehiculo')">✕</button>
     </div>
     <div class="form-grid">
@@ -659,10 +535,7 @@ tr:hover td{background:rgba(255,255,255,0.03);color:var(--blanco);}
       <div class="form-group"><label>Motor / Cilindrada</label><input type="text" id="veh-motor" placeholder="1.8L 4 cil."></div>
       <div class="form-group"><label>Combustible</label>
         <select id="veh-combustible">
-          <option value="gasolina">Gasolina</option>
-          <option value="diesel">Diésel</option>
-          <option value="hibrido">Híbrido</option>
-          <option value="electrico">Eléctrico</option>
+          <option value="gasolina">Gasolina</option><option value="diesel">Diésel</option><option value="hibrido">Híbrido</option><option value="electrico">Eléctrico</option>
         </select>
       </div>
       <div class="form-group"><label>VIN / Chasis</label><input type="text" id="veh-vin" placeholder="VIN (opcional)"></div>
@@ -671,7 +544,7 @@ tr:hover td{background:rgba(255,255,255,0.03);color:var(--blanco);}
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal('modal-vehiculo')">Cancelar</button>
-      <button class="btn btn-primary" onclick="guardarVehiculo()">Guardar</button>
+      <button class="btn btn-primary" id="btn-guardar-vehiculo" onclick="guardarVehiculo()">Guardar</button>
     </div>
   </div>
 </div>
@@ -680,7 +553,7 @@ tr:hover td{background:rgba(255,255,255,0.03);color:var(--blanco);}
 <div class="modal-wrap" id="modal-repuesto">
   <div class="modal">
     <div class="modal-header">
-      <span class="modal-title">Nuevo Repuesto</span>
+      <span class="modal-title" id="modal-repuesto-title">Nuevo Repuesto</span>
       <button class="modal-close" onclick="closeModal('modal-repuesto')">✕</button>
     </div>
     <div class="form-grid">
@@ -696,7 +569,7 @@ tr:hover td{background:rgba(255,255,255,0.03);color:var(--blanco);}
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal('modal-repuesto')">Cancelar</button>
-      <button class="btn btn-primary" onclick="guardarRepuesto()">Guardar</button>
+      <button class="btn btn-primary" id="btn-guardar-repuesto" onclick="guardarRepuesto()">Guardar</button>
     </div>
   </div>
 </div>
@@ -705,7 +578,7 @@ tr:hover td{background:rgba(255,255,255,0.03);color:var(--blanco);}
 <div class="modal-wrap" id="modal-cita">
   <div class="modal">
     <div class="modal-header">
-      <span class="modal-title">Nueva Cita</span>
+      <span class="modal-title" id="modal-cita-title">Nueva Cita</span>
       <button class="modal-close" onclick="closeModal('modal-cita')">✕</button>
     </div>
     <div class="form-grid">
@@ -716,16 +589,13 @@ tr:hover td{background:rgba(255,255,255,0.03);color:var(--blanco);}
       <div class="form-group form-full"><label>Notas</label><textarea id="cita-notas" placeholder="Detalles de la cita..."></textarea></div>
       <div class="form-group"><label>Estado</label>
         <select id="cita-estado">
-          <option value="pendiente">Pendiente</option>
-          <option value="confirmada">Confirmada</option>
-          <option value="completada">Completada</option>
-          <option value="cancelada">Cancelada</option>
+          <option value="pendiente">Pendiente</option><option value="confirmada">Confirmada</option><option value="completada">Completada</option><option value="cancelada">Cancelada</option>
         </select>
       </div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal('modal-cita')">Cancelar</button>
-      <button class="btn btn-primary" onclick="guardarCita()">Guardar</button>
+      <button class="btn btn-primary" id="btn-guardar-cita" onclick="guardarCita()">Guardar</button>
     </div>
   </div>
 </div>
@@ -734,29 +604,27 @@ tr:hover td{background:rgba(255,255,255,0.03);color:var(--blanco);}
 <div class="modal-wrap" id="modal-factura">
   <div class="modal">
     <div class="modal-header">
-      <span class="modal-title">Nueva Factura</span>
+      <span class="modal-title" id="modal-factura-title">Nueva Factura</span>
       <button class="modal-close" onclick="closeModal('modal-factura')">✕</button>
     </div>
     <div class="form-grid">
       <div class="form-group"><label>Cliente</label><select id="fac-cliente"><option value="">Seleccionar...</option></select></div>
       <div class="form-group"><label>Fecha</label><input type="date" id="fac-fecha"></div>
-      <div class="form-group form-full"><label>Descripción de servicios</label><textarea id="fac-desc" placeholder="Detalle de servicios realizados..."></textarea></div>
+      <div class="form-group form-full"><label>Descripción de servicios</label><textarea id="fac-desc" placeholder="Detalle de los servicios realizados..."></textarea></div>
       <div class="form-group"><label>Mano de obra (₡)</label><input type="number" id="fac-mano" placeholder="0" oninput="calcTotal()"></div>
       <div class="form-group"><label>Repuestos (₡)</label><input type="number" id="fac-repuestos" placeholder="0" oninput="calcTotal()"></div>
       <div class="form-group"><label>Otros cargos (₡)</label><input type="number" id="fac-otros" placeholder="0" oninput="calcTotal()"></div>
       <div class="form-group"><label>Total (₡)</label><input type="number" id="fac-total" placeholder="0" readonly style="color:var(--dorado);font-weight:700;"></div>
       <div class="form-group"><label>Estado de pago</label>
         <select id="fac-estado">
-          <option value="pendiente">Pendiente</option>
-          <option value="pagada">Pagada</option>
-          <option value="parcial">Pago parcial</option>
+          <option value="pendiente">Pendiente</option><option value="pagada">Pagada</option><option value="parcial">Pago parcial</option>
         </select>
       </div>
       <div class="form-group form-full"><label>Notas</label><input type="text" id="fac-notas" placeholder="Notas adicionales..."></div>
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal('modal-factura')">Cancelar</button>
-      <button class="btn btn-primary" onclick="guardarFactura()">Guardar</button>
+      <button class="btn btn-primary" id="btn-guardar-factura" onclick="guardarFactura()">Guardar</button>
     </div>
   </div>
 </div>
@@ -765,7 +633,7 @@ tr:hover td{background:rgba(255,255,255,0.03);color:var(--blanco);}
 <div class="modal-wrap" id="modal-proveedor">
   <div class="modal">
     <div class="modal-header">
-      <span class="modal-title">Nuevo Proveedor</span>
+      <span class="modal-title" id="modal-proveedor-title">Nuevo Proveedor</span>
       <button class="modal-close" onclick="closeModal('modal-proveedor')">✕</button>
     </div>
     <div class="form-grid">
@@ -778,49 +646,194 @@ tr:hover td{background:rgba(255,255,255,0.03);color:var(--blanco);}
     </div>
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeModal('modal-proveedor')">Cancelar</button>
-      <button class="btn btn-primary" onclick="guardarProveedor()">Guardar</button>
+      <button class="btn btn-primary" id="btn-guardar-proveedor" onclick="guardarProveedor()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL AUTORIZACIÓN ADMIN ===== -->
+<div class="modal-wrap" id="modal-auth">
+  <div class="modal modal-auth">
+    <div class="modal-header">
+      <span class="modal-title">🔐 Autorización Requerida</span>
+      <button class="modal-close" onclick="cancelAuth()">✕</button>
+    </div>
+    <div class="auth-warning">
+      <strong>Acción restringida</strong><br>
+      Para <span id="auth-accion-desc">realizar esta acción</span>, se requiere la autorización del administrador.<br>
+      Ingrese las credenciales de <strong>Jose (Administrador)</strong>.
+    </div>
+    <div class="form-group" style="margin-bottom:12px;">
+      <label>Contraseña del Administrador</label>
+      <input type="password" id="auth-pass" placeholder="Contraseña..." onkeydown="if(event.key==='Enter')confirmarAuth()">
+    </div>
+    <div id="auth-err" style="color:var(--rojo2);font-size:0.8rem;margin-bottom:10px;display:none;">Contraseña incorrecta</div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="cancelAuth()">Cancelar</button>
+      <button class="btn btn-primary" onclick="confirmarAuth()">Autorizar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODAL EDICIÓN GENÉRICO ===== -->
+<div class="modal-wrap" id="modal-edit-rep">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Editar Reparación</span>
+      <button class="modal-close" onclick="closeModal('modal-edit-rep')">✕</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-group"><label>Servicio</label><input type="text" id="edit-rep-servicio"></div>
+      <div class="form-group"><label>Estado</label>
+        <select id="edit-rep-estado">
+          <option value="pendiente">Pendiente</option><option value="proceso">En proceso</option><option value="listo">Listo</option><option value="entregado">Entregado</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Costo mano de obra (₡)</label><input type="number" id="edit-rep-mano"></div>
+      <div class="form-group"><label>Notas</label><input type="text" id="edit-rep-notas"></div>
+      <div class="form-group form-full"><label>Descripción</label><textarea id="edit-rep-desc"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-edit-rep')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarEditRep()">Guardar cambios</button>
     </div>
   </div>
 </div>
 
 <script>
-// Firebase
+// =================== FIREBASE ===================
 const FB={apiKey:"AIzaSyAZ8Psn7CLbkvWe9dUIaqXRTyCvCbSsygw",authDomain:"taller-diaz.firebaseapp.com",projectId:"taller-diaz",storageBucket:"taller-diaz.firebasestorage.app",messagingSenderId:"996058978834",appId:"1:996058978834:web:ad975df05726abd8e316cb"};
 firebase.initializeApp(FB);
 const db=firebase.firestore();
 
-// Auth local
-const CREDS={usuario:'Jose',pass:'Jose2026$'};
-let loggedIn=false;
+// =================== USUARIOS ===================
+const USUARIOS={
+  'Jose':  {pass:'Jose2026$', rol:'admin',  nombre:'Jose',  display:'Administrador'},
+  'Meca1': {pass:'Meca1#2026', rol:'meca', nombre:'Meca1', display:'Mecánico 1'},
+  'Meca2': {pass:'Meca2#2026', rol:'meca', nombre:'Meca2', display:'Mecánico 2'},
+  'Meca3': {pass:'Meca3#2026', rol:'meca', nombre:'Meca3', display:'Mecánico 3'},
+};
+const ADMIN_PASS='Jose2026$';
 
+let currentUser=null; // {nombre, rol, display}
+
+// =================== LOGIN ===================
 function doLogin(){
   const u=document.getElementById('login-user').value.trim();
   const p=document.getElementById('login-pass').value;
-  if(u===CREDS.usuario&&p===CREDS.pass){
-    loggedIn=true;
+  const usr=USUARIOS[u];
+  if(usr && p===usr.pass){
+    currentUser={nombre:u, rol:usr.rol, display:usr.display};
     document.getElementById('login-wrap').style.display='none';
     document.getElementById('app').style.display='flex';
+    document.getElementById('sidebar-user-name').textContent=u;
+    document.getElementById('sidebar-user-role').textContent=usr.display;
+    document.getElementById('sidebar-user-badge').innerHTML=usr.rol==='admin'?'<span class="sidebar-user-badge badge-admin">Admin</span>':'<span class="sidebar-user-badge badge-meca">Mecánico</span>';
+    // Mostrar menú admin solo si es admin
+    document.querySelectorAll('.admin-only').forEach(el=>el.style.display=usr.rol==='admin'?'flex':'none');
+    registrarMovimiento('login','sistema','—','Inicio de sesión');
     initApp();
   } else {
     document.getElementById('login-err').style.display='block';
   }
 }
+
 function doLogout(){
-  loggedIn=false;
+  registrarMovimiento('login','sistema','—','Cierre de sesión');
+  currentUser=null;
   document.getElementById('app').style.display='none';
   document.getElementById('login-wrap').style.display='flex';
   document.getElementById('login-user').value='';
   document.getElementById('login-pass').value='';
+  document.getElementById('login-err').style.display='none';
 }
 
-// Navegación
-const BGFOTOS={dashboard:'foto13.jpg',reparaciones:'foto14.jpg',clientes:'foto15.jpg',vehiculos:'foto16.webp',repuestos:'foto17.jpg',agenda:'foto18.jpg',facturacion:'foto24.jpg',proveedores:'foto20.jpg',estadisticas:'foto21.jpg'};
+// =================== AUTORIZACIÓN ADMIN ===================
+let authCallback=null;
+let authCancelCallback=null;
+
+function pedirAuth(descripcion, onOk, onCancel=null){
+  // Si ya es admin, no pedir
+  if(currentUser && currentUser.rol==='admin'){onOk();return;}
+  document.getElementById('auth-accion-desc').textContent=descripcion;
+  document.getElementById('auth-pass').value='';
+  document.getElementById('auth-err').style.display='none';
+  authCallback=onOk;
+  authCancelCallback=onCancel;
+  document.getElementById('modal-auth').classList.add('open');
+  setTimeout(()=>document.getElementById('auth-pass').focus(),100);
+}
+
+function confirmarAuth(){
+  const p=document.getElementById('auth-pass').value;
+  if(p===ADMIN_PASS){
+    document.getElementById('modal-auth').classList.remove('open');
+    if(authCallback)authCallback();
+    authCallback=null;
+  } else {
+    document.getElementById('auth-err').style.display='block';
+    document.getElementById('auth-pass').value='';
+  }
+}
+
+function cancelAuth(){
+  document.getElementById('modal-auth').classList.remove('open');
+  if(authCancelCallback)authCancelCallback();
+  authCallback=null;
+  authCancelCallback=null;
+}
+
+// =================== HISTORIAL ===================
+let movimientos=[];
+
+async function registrarMovimiento(tipo, modulo, descripcion, detalle=''){
+  const data={
+    tipo, modulo, descripcion, detalle,
+    usuario: currentUser?currentUser.nombre:'sistema',
+    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    fechaLocal: new Date().toLocaleString('es-CR')
+  };
+  try{ await db.collection('movimientos').add(data); }catch(e){ console.warn('Error registrando movimiento',e); }
+}
+
+function renderHistorial(){
+  const tipoFiltro=(document.getElementById('hist-filtro-tipo')||{value:''}).value;
+  const userFiltro=(document.getElementById('hist-filtro-usuario')||{value:''}).value;
+  let data=[...movimientos];
+  if(tipoFiltro)data=data.filter(m=>m.tipo===tipoFiltro);
+  if(userFiltro)data=data.filter(m=>m.usuario===userFiltro);
+  const contenedor=document.getElementById('historial-lista');
+  if(!data.length){contenedor.innerHTML='<div class="empty-state">Sin movimientos registrados</div>';return;}
+  const iconos={crear:'➕',editar:'✏️',eliminar:'🗑️',login:'🔑'};
+  contenedor.innerHTML=data.map(m=>{
+    const ts=m.fechaLocal||'—';
+    return `<div class="hist-item">
+      <div class="hist-icon ${m.tipo}">${iconos[m.tipo]||'📋'}</div>
+      <div class="hist-body">
+        <div class="hist-desc">${m.descripcion||'—'}</div>
+        <div class="hist-meta">
+          <span class="hist-user">${m.usuario||'—'}</span>
+          · ${m.modulo||'—'}
+          ${m.detalle?'· '+m.detalle:''}
+          · <span style="color:var(--gris);">${ts}</span>
+        </div>
+      </div>
+      <span class="badge badge-${m.tipo==='crear'?'crear':m.tipo==='editar'?'editar':m.tipo==='eliminar'?'eliminar':'listo'}">${m.tipo}</span>
+    </div>`;
+  }).join('');
+}
+
+// =================== NAVEGACIÓN ===================
+const BGFOTOS={dashboard:'foto13.jpg',reparaciones:'foto14.jpg',clientes:'foto15.jpg',vehiculos:'foto16.webp',repuestos:'foto17.jpg',agenda:'foto18.jpg',facturacion:'foto24.jpg',proveedores:'foto20.jpg',estadisticas:'foto21.jpg',historial:'foto14.jpg',usuarios:'foto13.jpg'};
+
 function goTo(screen){
   if(BGFOTOS[screen])document.getElementById('main-bg').style.backgroundImage="url('"+BGFOTOS[screen]+"')";
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  document.getElementById('screen-'+screen).classList.add('active');
-  document.querySelector(`.nav-item[onclick="goTo('${screen}')"]`).classList.add('active');
+  const screenEl=document.getElementById('screen-'+screen);
+  if(screenEl)screenEl.classList.add('active');
+  const navEl=document.querySelector(`.nav-item[onclick="goTo('${screen}')"]`);
+  if(navEl)navEl.classList.add('active');
   if(screen==='dashboard')loadDash();
   if(screen==='reparaciones')renderReps();
   if(screen==='clientes')renderClientes();
@@ -830,7 +843,9 @@ function goTo(screen){
   if(screen==='facturacion')renderFacturas();
   if(screen==='proveedores')renderProveedores();
   if(screen==='estadisticas')renderEstadisticas();
+  if(screen==='historial')renderHistorial();
 }
+
 function openModal(id){
   if(id==='modal-rep'||id==='modal-cita'||id==='modal-factura')loadClientesSelect();
   if(id==='modal-rep')loadVehiculosSelect();
@@ -840,13 +855,15 @@ function openModal(id){
 }
 function closeModal(id){document.getElementById(id).classList.remove('open');}
 
-// Data stores
+// =================== DATA ===================
 let reps=[],clientes=[],vehiculos=[],repuestos=[],citas=[],facturas=[],proveedores=[];
 
 function initApp(){
   document.getElementById('main-bg').style.backgroundImage="url('foto13.jpg')";
   document.getElementById('dash-fecha').textContent=new Date().toLocaleDateString('es-CR',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-  // Listeners en tiempo real
+  const hoy=new Date().toISOString().split('T')[0];
+  ['rep-fecha','cita-fecha','fac-fecha'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=hoy;});
+
   db.collection('reparaciones').orderBy('createdAt','desc').onSnapshot(s=>{reps=[];s.forEach(d=>reps.push({id:d.id,...d.data()}));loadDash();if(document.getElementById('screen-reparaciones').classList.contains('active'))renderReps();});
   db.collection('clientes').orderBy('nombre').onSnapshot(s=>{clientes=[];s.forEach(d=>clientes.push({id:d.id,...d.data()}));if(document.getElementById('screen-clientes').classList.contains('active'))renderClientes();});
   db.collection('vehiculos').onSnapshot(s=>{vehiculos=[];s.forEach(d=>vehiculos.push({id:d.id,...d.data()}));if(document.getElementById('screen-vehiculos').classList.contains('active'))renderVehiculos();});
@@ -854,8 +871,10 @@ function initApp(){
   db.collection('citas').orderBy('fecha').onSnapshot(s=>{citas=[];s.forEach(d=>citas.push({id:d.id,...d.data()}));if(document.getElementById('screen-agenda').classList.contains('active'))renderCitas();});
   db.collection('facturas').orderBy('createdAt','desc').onSnapshot(s=>{facturas=[];s.forEach(d=>facturas.push({id:d.id,...d.data()}));if(document.getElementById('screen-facturacion').classList.contains('active'))renderFacturas();});
   db.collection('proveedores').orderBy('nombre').onSnapshot(s=>{proveedores=[];s.forEach(d=>proveedores.push({id:d.id,...d.data()}));if(document.getElementById('screen-proveedores').classList.contains('active'))renderProveedores();});
+  db.collection('movimientos').orderBy('timestamp','desc').limit(200).onSnapshot(s=>{movimientos=[];s.forEach(d=>movimientos.push({id:d.id,...d.data()}));if(document.getElementById('screen-historial').classList.contains('active'))renderHistorial();});
 }
 
+// =================== DASHBOARD ===================
 function loadDash(){
   const activas=reps.filter(r=>r.estado==='pendiente'||r.estado==='proceso').length;
   const listas=reps.filter(r=>r.estado==='listo').length;
@@ -868,16 +887,81 @@ function loadDash(){
   tbody.innerHTML=recientes.length?recientes.map(r=>`<tr><td class="fw700">${r.clienteNombre||'—'}</td><td>${r.vehiculo||'—'}</td><td>${r.servicio||'—'}</td><td><span class="badge badge-${r.estado||'pendiente'}">${badgeLabel(r.estado)}</span></td><td class="text-gris">${r.fecha||'—'}</td></tr>`).join(''):'<tr><td colspan="5" class="empty-state">Sin reparaciones aún</td></tr>';
 }
 
-function badgeLabel(e){const m={pendiente:'Pendiente',proceso:'En proceso',listo:'✓ Listo',entregado:'Entregado',confirmada:'Confirmada',completada:'Completada',cancelada:'Cancelada',pagada:'Pagada',parcial:'Parcial'};return m[e]||e;}
+// =================== HELPERS ===================
+function badgeLabel(s){return{pendiente:'Pendiente',proceso:'En proceso',listo:'Listo ✓',entregado:'Entregado',confirmada:'Confirmada',completada:'Completada',cancelada:'Cancelada',pagada:'Pagada',parcial:'Parcial'}[s]||s||'—';}
 
-// REPARACIONES
+function botonesAccion(col, id, nombre, datos={}){
+  const editBtn=`<button class="btn btn-sm btn-warning btn-icon" title="Editar" onclick="accionEditar('${col}','${id}')">✏️</button>`;
+  const delBtn=`<button class="btn btn-sm btn-danger btn-icon" title="Eliminar" onclick="accionEliminar('${col}','${id}','${nombre}')">🗑</button>`;
+  return `<div class="tbl-acciones">${editBtn}${delBtn}</div>`;
+}
+
+// =================== ELIMINAR ===================
+function accionEliminar(col, id, nombre){
+  pedirAuth(
+    `eliminar "${nombre}" de ${col}`,
+    async ()=>{
+      await db.collection(col).doc(id).delete();
+      registrarMovimiento('eliminar', col, `Eliminado: ${nombre}`, `ID: ${id}`);
+    }
+  );
+}
+
+// =================== EDITAR REPARACIÓN ===================
+let editRepId=null;
+function accionEditar(col, id){
+  if(col==='reparaciones'){
+    const rep=reps.find(r=>r.id===id);
+    if(!rep)return;
+    pedirAuth(
+      `editar la reparación de ${rep.clienteNombre||'cliente'}`,
+      ()=>{
+        editRepId=id;
+        document.getElementById('edit-rep-servicio').value=rep.servicio||'';
+        document.getElementById('edit-rep-estado').value=rep.estado||'pendiente';
+        document.getElementById('edit-rep-mano').value=rep.manoObra||0;
+        document.getElementById('edit-rep-notas').value=rep.notas||'';
+        document.getElementById('edit-rep-desc').value=rep.descripcion||'';
+        openModal('modal-edit-rep');
+      }
+    );
+  } else {
+    // Para otros módulos: mensaje simple
+    if(currentUser && currentUser.rol!=='admin'){
+      pedirAuth(`editar este registro en ${col}`,()=>{
+        alert('Edición autorizada. Funcionalidad completa disponible próximamente para este módulo.');
+      });
+    } else {
+      alert('Edición completa disponible próximamente para este módulo.');
+    }
+  }
+}
+
+async function guardarEditRep(){
+  if(!editRepId)return;
+  const data={
+    servicio:document.getElementById('edit-rep-servicio').value,
+    estado:document.getElementById('edit-rep-estado').value,
+    manoObra:parseFloat(document.getElementById('edit-rep-mano').value)||0,
+    notas:document.getElementById('edit-rep-notas').value,
+    descripcion:document.getElementById('edit-rep-desc').value,
+    updatedAt:firebase.firestore.FieldValue.serverTimestamp()
+  };
+  const rep=reps.find(r=>r.id===editRepId);
+  await db.collection('reparaciones').doc(editRepId).update(data);
+  registrarMovimiento('editar','reparaciones',`Editada reparación de ${rep?rep.clienteNombre:'cliente'}`,`Estado: ${data.estado}`);
+  closeModal('modal-edit-rep');
+  editRepId=null;
+}
+
+// =================== RENDERS ===================
 function renderReps(){
   const q=(document.getElementById('rep-search')||{value:''}).value.toLowerCase();
   const f=(document.getElementById('rep-filtro')||{value:''}).value;
   let data=reps.filter(r=>{
-    const match=!q||(r.clienteNombre||'').toLowerCase().includes(q)||(r.vehiculo||'').toLowerCase().includes(q)||(r.servicio||'').toLowerCase().includes(q);
-    const est=!f||r.estado===f;
-    return match&&est;
+    const matchQ=!q||(r.clienteNombre||'').toLowerCase().includes(q)||(r.vehiculo||'').toLowerCase().includes(q)||(r.servicio||'').toLowerCase().includes(q);
+    const matchF=!f||r.estado===f;
+    return matchQ&&matchF;
   });
   const tbody=document.getElementById('reps-body');
   tbody.innerHTML=data.length?data.map((r,i)=>`<tr>
@@ -888,64 +972,23 @@ function renderReps(){
     <td>${r.servicio||'—'}</td>
     <td><span class="badge badge-${r.estado||'pendiente'}">${badgeLabel(r.estado)}</span></td>
     <td class="text-gris">${r.fecha||'—'}</td>
-    <td><div class="gap8">
-      <select class="btn btn-sm btn-secondary" style="padding:4px 8px;" onchange="cambiarEstadoRep('${r.id}',this.value)">
-        <option value="pendiente"${r.estado==='pendiente'?' selected':''}>Pendiente</option>
-        <option value="proceso"${r.estado==='proceso'?' selected':''}>En proceso</option>
-        <option value="listo"${r.estado==='listo'?' selected':''}>Listo</option>
-        <option value="entregado"${r.estado==='entregado'?' selected':''}>Entregado</option>
-      </select>
-      <button class="btn btn-sm btn-secondary" onclick="eliminar('reparaciones','${r.id}')">🗑</button>
-    </div></td>
+    <td>${botonesAccion('reparaciones',r.id,r.clienteNombre||'reparación')}</td>
   </tr>`).join(''):'<tr><td colspan="8"><div class="empty-state">Sin reparaciones registradas</div></td></tr>';
 }
 
-async function guardarRep(){
-  const cli=clientes.find(c=>c.id===document.getElementById('rep-cliente').value);
-  const veh=vehiculos.find(v=>v.id===document.getElementById('rep-vehiculo').value);
-  const data={
-    clienteId:cli?.id||'',clienteNombre:cli?.nombre||document.getElementById('rep-cliente').value||'—',
-    vehiculoId:veh?.id||'',vehiculo:veh?`${veh.marca} ${veh.modelo}`:document.getElementById('rep-vehiculo').value||'—',
-    placa:veh?.placa||'—',
-    servicio:document.getElementById('rep-servicio').value,
-    descripcion:document.getElementById('rep-desc').value,
-    fecha:document.getElementById('rep-fecha').value||new Date().toISOString().split('T')[0],
-    manoObra:parseFloat(document.getElementById('rep-mano').value)||0,
-    estado:document.getElementById('rep-estado').value,
-    notas:document.getElementById('rep-notas').value,
-    createdAt:firebase.firestore.FieldValue.serverTimestamp()
-  };
-  await db.collection('reparaciones').add(data);
-  closeModal('modal-rep');
-  ['rep-servicio','rep-desc','rep-mano','rep-notas'].forEach(id=>document.getElementById(id).value='');
-}
-
-async function cambiarEstadoRep(id,estado){await db.collection('reparaciones').doc(id).update({estado});}
-
-// CLIENTES
 function renderClientes(){
   const q=(document.getElementById('cli-search')||{value:''}).value.toLowerCase();
-  let data=clientes.filter(c=>!q||(c.nombre||'').toLowerCase().includes(q)||(c.tel||'').includes(q)||(c.correo||'').toLowerCase().includes(q));
+  let data=clientes.filter(c=>!q||(c.nombre||'').toLowerCase().includes(q)||(c.tel||'').toLowerCase().includes(q)||(c.correo||'').toLowerCase().includes(q));
   const tbody=document.getElementById('clientes-body');
-  const vehCount=id=>vehiculos.filter(v=>v.clienteId===id).length;
   tbody.innerHTML=data.length?data.map(c=>`<tr>
     <td class="fw700">${c.nombre||'—'}</td>
     <td><a href="tel:${c.tel}" style="color:var(--dorado);text-decoration:none;">${c.tel||'—'}</a></td>
     <td class="text-gris">${c.correo||'—'}</td>
-    <td><span class="badge badge-pendiente">${vehCount(c.id)}</span></td>
-    <td><button class="btn btn-sm btn-secondary" onclick="eliminar('clientes','${c.id}')">🗑</button></td>
+    <td class="text-gris">${c.cedula||'—'}</td>
+    <td>${botonesAccion('clientes',c.id,c.nombre||'cliente')}</td>
   </tr>`).join(''):'<tr><td colspan="5"><div class="empty-state">Sin clientes registrados</div></td></tr>';
 }
 
-async function guardarCliente(){
-  const data={nombre:document.getElementById('cli-nombre').value,tel:document.getElementById('cli-tel').value,correo:document.getElementById('cli-correo').value,cedula:document.getElementById('cli-cedula').value,direccion:document.getElementById('cli-dir').value,notas:document.getElementById('cli-notas').value,createdAt:firebase.firestore.FieldValue.serverTimestamp()};
-  if(!data.nombre){alert('El nombre es requerido.');return;}
-  await db.collection('clientes').add(data);
-  closeModal('modal-cliente');
-  ['cli-nombre','cli-tel','cli-correo','cli-cedula','cli-dir','cli-notas'].forEach(id=>document.getElementById(id).value='');
-}
-
-// VEHÍCULOS
 function renderVehiculos(){
   const q=(document.getElementById('veh-search')||{value:''}).value.toLowerCase();
   let data=vehiculos.filter(v=>!q||(v.placa||'').toLowerCase().includes(q)||(v.marca||'').toLowerCase().includes(q)||(v.modelo||'').toLowerCase().includes(q)||(v.clienteNombre||'').toLowerCase().includes(q));
@@ -957,20 +1000,10 @@ function renderVehiculos(){
     <td>${v.anio||'—'}</td>
     <td>${v.color||'—'}</td>
     <td class="text-gris">${v.clienteNombre||'—'}</td>
-    <td><button class="btn btn-sm btn-secondary" onclick="eliminar('vehiculos','${v.id}')">🗑</button></td>
+    <td>${botonesAccion('vehiculos',v.id,v.placa||'vehículo')}</td>
   </tr>`).join(''):'<tr><td colspan="7"><div class="empty-state">Sin vehículos registrados</div></td></tr>';
 }
 
-async function guardarVehiculo(){
-  const cli=clientes.find(c=>c.id===document.getElementById('veh-cliente').value);
-  const data={clienteId:cli?.id||'',clienteNombre:cli?.nombre||'—',placa:document.getElementById('veh-placa').value,marca:document.getElementById('veh-marca').value,modelo:document.getElementById('veh-modelo').value,anio:document.getElementById('veh-anio').value,color:document.getElementById('veh-color').value,motor:document.getElementById('veh-motor').value,combustible:document.getElementById('veh-combustible').value,vin:document.getElementById('veh-vin').value,km:parseInt(document.getElementById('veh-km').value)||0,observaciones:document.getElementById('veh-obs').value,createdAt:firebase.firestore.FieldValue.serverTimestamp()};
-  if(!data.placa){alert('La placa es requerida.');return;}
-  await db.collection('vehiculos').add(data);
-  closeModal('modal-vehiculo');
-  ['veh-placa','veh-marca','veh-modelo','veh-anio','veh-color','veh-motor','veh-vin','veh-km','veh-obs'].forEach(id=>document.getElementById(id).value='');
-}
-
-// REPUESTOS
 function renderRepuestos(){
   const q=(document.getElementById('rep2-search')||{value:''}).value.toLowerCase();
   let data=repuestos.filter(r=>!q||(r.nombre||'').toLowerCase().includes(q)||(r.codigo||'').toLowerCase().includes(q));
@@ -982,19 +1015,10 @@ function renderRepuestos(){
     <td class="text-gris">₡${(r.costo||0).toLocaleString()}</td>
     <td class="text-dorado fw700">₡${(r.venta||0).toLocaleString()}</td>
     <td class="text-gris">${r.proveedorNombre||'—'}</td>
-    <td><button class="btn btn-sm btn-secondary" onclick="eliminar('repuestos','${r.id}')">🗑</button></td>
+    <td>${botonesAccion('repuestos',r.id,r.nombre||'repuesto')}</td>
   </tr>`).join(''):'<tr><td colspan="7"><div class="empty-state">Sin repuestos registrados</div></td></tr>';
 }
 
-async function guardarRepuesto(){
-  const prov=proveedores.find(p=>p.id===document.getElementById('rp-proveedor').value);
-  const data={codigo:document.getElementById('rp-codigo').value,nombre:document.getElementById('rp-nombre').value,stock:parseInt(document.getElementById('rp-stock').value)||0,minimo:parseInt(document.getElementById('rp-minimo').value)||1,costo:parseFloat(document.getElementById('rp-costo').value)||0,venta:parseFloat(document.getElementById('rp-venta').value)||0,proveedorId:prov?.id||'',proveedorNombre:prov?.nombre||'—',ubicacion:document.getElementById('rp-ubic').value,descripcion:document.getElementById('rp-desc').value,createdAt:firebase.firestore.FieldValue.serverTimestamp()};
-  if(!data.nombre){alert('El nombre es requerido.');return;}
-  await db.collection('repuestos').add(data);
-  closeModal('modal-repuesto');
-}
-
-// AGENDA
 function renderCitas(){
   const tbody=document.getElementById('citas-body');
   tbody.innerHTML=citas.length?citas.map(c=>`<tr>
@@ -1004,18 +1028,10 @@ function renderCitas(){
     <td>${c.servicio||'—'}</td>
     <td class="text-gris">${c.notas||'—'}</td>
     <td><span class="badge badge-${c.estado==='confirmada'?'listo':c.estado==='cancelada'?'entregado':'pendiente'}">${badgeLabel(c.estado)}</span></td>
-    <td><button class="btn btn-sm btn-secondary" onclick="eliminar('citas','${c.id}')">🗑</button></td>
+    <td>${botonesAccion('citas',c.id,c.servicio||'cita')}</td>
   </tr>`).join(''):'<tr><td colspan="7"><div class="empty-state">Sin citas programadas</div></td></tr>';
 }
 
-async function guardarCita(){
-  const cli=clientes.find(c=>c.id===document.getElementById('cita-cliente').value);
-  const data={clienteId:cli?.id||'',clienteNombre:cli?.nombre||'—',servicio:document.getElementById('cita-servicio').value,fecha:document.getElementById('cita-fecha').value,hora:document.getElementById('cita-hora').value,notas:document.getElementById('cita-notas').value,estado:document.getElementById('cita-estado').value,createdAt:firebase.firestore.FieldValue.serverTimestamp()};
-  await db.collection('citas').add(data);
-  closeModal('modal-cita');
-}
-
-// FACTURACIÓN
 function renderFacturas(){
   const tbody=document.getElementById('facturas-body');
   tbody.innerHTML=facturas.length?facturas.map((f,i)=>`<tr>
@@ -1025,25 +1041,10 @@ function renderFacturas(){
     <td class="text-gris">${(f.descripcion||'').substring(0,40)}${(f.descripcion||'').length>40?'...':''}</td>
     <td class="text-dorado fw700">₡${(f.total||0).toLocaleString()}</td>
     <td><span class="badge badge-${f.estado==='pagada'?'listo':f.estado==='parcial'?'proceso':'pendiente'}">${badgeLabel(f.estado)}</span></td>
-    <td><button class="btn btn-sm btn-secondary" onclick="eliminar('facturas','${f.id}')">🗑</button></td>
+    <td>${botonesAccion('facturas',f.id,`factura ${f.clienteNombre||''}`)}</td>
   </tr>`).join(''):'<tr><td colspan="7"><div class="empty-state">Sin facturas registradas</div></td></tr>';
 }
 
-function calcTotal(){
-  const m=parseFloat(document.getElementById('fac-mano').value)||0;
-  const r=parseFloat(document.getElementById('fac-repuestos').value)||0;
-  const o=parseFloat(document.getElementById('fac-otros').value)||0;
-  document.getElementById('fac-total').value=m+r+o;
-}
-
-async function guardarFactura(){
-  const cli=clientes.find(c=>c.id===document.getElementById('fac-cliente').value);
-  const data={clienteId:cli?.id||'',clienteNombre:cli?.nombre||'—',fecha:document.getElementById('fac-fecha').value||new Date().toISOString().split('T')[0],descripcion:document.getElementById('fac-desc').value,manoObra:parseFloat(document.getElementById('fac-mano').value)||0,repuestos:parseFloat(document.getElementById('fac-repuestos').value)||0,otros:parseFloat(document.getElementById('fac-otros').value)||0,total:parseFloat(document.getElementById('fac-total').value)||0,estado:document.getElementById('fac-estado').value,notas:document.getElementById('fac-notas').value,createdAt:firebase.firestore.FieldValue.serverTimestamp()};
-  await db.collection('facturas').add(data);
-  closeModal('modal-factura');
-}
-
-// PROVEEDORES
 function renderProveedores(){
   const tbody=document.getElementById('proveedores-body');
   tbody.innerHTML=proveedores.length?proveedores.map(p=>`<tr>
@@ -1051,64 +1052,113 @@ function renderProveedores(){
     <td>${p.contacto||'—'}</td>
     <td><a href="tel:${p.tel}" style="color:var(--dorado);text-decoration:none;">${p.tel||'—'}</a></td>
     <td class="text-gris">${p.correo||'—'}</td>
-    <td><button class="btn btn-sm btn-secondary" onclick="eliminar('proveedores','${p.id}')">🗑</button></td>
+    <td>${botonesAccion('proveedores',p.id,p.nombre||'proveedor')}</td>
   </tr>`).join(''):'<tr><td colspan="5"><div class="empty-state">Sin proveedores registrados</div></td></tr>';
 }
 
+// =================== GUARDAR (con historial) ===================
+async function guardarRep(){
+  const cli=clientes.find(c=>c.id===document.getElementById('rep-cliente').value);
+  const veh=vehiculos.find(v=>v.id===document.getElementById('rep-vehiculo').value);
+  const data={clienteId:cli?.id||'',clienteNombre:cli?.nombre||'—',vehiculoId:veh?.id||'',vehiculo:veh?`${veh.marca} ${veh.modelo}`:'—',placa:veh?.placa||'—',servicio:document.getElementById('rep-servicio').value,descripcion:document.getElementById('rep-desc').value,fecha:document.getElementById('rep-fecha').value,manoObra:parseFloat(document.getElementById('rep-mano').value)||0,estado:document.getElementById('rep-estado').value,notas:document.getElementById('rep-notas').value,creadoPor:currentUser?.nombre||'—',createdAt:firebase.firestore.FieldValue.serverTimestamp()};
+  if(!data.servicio){alert('El servicio es requerido.');return;}
+  await db.collection('reparaciones').add(data);
+  await registrarMovimiento('crear','reparaciones',`Nueva reparación: ${data.servicio}`,`Cliente: ${data.clienteNombre}`);
+  closeModal('modal-rep');
+  ['rep-servicio','rep-desc','rep-mano','rep-notas'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+}
+
+async function guardarCliente(){
+  const data={nombre:document.getElementById('cli-nombre').value,tel:document.getElementById('cli-tel').value,correo:document.getElementById('cli-correo').value,cedula:document.getElementById('cli-cedula').value,direccion:document.getElementById('cli-dir').value,notas:document.getElementById('cli-notas').value,creadoPor:currentUser?.nombre||'—',createdAt:firebase.firestore.FieldValue.serverTimestamp()};
+  if(!data.nombre){alert('El nombre es requerido.');return;}
+  await db.collection('clientes').add(data);
+  await registrarMovimiento('crear','clientes',`Nuevo cliente: ${data.nombre}`,`Tel: ${data.tel||'—'}`);
+  closeModal('modal-cliente');
+  ['cli-nombre','cli-tel','cli-correo','cli-cedula','cli-dir','cli-notas'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+}
+
+async function guardarVehiculo(){
+  const cli=clientes.find(c=>c.id===document.getElementById('veh-cliente').value);
+  const data={clienteId:cli?.id||'',clienteNombre:cli?.nombre||'—',placa:document.getElementById('veh-placa').value,marca:document.getElementById('veh-marca').value,modelo:document.getElementById('veh-modelo').value,anio:document.getElementById('veh-anio').value,color:document.getElementById('veh-color').value,motor:document.getElementById('veh-motor').value,combustible:document.getElementById('veh-combustible').value,vin:document.getElementById('veh-vin').value,km:parseInt(document.getElementById('veh-km').value)||0,observaciones:document.getElementById('veh-obs').value,creadoPor:currentUser?.nombre||'—',createdAt:firebase.firestore.FieldValue.serverTimestamp()};
+  if(!data.placa){alert('La placa es requerida.');return;}
+  await db.collection('vehiculos').add(data);
+  await registrarMovimiento('crear','vehiculos',`Nuevo vehículo: ${data.placa}`,`${data.marca} ${data.modelo} · ${data.clienteNombre}`);
+  closeModal('modal-vehiculo');
+  ['veh-placa','veh-marca','veh-modelo','veh-anio','veh-color','veh-motor','veh-vin','veh-km','veh-obs'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+}
+
+async function guardarRepuesto(){
+  const prov=proveedores.find(p=>p.id===document.getElementById('rp-proveedor').value);
+  const data={codigo:document.getElementById('rp-codigo').value,nombre:document.getElementById('rp-nombre').value,stock:parseInt(document.getElementById('rp-stock').value)||0,minimo:parseInt(document.getElementById('rp-minimo').value)||1,costo:parseFloat(document.getElementById('rp-costo').value)||0,venta:parseFloat(document.getElementById('rp-venta').value)||0,proveedorId:prov?.id||'',proveedorNombre:prov?.nombre||'—',ubicacion:document.getElementById('rp-ubic').value,descripcion:document.getElementById('rp-desc').value,creadoPor:currentUser?.nombre||'—',createdAt:firebase.firestore.FieldValue.serverTimestamp()};
+  if(!data.nombre){alert('El nombre es requerido.');return;}
+  await db.collection('repuestos').add(data);
+  await registrarMovimiento('crear','repuestos',`Nuevo repuesto: ${data.nombre}`,`Stock: ${data.stock}`);
+  closeModal('modal-repuesto');
+}
+
+async function guardarCita(){
+  const cli=clientes.find(c=>c.id===document.getElementById('cita-cliente').value);
+  const data={clienteId:cli?.id||'',clienteNombre:cli?.nombre||'—',servicio:document.getElementById('cita-servicio').value,fecha:document.getElementById('cita-fecha').value,hora:document.getElementById('cita-hora').value,notas:document.getElementById('cita-notas').value,estado:document.getElementById('cita-estado').value,creadoPor:currentUser?.nombre||'—',createdAt:firebase.firestore.FieldValue.serverTimestamp()};
+  await db.collection('citas').add(data);
+  await registrarMovimiento('crear','agenda',`Nueva cita: ${data.servicio}`,`Cliente: ${data.clienteNombre} · ${data.fecha}`);
+  closeModal('modal-cita');
+}
+
+async function guardarFactura(){
+  const cli=clientes.find(c=>c.id===document.getElementById('fac-cliente').value);
+  const data={clienteId:cli?.id||'',clienteNombre:cli?.nombre||'—',fecha:document.getElementById('fac-fecha').value||new Date().toISOString().split('T')[0],descripcion:document.getElementById('fac-desc').value,manoObra:parseFloat(document.getElementById('fac-mano').value)||0,repuestos:parseFloat(document.getElementById('fac-repuestos').value)||0,otros:parseFloat(document.getElementById('fac-otros').value)||0,total:parseFloat(document.getElementById('fac-total').value)||0,estado:document.getElementById('fac-estado').value,notas:document.getElementById('fac-notas').value,creadoPor:currentUser?.nombre||'—',createdAt:firebase.firestore.FieldValue.serverTimestamp()};
+  await db.collection('facturas').add(data);
+  await registrarMovimiento('crear','facturas',`Nueva factura: ${data.clienteNombre}`,`Total: ₡${data.total.toLocaleString()}`);
+  closeModal('modal-factura');
+}
+
 async function guardarProveedor(){
-  const data={nombre:document.getElementById('prov-nombre').value,contacto:document.getElementById('prov-contacto').value,tel:document.getElementById('prov-tel').value,correo:document.getElementById('prov-correo').value,direccion:document.getElementById('prov-dir').value,notas:document.getElementById('prov-notas').value,createdAt:firebase.firestore.FieldValue.serverTimestamp()};
+  const data={nombre:document.getElementById('prov-nombre').value,contacto:document.getElementById('prov-contacto').value,tel:document.getElementById('prov-tel').value,correo:document.getElementById('prov-correo').value,direccion:document.getElementById('prov-dir').value,notas:document.getElementById('prov-notas').value,creadoPor:currentUser?.nombre||'—',createdAt:firebase.firestore.FieldValue.serverTimestamp()};
   if(!data.nombre){alert('El nombre es requerido.');return;}
   await db.collection('proveedores').add(data);
+  await registrarMovimiento('crear','proveedores',`Nuevo proveedor: ${data.nombre}`,`Tel: ${data.tel||'—'}`);
   closeModal('modal-proveedor');
 }
 
-// ESTADÍSTICAS
+// =================== ESTADÍSTICAS ===================
 function renderEstadisticas(){
   document.getElementById('est-total').textContent=reps.length;
   document.getElementById('est-entregadas').textContent=reps.filter(r=>r.estado==='entregado').length;
   document.getElementById('est-proceso').textContent=reps.filter(r=>r.estado==='proceso'||r.estado==='pendiente').length;
   const totalFac=facturas.filter(f=>f.estado==='pagada').reduce((a,f)=>a+(f.total||0),0);
   document.getElementById('est-facturado').textContent='₡'+totalFac.toLocaleString();
-  // Servicios más frecuentes
   const svcCount={};
   reps.forEach(r=>{if(r.servicio)svcCount[r.servicio]=(svcCount[r.servicio]||0)+1;});
   const sorted=Object.entries(svcCount).sort((a,b)=>b[1]-a[1]).slice(0,8);
-  document.getElementById('est-servicios').innerHTML=sorted.length?sorted.map(([s,c])=>`<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)"><span style="flex:1;font-size:0.9rem;">${s}</span><span class="badge badge-pendiente">${c} veces</span></div>`).join(''):'<div class="empty-state">Sin datos aún</div>';
+  document.getElementById('est-servicios').innerHTML=sorted.length?sorted.map(([s,c])=>`<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)"><span style="flex:1;font-size:0.88rem;">${s}</span><span class="badge badge-pendiente">${c} veces</span></div>`).join(''):'<div class="empty-state">Sin datos aún</div>';
 }
 
-// Helpers
-async function eliminar(col,id){
-  if(!confirm('¿Eliminar este registro?'))return;
-  await db.collection(col).doc(id).delete();
+// =================== HELPERS SELECTS ===================
+function calcTotal(){
+  const m=parseFloat(document.getElementById('fac-mano').value)||0;
+  const r=parseFloat(document.getElementById('fac-repuestos').value)||0;
+  const o=parseFloat(document.getElementById('fac-otros').value)||0;
+  document.getElementById('fac-total').value=m+r+o;
 }
 
 function loadClientesSelect(selectId=''){
   const ids=selectId?[selectId]:['rep-cliente','cita-cliente','fac-cliente'];
   ids.forEach(id=>{
-    const sel=document.getElementById(id);
-    if(!sel)return;
+    const sel=document.getElementById(id);if(!sel)return;
     const cur=sel.value;
     sel.innerHTML='<option value="">Seleccionar cliente...</option>'+clientes.map(c=>`<option value="${c.id}"${c.id===cur?' selected':''}>${c.nombre}</option>`).join('');
   });
 }
 
 function loadVehiculosSelect(){
-  const sel=document.getElementById('rep-vehiculo');
-  if(!sel)return;
+  const sel=document.getElementById('rep-vehiculo');if(!sel)return;
   sel.innerHTML='<option value="">Seleccionar vehículo...</option>'+vehiculos.map(v=>`<option value="${v.id}">${v.placa} · ${v.marca} ${v.modelo} (${v.clienteNombre})</option>`).join('');
 }
 
 function loadProveedoresSelect(){
-  const sel=document.getElementById('rp-proveedor');
-  if(!sel)return;
+  const sel=document.getElementById('rp-proveedor');if(!sel)return;
   sel.innerHTML='<option value="">Sin proveedor</option>'+proveedores.map(p=>`<option value="${p.id}">${p.nombre}</option>`).join('');
 }
-
-// Fecha por defecto en inputs
-document.addEventListener('DOMContentLoaded',()=>{
-  const hoy=new Date().toISOString().split('T')[0];
-  ['rep-fecha','cita-fecha','fac-fecha'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=hoy;});
-});
 </script>
 </body>
 </html>
