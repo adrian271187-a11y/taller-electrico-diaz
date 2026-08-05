@@ -1472,6 +1472,33 @@ async function guardarCita(){
   try{
     const btn=document.getElementById('btn-guardar-cita');
     if(btn){btn.disabled=true; btn.textContent='Guardando...';}
+
+    // Si es cliente manual, crear en colección clientes automáticamente
+    if(data.tipoCliente==='manual' && data.clienteNombre && data.clienteNombre!=='—'){
+      // Verificar si ya existe un cliente con ese nombre y teléfono
+      const existe = clientes.find(c =>
+        c.nombre.toLowerCase()===data.clienteNombre.toLowerCase() &&
+        (c.tel===data.clienteTel || !data.clienteTel)
+      );
+      if(!existe){
+        const nuevoCliente = {
+          nombre: data.clienteNombre,
+          tel: data.clienteTel||'',
+          correo: data.clienteCorreo||'',
+          cedula: '',
+          direccion: '',
+          notas: 'Agregado automáticamente desde Agenda',
+          creadoPor: currentUser?.nombre||'—',
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+        const docRef = await db.collection('clientes').add(nuevoCliente);
+        data.clienteId = docRef.id;
+        await registrarMovimiento('crear','clientes',`Cliente creado desde Agenda: ${data.clienteNombre}`,`Tel: ${data.clienteTel||'—'}`);
+      } else {
+        data.clienteId = existe.id;
+      }
+    }
+
     await db.collection('citas').add(data);
     await registrarMovimiento('crear','agenda',`Nueva cita: ${data.servicio}`,`Cliente: ${data.clienteNombre} · ${data.fecha}`);
     closeModal('modal-cita');
