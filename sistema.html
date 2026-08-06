@@ -1908,7 +1908,6 @@ async function confirmarEnvioFactura(){
 
     // 3. Enviar al servidor con el PDF adjunto
     const num = 'F-' + String(facturas.indexOf(facturaParaEnviar)+1).padStart(4,'0');
-    const num = 'F-' + String(facturas.indexOf(facturaParaEnviar)+1).padStart(4,'0');
     await fetch(CLOUD_RUN_URL, {
       method: 'POST',
       mode: 'no-cors',
