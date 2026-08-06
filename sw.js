@@ -1,5 +1,8 @@
-const CACHE = 'taller-diaz-v2';
+const CACHE = 'taller-diaz-v3';
 const ASSETS = ['/sistema.html', '/manifest.json', '/logo.jpeg', '/logo-negro.jpg'];
+
+// Archivos que siempre deben ir a la red primero
+const NETWORK_FIRST = ['/sistema.html'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
@@ -16,14 +19,32 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
-  // No interceptar Firebase ni Google Scripts
   const url = e.request.url;
+
+  // No interceptar Firebase ni Google Scripts
   if (url.includes('firestore.googleapis.com') ||
       url.includes('firebase') ||
       url.includes('script.google.com')) return;
 
-  if (!e.request.url.startsWith(self.location.origin)) return;
+  if (!url.startsWith(self.location.origin)) return;
 
+  const path = new URL(url).pathname;
+
+  // Network-first para sistema.html (siempre bajá la versión más nueva)
+  if (NETWORK_FIRST.some(p => path === p || path.endsWith(p))) {
+    e.respondWith(
+      fetch(e.request).then(res => {
+        if (res.ok) {
+          const clone = res.clone();
+          caches.open(CACHE).then(c => c.put(e.request, clone));
+        }
+        return res;
+      }).catch(() => caches.match(e.request))
+    );
+    return;
+  }
+
+  // Cache-first para el resto (logos, manifest, fotos)
   e.respondWith(
     caches.match(e.request).then(cached => {
       if (cached) return cached;
@@ -33,7 +54,7 @@ self.addEventListener('fetch', e => {
           caches.open(CACHE).then(c => c.put(e.request, clone));
         }
         return res;
-      }).catch(() => cached || new Response('Sin conexión', { status: 503 }));
+      }).catch(() => new Response('Sin conexión', { status: 503 }));
     })
   );
 });
