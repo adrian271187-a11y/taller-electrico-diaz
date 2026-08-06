@@ -1657,7 +1657,7 @@ function renderEstadisticas(){
 }
 
 // =================== ENVIAR FACTURA POR CORREO ===================
-const CLOUD_RUN_URL = 'https://enviar-factura-996058978834.us-central1.run.app';
+const CLOUD_RUN_URL = 'https://script.google.com/macros/s/AKfycbyLcGA67BGFktXBjEaxU-6dpKon2t1IfrA50v6gA0iybEIsKiJulkYz5sqTPgDyQL0FTg/exec';
 let facturaParaEnviar = null;
 
 function enviarFacturaCorreo(facturaId){
@@ -1898,7 +1898,9 @@ async function confirmarEnvioFactura(){
 
     loadEl.textContent = '⏳ Enviando correo...';
 
-    // 3. Enviar al servidor con el PDF adjunto
+    // 3. Enviar con EmailJS directo desde el browser
+    const num = 'F-' + String(facturas.indexOf(facturaParaEnviar)+1).padStart(4,'0');
+
     const num = 'F-' + String(facturas.indexOf(facturaParaEnviar)+1).padStart(4,'0');
     const response = await fetch(CLOUD_RUN_URL, {
       method: 'POST',
@@ -1906,13 +1908,6 @@ async function confirmarEnvioFactura(){
       body: JSON.stringify({
         correoCliente: correo,
         nombreCliente: facturaParaEnviar.clienteNombre || '—',
-        descripcion: facturaParaEnviar.descripcion || '',
-        manoObra: facturaParaEnviar.manoObra || 0,
-        repuestos: facturaParaEnviar.repuestos || 0,
-        otros: facturaParaEnviar.otros || 0,
-        total: facturaParaEnviar.total || 0,
-        fecha: facturaParaEnviar.fecha || '',
-        notas: facturaParaEnviar.notas || '',
         pdfBase64: pdfBase64,
         pdfNombre: `Factura-${num}-TallerDiaz.pdf`
       })
@@ -1934,7 +1929,7 @@ async function confirmarEnvioFactura(){
     }
   } catch(e) {
     loadEl.style.display = 'none';
-    errEl.textContent = 'Error generando PDF. Intente de nuevo.';
+    errEl.textContent = 'Error: ' + (e?.message || 'intente de nuevo');
     errEl.style.display = 'block';
   }
 }
@@ -1955,7 +1950,9 @@ function imprimirFactura(facturaId){
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Segoe UI',Arial,sans-serif;font-size:12px;color:#1a1a1a;background:#f5f5f5;}
-.page{max-width:780px;margin:0 auto;padding:20px;background:#fff;}
+.page{width:216mm;max-width:216mm;margin:0 auto;padding:15mm 18mm;background:#fff;box-sizing:border-box;}
+@page{size:letter portrait;margin:0;}
+@media print{*{-webkit-print-color-adjust:exact;print-color-adjust:exact;}body{background:#fff!important;margin:0!important;padding:0!important;}.page{width:216mm!important;padding:12mm 15mm!important;margin:0!important;box-shadow:none!important;}.no-print{display:none!important;}table{page-break-inside:auto;}tr{page-break-inside:avoid;page-break-after:auto;}}
 
 .header{display:flex;justify-content:space-between;align-items:stretch;border:2.5px solid #1a1a1a;border-radius:10px 10px 0 0;overflow:hidden;}
 .header-brand{background:#1a1a1a;padding:16px 24px;display:flex;align-items:center;gap:18px;min-width:310px;}
@@ -2354,7 +2351,9 @@ function imprimirOrden(ordenId){
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Segoe UI',Arial,sans-serif;font-size:12px;color:#1a1a1a;background:#f5f5f5;}
-.page{max-width:880px;margin:0 auto;padding:16px;background:#fff;}
+.page{width:216mm;max-width:216mm;margin:0 auto;padding:13mm 16mm;background:#fff;box-sizing:border-box;}
+@page{size:letter portrait;margin:0;}
+@media print{*{-webkit-print-color-adjust:exact;print-color-adjust:exact;}body{background:#fff!important;margin:0!important;padding:0!important;}.page{width:216mm!important;padding:10mm 14mm!important;margin:0!important;box-shadow:none!important;}.no-print{display:none!important;}table{page-break-inside:auto;}tr{page-break-inside:avoid;page-break-after:auto;}.trabajos,.obs{page-break-inside:avoid;}}
 
 .header{display:flex;align-items:stretch;border:2.5px solid #1a1a1a;border-radius:10px 10px 0 0;overflow:hidden;margin-bottom:0;}
 .header-brand{background:#1a1a1a;padding:14px 20px;display:flex;align-items:center;gap:18px;min-width:300px;}
