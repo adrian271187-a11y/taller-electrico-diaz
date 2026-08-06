@@ -1,7 +1,6 @@
-const CACHE = 'taller-diaz-v3';
+const CACHE = 'taller-diaz-v4';
 const ASSETS = ['/sistema.html', '/manifest.json', '/logo.jpeg', '/logo-negro.jpg'];
 
-// Archivos que siempre deben ir a la red primero
 const NETWORK_FIRST = ['/sistema.html'];
 
 self.addEventListener('install', e => {
@@ -21,7 +20,6 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   const url = e.request.url;
 
-  // No interceptar Firebase ni Google Scripts
   if (url.includes('firestore.googleapis.com') ||
       url.includes('firebase') ||
       url.includes('script.google.com')) return;
@@ -30,7 +28,6 @@ self.addEventListener('fetch', e => {
 
   const path = new URL(url).pathname;
 
-  // Network-first para sistema.html (siempre bajá la versión más nueva)
   if (NETWORK_FIRST.some(p => path === p || path.endsWith(p))) {
     e.respondWith(
       fetch(e.request).then(res => {
@@ -44,7 +41,6 @@ self.addEventListener('fetch', e => {
     return;
   }
 
-  // Cache-first para el resto (logos, manifest, fotos)
   e.respondWith(
     caches.match(e.request).then(cached => {
       if (cached) return cached;

@@ -1171,6 +1171,25 @@ function cancelAuth(){
 // =================== HISTORIAL ===================
 let movimientos=[];
 
+// Limpia movimientos con más de 7 días — solo corre los domingos, una vez por día
+async function limpiarHistorialSemanal(){
+  const hoy = new Date().toISOString().split('T')[0];
+  const esDOM = new Date().getDay() === 0; // 0 = domingo
+  if(!esDOM) return;
+  const ultimaLimpieza = localStorage.getItem('tallerDiazLimpiezaHistorial');
+  if(ultimaLimpieza === hoy) return; // ya se limpió hoy
+  try{
+    const limite = new Date();
+    limite.setDate(limite.getDate() - 7);
+    const snap = await db.collection('movimientos').where('timestamp','<', limite).get();
+    const batch = db.batch();
+    snap.forEach(doc => batch.delete(doc.ref));
+    if(!snap.empty) await batch.commit();
+    localStorage.setItem('tallerDiazLimpiezaHistorial', hoy);
+    console.log(`Historial limpiado: ${snap.size} registros eliminados`);
+  }catch(e){ console.warn('Error limpiando historial', e); }
+}
+
 async function registrarMovimiento(tipo, modulo, descripcion, detalle=''){
   const data={
     tipo, modulo, descripcion, detalle,
@@ -1256,6 +1275,9 @@ async function initApp(){
 
   // Cargar contraseñas de mecánicos desde Firestore
   await cargarPasswordsFirestore();
+
+  // Limpiar historial si es domingo
+  limpiarHistorialSemanal();
 
   db.collection('reparaciones').orderBy('createdAt','desc').onSnapshot(s=>{reps=[];s.forEach(d=>reps.push({id:d.id,...d.data()}));loadDash();if(document.getElementById('screen-reparaciones').classList.contains('active'))renderReps();});
   db.collection('clientes').orderBy('nombre').onSnapshot(s=>{clientes=[];s.forEach(d=>clientes.push({id:d.id,...d.data()}));if(document.getElementById('screen-clientes').classList.contains('active'))renderClientes();});
