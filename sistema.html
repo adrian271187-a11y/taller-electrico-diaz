@@ -2533,9 +2533,56 @@ body{font-family:'Segoe UI',Arial,sans-serif;font-size:12px;color:#1a1a1a;backgr
 <script>
 if('serviceWorker' in navigator){
   window.addEventListener('load',()=>{
-    navigator.serviceWorker.register('/sw.js')
-      .then(r=>console.log('SW registrado:',r.scope))
-      .catch(e=>console.log('SW error:',e));
+    navigator.serviceWorker.register('/sw.js').then(reg=>{
+      console.log('SW registrado:',reg.scope);
+
+      // Detectar nueva versión disponible
+      reg.addEventListener('updatefound',()=>{
+        const newSW = reg.installing;
+        newSW.addEventListener('statechange',()=>{
+          if(newSW.state==='installed' && navigator.serviceWorker.controller){
+            // Hay una nueva versión — mostrar aviso
+            const toast = document.createElement('div');
+            toast.id = 'sw-update-toast';
+            toast.style.cssText = `
+              position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+              background:#1a1a24;border:1px solid rgba(201,168,76,0.4);
+              border-radius:12px;padding:14px 20px;
+              display:flex;align-items:center;gap:14px;
+              box-shadow:0 8px 32px rgba(0,0,0,0.6);
+              z-index:99999;font-family:'Inter',sans-serif;
+              animation:slideUp 0.3s ease;
+            `;
+            toast.innerHTML = `
+              <span style="font-size:1.2rem;">🔄</span>
+              <span style="color:#f0f0ec;font-size:0.85rem;">Nueva versión disponible</span>
+              <button onclick="window.location.reload()" style="
+                padding:7px 16px;background:linear-gradient(135deg,#C9A84C,#e8c96a);
+                border:none;border-radius:8px;color:#000;font-weight:700;
+                font-size:0.8rem;cursor:pointer;white-space:nowrap;
+              ">Actualizar</button>
+              <button onclick="this.closest('#sw-update-toast').remove()" style="
+                background:none;border:none;color:#6b6b72;cursor:pointer;font-size:1rem;padding:4px;
+              ">✕</button>
+            `;
+            // Agregar animación
+            if(!document.getElementById('sw-toast-style')){
+              const style = document.createElement('style');
+              style.id = 'sw-toast-style';
+              style.textContent = '@keyframes slideUp{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}';
+              document.head.appendChild(style);
+            }
+            document.body.appendChild(toast);
+          }
+        });
+      });
+    }).catch(e=>console.log('SW error:',e));
+  });
+
+  // Cuando el nuevo SW toma control — recargar automáticamente
+  let refreshing = false;
+  navigator.serviceWorker.addEventListener('controllerchange',()=>{
+    if(!refreshing){ refreshing=true; window.location.reload(); }
   });
 }
 let deferredPrompt=null;
