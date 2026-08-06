@@ -3,6 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="theme-color" content="#C9A84C">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Taller Díaz">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/logo.jpeg">
 <title>Taller Eléctrico Automotriz Díaz — Sistema</title>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
@@ -1802,7 +1809,49 @@ table.cobros td:last-child{text-align:right;font-weight:700;color:#1a1a1a;}
   <span class="footer-txt">Taller Eléctrico Automotriz Díaz · (506) 6457-8000</span>
   <span class="footer-txt">${num} · ${f.fecha||''}</span>
 </div>
-</div></body></html>`;
+</div><script>
+// ── PWA: Registrar Service Worker ──
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => console.log('SW registrado:', reg.scope))
+      .catch(err => console.log('SW error:', err));
+  });
+}
+
+// ── PWA: Mostrar botón "Instalar app" ──
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+
+  // Crear botón de instalación en el sidebar
+  const btnInstall = document.createElement('button');
+  btnInstall.id = 'btn-install-pwa';
+  btnInstall.className = 'btn-logout';
+  btnInstall.style.cssText = 'background:rgba(201,168,76,0.1);border-color:rgba(201,168,76,0.3);color:#C9A84C;margin-top:6px;';
+  btnInstall.innerHTML = '⬇️ <span>Instalar app</span>';
+  btnInstall.onclick = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      btnInstall.remove();
+    }
+    deferredPrompt = null;
+  };
+
+  const footer = document.querySelector('.sidebar-footer');
+  if (footer) footer.prepend(btnInstall);
+});
+
+window.addEventListener('appinstalled', () => {
+  const btn = document.getElementById('btn-install-pwa');
+  if (btn) btn.remove();
+  deferredPrompt = null;
+});
+</script>
+</body></html>`;
 }
 
 // ── Convierte HTML a PDF base64 usando una ventana oculta + html2canvas + jsPDF ──
