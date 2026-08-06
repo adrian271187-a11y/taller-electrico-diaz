@@ -1,4 +1,4 @@
-const CACHE = 'taller-diaz-v1';
+const CACHE = 'taller-diaz-v2';
 const ASSETS = ['/sistema.html', '/manifest.json', '/logo.jpeg', '/logo-negro.jpg'];
 
 self.addEventListener('install', e => {
