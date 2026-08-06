@@ -1,5 +1,8 @@
 :{$PORT:8080} {
-    root * /app
-    file_server
-    try_files {path} /taller-landing.html
+	root * /app
+	file_server
+
+	header Content-Type "text/html; charset=utf-8"
+
+	try_files {path} /taller-landing.html
 }
