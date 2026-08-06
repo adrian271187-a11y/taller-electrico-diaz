@@ -1727,6 +1727,7 @@ table.cobros td:last-child{text-align:right;color:#1a1a1a;}
 .totals{margin-top:16px;display:flex;flex-direction:column;align-items:flex-end;gap:5px;}
 .tot-row{display:flex;gap:80px;font-size:13px;color:#666;}
 .tot-final{display:flex;gap:80px;font-size:16px;font-weight:700;color:#1a1a1a;padding-top:10px;border-top:2px solid #1a1a1a;margin-top:8px;}
+.desc-box{background:#f9fafb;border:1px solid #e5e7eb;border-radius:4px;padding:12px;font-size:12px;color:#374151;line-height:1.6;margin-bottom:16px;white-space:pre-wrap;}
 .notas-box{background:#fffbeb;border:1px solid #fde68a;border-radius:4px;padding:12px;font-size:12px;color:#92400e;line-height:1.6;margin-top:16px;}
 .firmas{margin-top:32px;display:grid;grid-template-columns:1fr 1fr;gap:40px;}
 .firma{text-align:center;}
@@ -1784,6 +1785,7 @@ table.cobros td:last-child{text-align:right;color:#1a1a1a;}
   </div>
 </div>
 <div class="body">
+  ${f.descripcion?'<div class="sec-lbl">Descripci&oacute;n del trabajo</div><div class="desc-box">'+f.descripcion+'</div>':''}
   <div class="sec-lbl">Mano de obra</div>
   <table class="cobros">
     <thead><tr><th>Descripci&oacute;n</th><th>Monto</th></tr></thead>
@@ -1984,6 +1986,7 @@ table.cobros td:last-child{text-align:right;color:#1a1a1a;}
 .totals{margin-top:16px;display:flex;flex-direction:column;align-items:flex-end;gap:5px;}
 .tot-row{display:flex;gap:80px;font-size:13px;color:#666;}
 .tot-final{display:flex;gap:80px;font-size:16px;font-weight:700;color:#1a1a1a;padding-top:10px;border-top:2px solid #1a1a1a;margin-top:8px;}
+.desc-box{background:#f9fafb;border:1px solid #e5e7eb;border-radius:4px;padding:12px;font-size:12px;color:#374151;line-height:1.6;margin-bottom:16px;white-space:pre-wrap;}
 .notas-box{background:#fffbeb;border:1px solid #fde68a;border-radius:4px;padding:12px;font-size:12px;color:#92400e;line-height:1.6;margin-top:16px;}
 .firmas{margin-top:32px;display:grid;grid-template-columns:1fr 1fr;gap:40px;}
 .firma{text-align:center;}
@@ -2037,6 +2040,7 @@ table.cobros td:last-child{text-align:right;color:#1a1a1a;}
   </div>
 </div>
 <div class="body">
+  ${f.descripcion?'<div class="sec-lbl">Descripci&oacute;n del trabajo</div><div class="desc-box">'+f.descripcion+'</div>':''}
   <div class="sec-lbl">Mano de obra</div>
   <table class="cobros">
     <thead><tr><th>Descripci&oacute;n</th><th>Monto</th></tr></thead>
