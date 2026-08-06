@@ -1898,9 +1898,7 @@ async function confirmarEnvioFactura(){
 
     loadEl.textContent = '⏳ Enviando correo...';
 
-    // 3. Enviar con EmailJS directo desde el browser
-    const num = 'F-' + String(facturas.indexOf(facturaParaEnviar)+1).padStart(4,'0');
-
+    // 3. Enviar al Apps Script de Google
     const num = 'F-' + String(facturas.indexOf(facturaParaEnviar)+1).padStart(4,'0');
     const response = await fetch(CLOUD_RUN_URL, {
       method: 'POST',
