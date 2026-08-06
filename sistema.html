@@ -1809,49 +1809,7 @@ table.cobros td:last-child{text-align:right;font-weight:700;color:#1a1a1a;}
   <span class="footer-txt">Taller Eléctrico Automotriz Díaz · (506) 6457-8000</span>
   <span class="footer-txt">${num} · ${f.fecha||''}</span>
 </div>
-</div><script>
-// ── PWA: Registrar Service Worker ──
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then(reg => console.log('SW registrado:', reg.scope))
-      .catch(err => console.log('SW error:', err));
-  });
-}
-
-// ── PWA: Mostrar botón "Instalar app" ──
-let deferredPrompt = null;
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-
-  // Crear botón de instalación en el sidebar
-  const btnInstall = document.createElement('button');
-  btnInstall.id = 'btn-install-pwa';
-  btnInstall.className = 'btn-logout';
-  btnInstall.style.cssText = 'background:rgba(201,168,76,0.1);border-color:rgba(201,168,76,0.3);color:#C9A84C;margin-top:6px;';
-  btnInstall.innerHTML = '⬇️ <span>Instalar app</span>';
-  btnInstall.onclick = async () => {
-    if (!deferredPrompt) return;
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === 'accepted') {
-      btnInstall.remove();
-    }
-    deferredPrompt = null;
-  };
-
-  const footer = document.querySelector('.sidebar-footer');
-  if (footer) footer.prepend(btnInstall);
-});
-
-window.addEventListener('appinstalled', () => {
-  const btn = document.getElementById('btn-install-pwa');
-  if (btn) btn.remove();
-  deferredPrompt = null;
-});
-</script>
-</body></html>`;
+</div>`;
 }
 
 // ── Convierte HTML a PDF base64 usando una ventana oculta + html2canvas + jsPDF ──
@@ -2573,208 +2531,42 @@ body{font-family:'Segoe UI',Arial,sans-serif;font-size:12px;color:#1a1a1a;backgr
   <button onclick="window.close()" style="padding:12px 24px;background:#444;color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer;">Cerrar</button>
 </div>
 </div>
-</body></html>`);
-  ventana.document.close();
-  ventana.focus();
-}
-
-
-// =================== TOGGLE TIPO CLIENTE CITA ===================
-function toggleTipoCliente(){
-  const tipo = document.querySelector('input[name="cita-tipo-cli"]:checked')?.value;
-  const esManual = tipo === 'manual';
-  document.getElementById('cita-cli-select-wrap').style.display = esManual ? 'none' : 'block';
-  document.getElementById('cita-cli-nombre-wrap').style.display = esManual ? 'block' : 'none';
-  document.getElementById('cita-cli-tel-wrap').style.display = esManual ? 'block' : 'none';
-  document.getElementById('cita-cli-correo-wrap').style.display = esManual ? 'block' : 'none';
-}
-
-// =================== HELPERS SELECTS ===================
-function calcTotal(){
-  const m=parseFloat(document.getElementById('fac-mano').value)||0;
-  const r=parseFloat(document.getElementById('fac-repuestos').value)||0;
-  const o=parseFloat(document.getElementById('fac-otros').value)||0;
-  document.getElementById('fac-total').value=m+r+o;
-}
-
-// =================== EDITAR CLIENTES ===================
-function abrirEditCliente(id){
-  const c=clientes.find(x=>x.id===id); if(!c)return;
-  document.getElementById('ec-nombre').value=c.nombre||'';
-  document.getElementById('ec-tel').value=c.tel||'';
-  document.getElementById('ec-correo').value=c.correo||'';
-  document.getElementById('ec-cedula').value=c.cedula||'';
-  document.getElementById('ec-dir').value=c.direccion||'';
-  document.getElementById('ec-notas').value=c.notas||'';
-  openModal('modal-edit-cliente');
-}
-async function guardarEditCliente(){
-  const data={nombre:document.getElementById('ec-nombre').value.trim(),tel:document.getElementById('ec-tel').value.trim(),correo:document.getElementById('ec-correo').value.trim(),cedula:document.getElementById('ec-cedula').value.trim(),direccion:document.getElementById('ec-dir').value.trim(),notas:document.getElementById('ec-notas').value.trim(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
-  if(!data.nombre){alert('El nombre es requerido.');return;}
-  await db.collection('clientes').doc(editId).update(data);
-  registrarMovimiento('editar','clientes',`Cliente editado: ${data.nombre}`,'');
-  closeModal('modal-edit-cliente');
-}
-
-// =================== EDITAR VEHÍCULO ===================
-function abrirEditVehiculo(id){
-  const v=vehiculos.find(x=>x.id===id); if(!v)return;
-  document.getElementById('ev-placa').value=v.placa||'';
-  document.getElementById('ev-marca').value=v.marca||'';
-  document.getElementById('ev-modelo').value=v.modelo||'';
-  document.getElementById('ev-anio').value=v.anio||'';
-  document.getElementById('ev-color').value=v.color||'';
-  document.getElementById('ev-motor').value=v.motor||'';
-  document.getElementById('ev-combustible').value=v.combustible||'gasolina';
-  document.getElementById('ev-km').value=v.km||0;
-  document.getElementById('ev-obs').value=v.observaciones||'';
-  openModal('modal-edit-vehiculo');
-}
-async function guardarEditVehiculo(){
-  const data={placa:document.getElementById('ev-placa').value.trim().toUpperCase(),marca:document.getElementById('ev-marca').value.trim(),modelo:document.getElementById('ev-modelo').value.trim(),anio:document.getElementById('ev-anio').value,color:document.getElementById('ev-color').value.trim(),motor:document.getElementById('ev-motor').value.trim(),combustible:document.getElementById('ev-combustible').value,km:parseInt(document.getElementById('ev-km').value)||0,observaciones:document.getElementById('ev-obs').value.trim(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
-  await db.collection('vehiculos').doc(editId).update(data);
-  registrarMovimiento('editar','vehiculos',`Vehículo editado: ${data.placa}`,'');
-  closeModal('modal-edit-vehiculo');
-}
-
-// =================== EDITAR REPUESTO ===================
-function abrirEditRepuesto(id){
-  const r=repuestos.find(x=>x.id===id); if(!r)return;
-  document.getElementById('er-codigo').value=r.codigo||'';
-  document.getElementById('er-nombre').value=r.nombre||'';
-  document.getElementById('er-stock').value=r.stock||0;
-  document.getElementById('er-minimo').value=r.minimo||1;
-  document.getElementById('er-costo').value=r.costo||0;
-  document.getElementById('er-venta').value=r.venta||0;
-  document.getElementById('er-ubic').value=r.ubicacion||'';
-  document.getElementById('er-desc').value=r.descripcion||'';
-  openModal('modal-edit-repuesto');
-}
-async function guardarEditRepuesto(){
-  const data={codigo:document.getElementById('er-codigo').value.trim(),nombre:document.getElementById('er-nombre').value.trim(),stock:parseInt(document.getElementById('er-stock').value)||0,minimo:parseInt(document.getElementById('er-minimo').value)||1,costo:parseFloat(document.getElementById('er-costo').value)||0,venta:parseFloat(document.getElementById('er-venta').value)||0,ubicacion:document.getElementById('er-ubic').value.trim(),descripcion:document.getElementById('er-desc').value.trim(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
-  await db.collection('repuestos').doc(editId).update(data);
-  registrarMovimiento('editar','repuestos',`Repuesto editado: ${data.nombre}`,'');
-  closeModal('modal-edit-repuesto');
-}
-
-// =================== EDITAR CITA ===================
-function abrirEditCita(id){
-  const c=citas.find(x=>x.id===id); if(!c)return;
-  document.getElementById('eci-servicio').value=c.servicio||'';
-  document.getElementById('eci-fecha').value=c.fecha||'';
-  document.getElementById('eci-hora').value=c.hora||'';
-  document.getElementById('eci-notas').value=c.notas||'';
-  document.getElementById('eci-estado').value=c.estado||'pendiente';
-  openModal('modal-edit-cita');
-}
-async function guardarEditCita(){
-  const data={servicio:document.getElementById('eci-servicio').value.trim(),fecha:document.getElementById('eci-fecha').value,hora:document.getElementById('eci-hora').value,notas:document.getElementById('eci-notas').value.trim(),estado:document.getElementById('eci-estado').value,updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
-  await db.collection('citas').doc(editId).update(data);
-  registrarMovimiento('editar','agenda',`Cita editada: ${data.servicio}`,'');
-  closeModal('modal-edit-cita');
-}
-
-// =================== EDITAR FACTURA ===================
-function abrirEditFactura(id){
-  const f=facturas.find(x=>x.id===id); if(!f)return;
-  document.getElementById('ef-desc').value=f.descripcion||'';
-  document.getElementById('ef-mano').value=f.manoObra||0;
-  document.getElementById('ef-repuestos').value=f.repuestos||0;
-  document.getElementById('ef-otros').value=f.otros||0;
-  document.getElementById('ef-total').value=f.total||0;
-  document.getElementById('ef-estado').value=f.estado||'pendiente';
-  document.getElementById('ef-notas').value=f.notas||'';
-  openModal('modal-edit-factura');
-}
-async function guardarEditFactura(){
-  const data={descripcion:document.getElementById('ef-desc').value.trim(),manoObra:parseFloat(document.getElementById('ef-mano').value)||0,repuestos:parseFloat(document.getElementById('ef-repuestos').value)||0,otros:parseFloat(document.getElementById('ef-otros').value)||0,total:parseFloat(document.getElementById('ef-total').value)||0,estado:document.getElementById('ef-estado').value,notas:document.getElementById('ef-notas').value.trim(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
-  await db.collection('facturas').doc(editId).update(data);
-  registrarMovimiento('editar','facturas',`Factura editada`,'');
-  closeModal('modal-edit-factura');
-}
-function calcTotalEdit(){
-  const m=parseFloat(document.getElementById('ef-mano').value)||0;
-  const r=parseFloat(document.getElementById('ef-repuestos').value)||0;
-  const o=parseFloat(document.getElementById('ef-otros').value)||0;
-  document.getElementById('ef-total').value=m+r+o;
-}
-
-// =================== EDITAR PROVEEDOR ===================
-function abrirEditProveedor(id){
-  const p=proveedores.find(x=>x.id===id); if(!p)return;
-  document.getElementById('ep-nombre').value=p.nombre||'';
-  document.getElementById('ep-contacto').value=p.contacto||'';
-  document.getElementById('ep-tel').value=p.tel||'';
-  document.getElementById('ep-correo').value=p.correo||'';
-  document.getElementById('ep-dir').value=p.direccion||'';
-  document.getElementById('ep-notas').value=p.notas||'';
-  openModal('modal-edit-proveedor');
-}
-async function guardarEditProveedor(){
-  const data={nombre:document.getElementById('ep-nombre').value.trim(),contacto:document.getElementById('ep-contacto').value.trim(),tel:document.getElementById('ep-tel').value.trim(),correo:document.getElementById('ep-correo').value.trim(),direccion:document.getElementById('ep-dir').value.trim(),notas:document.getElementById('ep-notas').value.trim(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
-  await db.collection('proveedores').doc(editId).update(data);
-  registrarMovimiento('editar','proveedores',`Proveedor editado: ${data.nombre}`,'');
-  closeModal('modal-edit-proveedor');
-}
-
-// =================== EDITAR ORDEN ===================
-function abrirEditOrden(id){
-  const o=ordenes.find(x=>x.id===id); if(!o)return;
-  document.getElementById('eo-servicio').value=o.servicio||'';
-  document.getElementById('eo-trabajos').value=o.trabajos||'';
-  document.getElementById('eo-estado').value=o.estado||'abierta';
-  document.getElementById('eo-mecanico').value=o.mecanico||'Meca1';
-  document.getElementById('eo-obs-salida').value=o.obsSalida||'';
-  openModal('modal-edit-orden');
-}
-async function guardarEditOrden(){
-  const data={servicio:document.getElementById('eo-servicio').value.trim(),trabajos:document.getElementById('eo-trabajos').value.trim(),estado:document.getElementById('eo-estado').value,mecanico:document.getElementById('eo-mecanico').value,obsSalida:document.getElementById('eo-obs-salida').value.trim(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
-  await db.collection('ordenes').doc(editId).update(data);
-  registrarMovimiento('editar','ordenes',`Orden editada: ${data.servicio}`,'');
-  closeModal('modal-edit-orden');
-}
-
-// =================== RESTAURAR SESIÓN ===================
-(function restaurarSesion(){
-  const saved = sessionStorage.getItem('tallerDiazUser');
-  if(!saved) return;
-  try{
-    const usr = JSON.parse(saved);
-    if(!usr || !usr.nombre || !USUARIOS[usr.nombre]) return;
-    // Verificar que el usuario sigue existiendo
-    currentUser = usr;
-    document.getElementById('login-wrap').style.display='none';
-    document.getElementById('app').style.display='flex';
-    document.getElementById('sidebar-user-name').textContent = usr.nombre;
-    document.getElementById('sidebar-user-role').textContent = usr.display;
-    document.getElementById('sidebar-user-badge').innerHTML = usr.rol==='admin'
-      ? '<span class="sidebar-user-badge badge-admin">Admin</span>'
-      : '<span class="sidebar-user-badge badge-meca">Mecánico</span>';
-    document.querySelectorAll('.admin-only').forEach(el=>el.style.display=usr.rol==='admin'?'flex':'none');
-    initApp();
-  }catch(e){
-    sessionStorage.removeItem('tallerDiazUser');
-  }
-})();
-
-function loadClientesSelect(selectId=''){
-  const ids=selectId?[selectId]:['rep-cliente','cita-cliente','fac-cliente'];
-  ids.forEach(id=>{
-    const sel=document.getElementById(id);if(!sel)return;
-    const cur=sel.value;
-    sel.innerHTML='<option value="">Seleccionar cliente...</option>'+clientes.map(c=>`<option value="${c.id}"${c.id===cur?' selected':''}>${c.nombre}</option>`).join('');
+</script>
+<script>
+// ── PWA: Registrar Service Worker ──
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => console.log('SW registrado:', reg.scope))
+      .catch(err => console.log('SW error:', err));
   });
 }
 
-function loadVehiculosSelect(){
-  const sel=document.getElementById('rep-vehiculo');if(!sel)return;
-  sel.innerHTML='<option value="">Seleccionar vehículo...</option>'+vehiculos.map(v=>`<option value="${v.id}">${v.placa} · ${v.marca} ${v.modelo} (${v.clienteNombre})</option>`).join('');
-}
+// ── PWA: Mostrar botón "Instalar app" ──
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  const btnInstall = document.createElement('button');
+  btnInstall.id = 'btn-install-pwa';
+  btnInstall.className = 'btn-logout';
+  btnInstall.style.cssText = 'background:rgba(201,168,76,0.1);border-color:rgba(201,168,76,0.3);color:#C9A84C;margin-top:6px;';
+  btnInstall.innerHTML = '⬇️ <span>Instalar app</span>';
+  btnInstall.onclick = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') btnInstall.remove();
+    deferredPrompt = null;
+  };
+  const footer = document.querySelector('.sidebar-footer');
+  if (footer) footer.prepend(btnInstall);
+});
 
-function loadProveedoresSelect(){
-  const sel=document.getElementById('rp-proveedor');if(!sel)return;
-  sel.innerHTML='<option value="">Sin proveedor</option>'+proveedores.map(p=>`<option value="${p.id}">${p.nombre}</option>`).join('');
-}
+window.addEventListener('appinstalled', () => {
+  const btn = document.getElementById('btn-install-pwa');
+  if (btn) btn.remove();
+  deferredPrompt = null;
+});
 </script>
-</body>
-</html>
+</body></html>
