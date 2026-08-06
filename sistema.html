@@ -1733,11 +1733,15 @@ table.cobros td:last-child{text-align:right;color:#1a1a1a;}
 .firma-line{border-top:1.5px solid #1a1a1a;margin-top:48px;padding-top:8px;}
 .firma-name{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#1a1a1a;}
 .firma-sub{font-size:8px;color:#999;margin-top:2px;}
-.footer{margin-top:28px;border-top:1px solid #e0e0e0;padding-top:14px;display:flex;justify-content:space-between;}
+.footer{border-top:1px solid #e0e0e0;padding-top:14px;display:flex;justify-content:space-between;}
 .footer-txt{font-size:10px;color:#aaa;line-height:1.8;}
 .no-print{text-align:center;padding:20px;background:#eee;margin-top:16px;border-radius:8px;}
 @page{size:letter portrait;margin:0;}
-@media print{*{-webkit-print-color-adjust:exact;print-color-adjust:exact;}body{background:#fff!important;margin:0!important;}.page{width:216mm!important;padding:14mm 16mm!important;}.no-print{display:none!important;}table{page-break-inside:auto;}tr{page-break-inside:avoid;}.firmas{page-break-inside:avoid;}.footer{page-break-inside:avoid;}}
+@media print{*{-webkit-print-color-adjust:exact;print-color-adjust:exact;}body{background:#fff!important;margin:0!important;}
+.page{width:216mm!important;min-height:279mm!important;padding:14mm 16mm!important;display:flex!important;flex-direction:column!important;}
+.body{flex:1!important;}
+.footer{margin-top:auto!important;padding-top:14px!important;}
+.no-print{display:none!important;}table{page-break-inside:auto;}tr{page-break-inside:avoid;}.firmas{page-break-inside:avoid;}}
 </style></head><body>
 <div class="page">
 <div class="head">
