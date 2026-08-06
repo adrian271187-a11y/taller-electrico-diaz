@@ -1686,6 +1686,7 @@ function enviarFacturaCorreo(facturaId){
 
 // ── Genera el HTML de la factura (mismo que imprimirFactura pero sin abrir ventana) ──
 function generarHTMLFactura(f){
+  const f2 = f;
   const num = 'F-' + String(facturas.indexOf(f)+1).padStart(4,'0');
   const cliente = clientes.find(c => c.id === f.clienteId);
   const estadoColor={pagada:'#16a34a',pendiente:'#ca8a04',parcial:'#2563eb'};
@@ -1694,8 +1695,6 @@ function generarHTMLFactura(f){
   const subtotal = Number(f.manoObra||0)+Number(f.repuestos||0)+Number(f.otros||0);
   const iva = Math.round(subtotal*0.13);
   const veh = vehiculos?.find(v => v.clienteId === f.clienteId);
-  const vehiculo = veh ? (veh.marca||'') + ' ' + (veh.modelo||'') : '—';
-  const placa = veh ? 'Placa: ' + (veh.placa||'—') : '';
   return `<!DOCTYPE html>
 <html lang="es"><head><meta charset="UTF-8">
 <style>
@@ -1745,9 +1744,9 @@ table.cobros td:last-child{text-align:right;font-weight:700;color:#1a1a1a;}
 <div class="topbar"></div>
 <div class="head">
   <div>
-    <div class="brand-name">Taller D\u00edaz</div>
-    <div class="brand-sub">El\u00e9ctrico Automotriz &middot; Costa Rica</div>
-    <div class="brand-contact">&#128205; Cartago, La Uni\u00f3n, Concepci\u00f3n<br>&#128222; (506) 6457-8000 &middot; diaz.joseangel@icloud.com</div>
+    <div class="brand-name">Taller D&iacute;az</div>
+    <div class="brand-sub">El&eacute;ctrico Automotriz &middot; Costa Rica</div>
+    <div class="brand-contact">&#128205; Cartago, La Uni&oacute;n, Concepci&oacute;n<br>&#128222; (506) 6457-8000 &middot; diaz.joseangel@icloud.com</div>
   </div>
   <div class="right">
     <div class="fac-lbl">Factura</div>
@@ -1764,9 +1763,9 @@ table.cobros td:last-child{text-align:right;font-weight:700;color:#1a1a1a;}
     <div class="cl-det">${cliente?.tel||''}</div>
   </div>
   <div class="client-col">
-    <div class="cl-lbl">Veh\u00edculo</div>
-    <div class="cl-val">${vehiculo}</div>
-    <div class="cl-det">${placa}</div>
+    <div class="cl-lbl">Veh&iacute;culo</div>
+    <div class="cl-val">${veh?(veh.marca||'')+' '+(veh.modelo||''):'&mdash;'}</div>
+    <div class="cl-det">${veh?'Placa: '+(veh.placa||'&mdash;'):''}</div>
   </div>
   <div class="client-col">
     <div class="cl-lbl">Creado por</div>
@@ -1787,19 +1786,19 @@ table.cobros td:last-child{text-align:right;font-weight:700;color:#1a1a1a;}
       <tr class="total-row"><td>TOTAL A PAGAR</td><td>&#8353;${Number(f.total||0).toLocaleString('es-CR')}</td></tr>
     </tbody>
   </table>
-  ${f.notas ? '<div class="notas-box">&#128204; ' + f.notas + '</div>' : ''}
+  ${f.notas?'<div class="notas-box">&#128204; '+f.notas+'</div>':''}
 </div>
 <div class="firmas">
   <div class="firmas-grid">
-    <div class="firma"><div class="firma-line"><div class="firma-name">T\u00e9cnico Responsable</div><div class="firma-sub">Taller El\u00e9ctrico D\u00edaz</div></div></div>
+    <div class="firma"><div class="firma-line"><div class="firma-name">T&eacute;cnico Responsable</div><div class="firma-sub">Taller El&eacute;ctrico D&iacute;az</div></div></div>
     <div class="firma"><div class="firma-line"><div class="firma-name">Firma del Cliente</div><div class="firma-sub">${f.clienteNombre||'&mdash;'}</div></div></div>
   </div>
 </div>
 <div class="footer">
-  <div class="footer-txt">Garant\u00eda: 3 meses en mano de obra<br>Formas de pago: efectivo, SINPE, transferencia</div>
-  <div class="footer-txt" style="text-align:right">\u00a1Gracias por confiar en Taller D\u00edaz!<br>${num} &middot; ${f.fecha||''}</div>
+  <div class="footer-txt">Garant&iacute;a: 3 meses en mano de obra<br>Formas de pago: efectivo, SINPE, transferencia</div>
+  <div class="footer-txt" style="text-align:right">&#161;Gracias por confiar en Taller D&iacute;az!<br>${num} &middot; ${f.fecha||''}</div>
 </div>
-</div></body></html>\`;
+</div></body></html>`;
 }
 
 // ── Convierte HTML a PDF base64 usando una ventana oculta + html2canvas + jsPDF ──
@@ -1930,7 +1929,9 @@ function imprimirFactura(facturaId){
   const estadoColor={pagada:'#16a34a',pendiente:'#ca8a04',parcial:'#2563eb'};
   const estadoLabel={pagada:'PAGADA',pendiente:'PENDIENTE',parcial:'PAGO PARCIAL'};
   const ec = estadoColor[f.estado||'pendiente']||'#666';
-
+  const subtotal = Number(f.manoObra||0)+Number(f.repuestos||0)+Number(f.otros||0);
+  const iva = Math.round(subtotal*0.13);
+  const veh = vehiculos?.find(v => v.clienteId === f.clienteId);
   const ventana = window.open('', '_blank', 'width=820,height=1100');
   ventana.document.write(`<!DOCTYPE html>
 <html lang="es"><head><meta charset="UTF-8">
@@ -1981,9 +1982,9 @@ table.cobros td:last-child{text-align:right;font-weight:700;color:#1a1a1a;}
 <div class="topbar"></div>
 <div class="head">
   <div>
-    <div class="brand-name">Taller D\u00edaz</div>
-    <div class="brand-sub">El\u00e9ctrico Automotriz &middot; Costa Rica</div>
-    <div class="brand-contact">&#128205; Cartago, La Uni\u00f3n, Concepci\u00f3n<br>&#128222; (506) 6457-8000 &middot; diaz.joseangel@icloud.com</div>
+    <div class="brand-name">Taller D&iacute;az</div>
+    <div class="brand-sub">El&eacute;ctrico Automotriz &middot; Costa Rica</div>
+    <div class="brand-contact">&#128205; Cartago, La Uni&oacute;n, Concepci&oacute;n<br>&#128222; (506) 6457-8000 &middot; diaz.joseangel@icloud.com</div>
   </div>
   <div class="right">
     <div class="fac-lbl">Factura</div>
@@ -2000,9 +2001,9 @@ table.cobros td:last-child{text-align:right;font-weight:700;color:#1a1a1a;}
     <div class="cl-det">${cliente?.tel||''}</div>
   </div>
   <div class="client-col">
-    <div class="cl-lbl">Veh\u00edculo</div>
-    <div class="cl-val">${vehiculo}</div>
-    <div class="cl-det">${placa}</div>
+    <div class="cl-lbl">Veh&iacute;culo</div>
+    <div class="cl-val">${veh?(veh.marca||'')+' '+(veh.modelo||''):'&mdash;'}</div>
+    <div class="cl-det">${veh?'Placa: '+(veh.placa||'&mdash;'):''}</div>
   </div>
   <div class="client-col">
     <div class="cl-lbl">Creado por</div>
@@ -2023,21 +2024,22 @@ table.cobros td:last-child{text-align:right;font-weight:700;color:#1a1a1a;}
       <tr class="total-row"><td>TOTAL A PAGAR</td><td>&#8353;${Number(f.total||0).toLocaleString('es-CR')}</td></tr>
     </tbody>
   </table>
-  ${f.notas ? '<div class="notas-box">&#128204; ' + f.notas + '</div>' : ''}
+  ${f.notas?'<div class="notas-box">&#128204; '+f.notas+'</div>':''}
 </div>
 <div class="firmas">
   <div class="firmas-grid">
-    <div class="firma"><div class="firma-line"><div class="firma-name">T\u00e9cnico Responsable</div><div class="firma-sub">Taller El\u00e9ctrico D\u00edaz</div></div></div>
+    <div class="firma"><div class="firma-line"><div class="firma-name">T&eacute;cnico Responsable</div><div class="firma-sub">Taller El&eacute;ctrico D&iacute;az</div></div></div>
     <div class="firma"><div class="firma-line"><div class="firma-name">Firma del Cliente</div><div class="firma-sub">${f.clienteNombre||'&mdash;'}</div></div></div>
   </div>
 </div>
 <div class="footer">
-  <div class="footer-txt">Garant\u00eda: 3 meses en mano de obra<br>Formas de pago: efectivo, SINPE, transferencia</div>
-  <div class="footer-txt" style="text-align:right">\u00a1Gracias por confiar en Taller D\u00edaz!<br>${num} &middot; ${f.fecha||''}</div>
+  <div class="footer-txt">Garant&iacute;a: 3 meses en mano de obra<br>Formas de pago: efectivo, SINPE, transferencia</div>
+  <div class="footer-txt" style="text-align:right">&#161;Gracias por confiar en Taller D&iacute;az!<br>${num} &middot; ${f.fecha||''}</div>
 </div>
-</div></body></html>);
+</div></body></html>`);
   ventana.document.close();
   ventana.focus();
+  setTimeout(()=>ventana.print(),600);
 }
 
 
@@ -2355,29 +2357,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;font-size:12px;color:#1a1a1a;backgr
 .footer-code{border:1px dashed #ddd;border-radius:4px;padding:3px 10px;font-size:8px;color:#ccc;}
 
 .no-print{text-align:center;padding:20px;background:#eee;margin-top:12px;border-radius:8px;}
-@page{size:letter portrait;margin:8mm 10mm;}
-@media print{
-  *{-webkit-print-color-adjust:exact;print-color-adjust:exact;box-sizing:border-box;}
-  .no-print{display:none!important;}
-  body{background:#fff!important;margin:0!important;padding:0!important;font-size:11px!important;}
-  .page{width:100%!important;max-width:100%!important;padding:0!important;margin:0!important;box-shadow:none!important;}
-  .header{border-radius:0!important;}
-  .header-brand{padding:10px 16px!important;}
-  .brand-icon{width:40px!important;height:40px!important;}
-  .sec-head{padding:5px 12px!important;}
-  .pad{padding:8px 12px!important;}
-  .field{padding:5px 10px!important;}
-  .field-value{font-size:11px!important;}
-  .trabajos{min-height:40px!important;font-size:11px!important;}
-  .obs{min-height:30px!important;font-size:11px!important;}
-  .chk-thead th{padding:4px 6px!important;font-size:8px!important;}
-  .chk-col table td{padding:4px 6px!important;font-size:10px!important;}
-  .firmas{padding:10px 16px!important;}
-  .firmas-grid{gap:16px!important;}
-  .firma-line{margin-top:30px!important;}
-  .footer{margin-top:6px!important;}
-  .agradecimiento{margin:6px 0 4px!important;font-size:10px!important;}
-}
+@media print{.no-print{display:none;}body{background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact;}.page{padding:8px;}}
 </style></head><body>
 <div class="page">
 
