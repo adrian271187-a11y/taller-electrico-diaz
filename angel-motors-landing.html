@@ -4,188 +4,259 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Angel Motors | Taller Mecanico y Electrico de Motocicletas y Cuadraciclos</title>
-<meta name="description" content="Taller mecanico y electrico especializado en motocicletas y cuadraciclos. Repuestos, accesorios y servicio tecnico profesional. Costa Rica.">
+<meta name="description" content="Taller mecanico y electrico especializado en motocicletas y cuadraciclos. Repuestos, accesorios y servicio tecnico profesional. Costa Rica. Tel: 6457-8000">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Barlow+Condensed:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --negro:#080C14;--negro2:#0D1320;--negro3:#131B2E;
-  --azul:#1A6FD8;--azul2:#2A8BF0;--azul-dim:#1A4A8A;--azul-dark:#0D3B72;
-  --plata:#B8C8DC;--plata2:#D4E4F0;--plata-dim:#6A7D90;
-  --blanco:#F0F4F8;--gris:#7A8FA0;--line:rgba(26,111,216,0.2);
+  --negro:#06080F;
+  --negro2:#0A0E1A;
+  --negro3:#101828;
+  --azul:#1A6FD8;
+  --azul2:#2A8BF0;
+  --azul-dark:#0D2E5A;
+  --azul-dim:#1A4A8A;
+  --plata:#C8D8E8;
+  --plata2:#E0EAF4;
+  --plata3:#8FA8C0;
+  --plata-oscuro:#4A6070;
+  --plata-metal:linear-gradient(135deg,#C8D8E8 0%,#E8F0F8 40%,#B0C8E0 70%,#D8E8F4 100%);
+  --blanco:#F4F8FC;
+  --gris:#6A8090;
+  --line:rgba(42,139,240,0.18);
+  --line-plata:rgba(200,216,232,0.15);
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
 body{font-family:'Barlow',sans-serif;background:var(--negro);color:var(--blanco);overflow-x:hidden;}
 
-.topbar{background:var(--azul-dark);padding:8px 24px;display:flex;justify-content:center;gap:32px;flex-wrap:wrap;border-bottom:1px solid var(--line);}
-.topbar a{color:var(--plata2);text-decoration:none;font-size:0.82rem;font-weight:600;letter-spacing:0.04em;display:flex;align-items:center;gap:6px;}
+/* ── TOPBAR ── */
+.topbar{background:linear-gradient(90deg,var(--azul-dark),#0A1E3D,var(--azul-dark));padding:9px 24px;display:flex;justify-content:center;gap:32px;flex-wrap:wrap;border-bottom:1px solid rgba(42,139,240,0.3);}
+.topbar a{color:var(--plata2);text-decoration:none;font-size:0.82rem;font-weight:600;letter-spacing:0.05em;display:flex;align-items:center;gap:6px;transition:color 0.2s;}
 .topbar a:hover{color:#fff;}
 
-nav{position:sticky;top:0;z-index:100;background:rgba(8,12,20,0.97);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:0 32px;}
-.nav-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:64px;}
-.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:0.08em;color:var(--plata2);text-decoration:none;display:flex;align-items:center;gap:10px;}
-.nav-logo span{color:var(--azul2);}
+/* ── NAV ── */
+nav{position:sticky;top:0;z-index:100;background:rgba(6,8,15,0.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);padding:0 32px;}
+.nav-inner{max-width:1140px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:66px;}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:0.08em;text-decoration:none;display:flex;align-items:center;gap:10px;}
+.nav-logo img{width:38px;height:38px;border-radius:50%;object-fit:cover;border:2px solid var(--azul2);box-shadow:0 0 10px rgba(42,139,240,0.4);}
+.nav-logo-txt{background:var(--plata-metal);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.nav-logo-txt span{background:linear-gradient(135deg,var(--azul2),#60B0FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
 .nav-links{display:flex;gap:28px;list-style:none;}
-.nav-links a{color:var(--gris);text-decoration:none;font-size:0.85rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;transition:color 0.2s;}
+.nav-links a{color:var(--plata3);text-decoration:none;font-size:0.85rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;transition:color 0.2s;}
 .nav-links a:hover{color:var(--azul2);}
-.nav-cta{background:var(--azul);color:#fff;padding:9px 20px;border-radius:4px;font-size:0.82rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;transition:background 0.2s;}
-.nav-cta:hover{background:var(--azul2);}
+.nav-cta{background:linear-gradient(135deg,var(--azul),var(--azul-dark));color:#fff;padding:9px 22px;border-radius:4px;font-size:0.82rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;transition:all 0.2s;border:1px solid var(--azul-dim);}
+.nav-cta:hover{background:linear-gradient(135deg,var(--azul2),var(--azul));transform:translateY(-1px);}
 .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px;}
 .hamburger span{width:24px;height:2px;background:var(--azul2);display:block;}
 .mobile-menu{display:none;flex-direction:column;background:var(--negro2);border-top:1px solid var(--line);padding:20px 32px;gap:16px;}
 .mobile-menu a{color:var(--blanco);text-decoration:none;font-size:1rem;font-weight:600;border-bottom:1px solid var(--line);padding-bottom:12px;}
 .mobile-menu.open{display:flex;}
 
+/* ── HERO ── */
 .hero{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:80px 24px;}
-.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 60% 80% at 70% 50%,rgba(26,111,216,0.15) 0%,transparent 60%),radial-gradient(ellipse 40% 60% at 20% 80%,rgba(184,200,220,0.05) 0%,transparent 50%),linear-gradient(160deg,#080C14 0%,#0D1320 50%,#080C14 100%);}
-.circuit-lines{position:absolute;inset:0;opacity:0.04;background-image:linear-gradient(var(--azul2) 1px,transparent 1px),linear-gradient(90deg,var(--azul2) 1px,transparent 1px);background-size:60px 60px;}
-.hero-inner{max-width:1100px;margin:0 auto;position:relative;z-index:2;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;}
-.hero-eyebrow{font-family:'Barlow Condensed',sans-serif;font-size:0.82rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--azul2);margin-bottom:16px;display:flex;align-items:center;gap:10px;}
-.hero-eyebrow::before{content:'';width:32px;height:2px;background:var(--plata);}
-.hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(3rem,7vw,5.5rem);line-height:0.95;letter-spacing:0.02em;margin-bottom:12px;}
-.hero-title .azul{color:var(--azul2);}
-.hero-title .plata{color:var(--plata2);}
-.hero-sub{font-family:'Barlow Condensed',sans-serif;font-size:1.2rem;font-weight:500;color:var(--gris);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:24px;}
-.hero-desc{font-size:1rem;color:#8A9BB0;line-height:1.7;max-width:420px;margin-bottom:36px;}
+.hero-bg{position:absolute;inset:0;background:
+  radial-gradient(ellipse 70% 80% at 75% 50%,rgba(26,111,216,0.18) 0%,transparent 60%),
+  radial-gradient(ellipse 50% 60% at 15% 80%,rgba(200,216,232,0.06) 0%,transparent 50%),
+  linear-gradient(160deg,#06080F 0%,#0A0E1A 50%,#06080F 100%);}
+.grid-lines{position:absolute;inset:0;opacity:0.035;background-image:linear-gradient(var(--azul2) 1px,transparent 1px),linear-gradient(90deg,var(--azul2) 1px,transparent 1px);background-size:55px 55px;}
+.hero-glow{position:absolute;top:20%;right:10%;width:500px;height:500px;background:radial-gradient(circle,rgba(42,139,240,0.12) 0%,transparent 70%);pointer-events:none;}
+.hero-inner{max-width:1140px;margin:0 auto;position:relative;z-index:2;display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;}
+
+.hero-eyebrow{font-family:'Barlow Condensed',sans-serif;font-size:0.82rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--azul2);margin-bottom:18px;display:flex;align-items:center;gap:10px;}
+.hero-eyebrow::before{content:'';width:36px;height:2px;background:linear-gradient(90deg,var(--plata),var(--azul2));}
+.hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(3rem,7vw,5.8rem);line-height:0.92;letter-spacing:0.02em;margin-bottom:14px;}
+.hero-title .silver{background:var(--plata-metal);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-title .blue{background:linear-gradient(135deg,var(--azul2),#7CC8FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-sub{font-family:'Barlow Condensed',sans-serif;font-size:1.18rem;font-weight:500;color:var(--plata3);letter-spacing:0.07em;text-transform:uppercase;margin-bottom:22px;}
+.hero-desc{font-size:1rem;color:#7A96B0;line-height:1.75;max-width:440px;margin-bottom:36px;}
 .hero-btns{display:flex;gap:14px;flex-wrap:wrap;}
-.btn-primary{background:var(--azul);color:#fff;padding:14px 28px;border-radius:4px;font-size:0.9rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;transition:all 0.2s;display:inline-flex;align-items:center;gap:8px;}
-.btn-primary:hover{background:var(--azul2);transform:translateY(-1px);}
-.btn-secondary{background:transparent;color:var(--plata2);padding:14px 28px;border-radius:4px;border:1px solid var(--plata-dim);font-size:0.9rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;transition:all 0.2s;}
-.btn-secondary:hover{background:rgba(184,200,220,0.08);border-color:var(--plata2);}
-.hero-badge{background:var(--negro3);border:1px solid var(--line);border-radius:12px;padding:32px;display:flex;flex-direction:column;gap:20px;}
-.badge-item{display:flex;align-items:center;gap:16px;padding-bottom:20px;border-bottom:1px solid var(--line);}
+
+.btn-primary{background:linear-gradient(135deg,var(--azul),var(--azul-dark));color:#fff;padding:14px 28px;border-radius:5px;font-size:0.9rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;transition:all 0.25s;display:inline-flex;align-items:center;gap:8px;border:1px solid var(--azul-dim);box-shadow:0 4px 20px rgba(26,111,216,0.3);}
+.btn-primary:hover{background:linear-gradient(135deg,var(--azul2),var(--azul));transform:translateY(-2px);box-shadow:0 8px 28px rgba(26,111,216,0.45);}
+.btn-secondary{background:transparent;color:var(--plata2);padding:14px 28px;border-radius:5px;border:1px solid var(--plata-oscuro);font-size:0.9rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;transition:all 0.25s;}
+.btn-secondary:hover{background:rgba(200,216,232,0.07);border-color:var(--plata2);}
+
+.hero-card{background:linear-gradient(135deg,rgba(16,24,40,0.9),rgba(10,14,26,0.95));border:1px solid var(--line-plata);border-radius:14px;padding:32px;display:flex;flex-direction:column;gap:20px;backdrop-filter:blur(8px);box-shadow:0 20px 60px rgba(0,0,0,0.5),inset 0 1px 0 rgba(200,216,232,0.1);}
+.badge-item{display:flex;align-items:center;gap:16px;padding-bottom:20px;border-bottom:1px solid var(--line-plata);}
 .badge-item:last-child{border-bottom:none;padding-bottom:0;}
-.badge-icon{width:44px;height:44px;background:rgba(26,111,216,0.15);border:1px solid rgba(26,111,216,0.35);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.3rem;}
-.badge-text strong{display:block;font-size:0.95rem;font-weight:700;color:var(--blanco);}
-.badge-text span{font-size:0.8rem;color:var(--gris);}
-.scroll-indicator{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--gris);font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;}
-.scroll-line{width:1px;height:40px;background:linear-gradient(var(--azul2),transparent);animation:scrollpulse 1.8s ease-in-out infinite;}
-@keyframes scrollpulse{0%,100%{opacity:0.3;}50%{opacity:1;}}
+.badge-icon{width:46px;height:46px;background:linear-gradient(135deg,rgba(26,111,216,0.2),rgba(26,111,216,0.05));border:1px solid rgba(42,139,240,0.4);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.3rem;box-shadow:inset 0 1px 0 rgba(200,216,232,0.1);}
+.badge-text strong{display:block;font-size:0.95rem;font-weight:700;color:var(--plata2);}
+.badge-text span{font-size:0.8rem;color:var(--plata3);}
 
+.scroll-indicator{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--plata3);font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;}
+.scroll-line{width:1px;height:42px;background:linear-gradient(var(--azul2),transparent);animation:pulse 1.8s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:0.25;}50%{opacity:1;}}
+
+/* ── STATS ── */
+.stats-strip{background:linear-gradient(90deg,var(--negro2),var(--negro3),var(--negro2));border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:36px 24px;position:relative;overflow:hidden;}
+.stats-strip::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(26,111,216,0.06),transparent);}
+.stats-inner{max-width:1140px;margin:0 auto;display:flex;justify-content:space-around;flex-wrap:wrap;gap:24px;position:relative;z-index:1;}
+.stat-item{text-align:center;}
+.stat-num{font-family:'Bebas Neue',sans-serif;font-size:3rem;background:var(--plata-metal);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:0.04em;line-height:1;}
+.stat-label{font-size:0.75rem;color:var(--plata3);letter-spacing:0.12em;text-transform:uppercase;margin-top:6px;}
+.stat-divider{width:1px;background:linear-gradient(transparent,var(--line),transparent);align-self:stretch;}
+
+/* ── SECCIONES ── */
 section{padding:90px 24px;}
-.section-inner{max-width:1100px;margin:0 auto;}
-.section-eyebrow{font-family:'Barlow Condensed',sans-serif;font-size:0.78rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--azul2);margin-bottom:10px;}
-.section-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.2rem,5vw,3.5rem);line-height:1;letter-spacing:0.02em;margin-bottom:16px;}
-.section-title span{color:var(--azul2);}
-.section-desc{font-size:1rem;color:#8A9BB0;line-height:1.7;max-width:540px;}
-.divider{width:48px;height:3px;background:var(--azul);margin:16px 0 40px;}
+.section-inner{max-width:1140px;margin:0 auto;}
+.section-eyebrow{font-family:'Barlow Condensed',sans-serif;font-size:0.78rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--azul2);margin-bottom:10px;}
+.section-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.4rem,5vw,3.8rem);line-height:1;letter-spacing:0.02em;margin-bottom:16px;}
+.section-title .blue{color:var(--azul2);}
+.section-title .silver{background:var(--plata-metal);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.section-desc{font-size:1rem;color:#7A96B0;line-height:1.7;max-width:580px;}
+.divider{width:52px;height:3px;background:linear-gradient(90deg,var(--azul),var(--plata));margin:16px 0 44px;border-radius:2px;}
 
+/* ── SERVICIOS ── */
 #servicios{background:var(--negro2);}
-.servicios-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-top:48px;}
-.servicio-card{background:var(--negro2);padding:28px 24px;transition:background 0.2s;position:relative;overflow:hidden;}
-.servicio-card::before{content:'';position:absolute;top:0;left:0;width:3px;height:0;background:var(--azul);transition:height 0.3s;}
+.servicios-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:1px;background:var(--line-plata);border:1px solid var(--line-plata);border-radius:10px;overflow:hidden;margin-top:48px;}
+.servicio-card{background:var(--negro2);padding:30px 26px;transition:background 0.25s;position:relative;overflow:hidden;}
+.servicio-card::before{content:'';position:absolute;top:0;left:0;width:3px;height:0;background:linear-gradient(var(--azul2),var(--plata));transition:height 0.35s;}
 .servicio-card:hover{background:var(--negro3);}
 .servicio-card:hover::before{height:100%;}
-.svc-icon{font-size:2rem;margin-bottom:14px;display:block;}
-.svc-name{font-family:'Barlow Condensed',sans-serif;font-size:1.15rem;font-weight:700;letter-spacing:0.04em;color:var(--blanco);margin-bottom:8px;}
-.svc-desc{font-size:0.85rem;color:var(--gris);line-height:1.6;}
-.svc-tag{display:inline-block;margin-top:12px;padding:3px 10px;background:rgba(26,111,216,0.15);border:1px solid rgba(26,111,216,0.35);border-radius:20px;font-size:0.72rem;font-weight:600;color:var(--azul2);letter-spacing:0.06em;text-transform:uppercase;}
+.svc-icon{font-size:2.2rem;margin-bottom:14px;display:block;}
+.svc-name{font-family:'Barlow Condensed',sans-serif;font-size:1.18rem;font-weight:700;letter-spacing:0.04em;color:var(--plata2);margin-bottom:8px;}
+.svc-desc{font-size:0.85rem;color:var(--gris);line-height:1.65;}
+.svc-tag{display:inline-block;margin-top:12px;padding:3px 12px;background:linear-gradient(135deg,rgba(26,111,216,0.15),rgba(26,111,216,0.05));border:1px solid rgba(42,139,240,0.35);border-radius:20px;font-size:0.72rem;font-weight:700;color:var(--azul2);letter-spacing:0.07em;text-transform:uppercase;}
 
-.rescate-banner{background:linear-gradient(135deg,var(--azul-dark) 0%,#0A2A50 100%);border:1px solid var(--azul-dim);border-radius:10px;padding:48px 40px;display:flex;align-items:center;justify-content:space-between;gap:32px;flex-wrap:wrap;margin-top:48px;position:relative;overflow:hidden;}
-.rescate-banner::after{content:'🏍️';position:absolute;right:40px;top:50%;transform:translateY(-50%);font-size:8rem;opacity:0.06;pointer-events:none;}
-.rescate-text h3{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:0.04em;margin-bottom:8px;color:var(--plata2);}
-.rescate-text p{font-size:0.95rem;color:var(--plata);max-width:480px;line-height:1.6;}
-.rescate-btn{background:var(--azul2);color:#fff;padding:14px 28px;border-radius:4px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;font-size:0.9rem;white-space:nowrap;flex-shrink:0;transition:all 0.2s;}
-.rescate-btn:hover{background:#fff;color:var(--azul-dark);}
+.banner-servicio{background:linear-gradient(135deg,#0D2E5A 0%,#091A36 50%,#0D2E5A 100%);border:1px solid var(--azul-dim);border-radius:12px;padding:48px 44px;display:flex;align-items:center;justify-content:space-between;gap:32px;flex-wrap:wrap;margin-top:52px;position:relative;overflow:hidden;}
+.banner-servicio::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,transparent 60%,rgba(200,216,232,0.03));pointer-events:none;}
+.banner-servicio::after{content:'🏍️';position:absolute;right:44px;top:50%;transform:translateY(-50%);font-size:9rem;opacity:0.05;pointer-events:none;}
+.banner-text h3{font-family:'Bebas Neue',sans-serif;font-size:2.1rem;letter-spacing:0.05em;margin-bottom:10px;background:var(--plata-metal);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.banner-text p{font-size:0.95rem;color:var(--plata3);max-width:500px;line-height:1.65;}
+.banner-btn{background:linear-gradient(135deg,var(--azul2),var(--azul));color:#fff;padding:14px 30px;border-radius:5px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;font-size:0.9rem;white-space:nowrap;flex-shrink:0;transition:all 0.25s;box-shadow:0 4px 20px rgba(26,111,216,0.35);}
+.banner-btn:hover{background:#fff;color:var(--azul-dark);transform:translateY(-1px);}
 
+/* ── NOSOTROS ── */
 #nosotros{background:var(--negro);}
-.razones-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:24px;margin-top:48px;}
-.razon-card{background:var(--negro3);border:1px solid var(--line);border-radius:8px;padding:28px 24px;text-align:center;transition:border-color 0.2s,transform 0.2s;}
-.razon-card:hover{border-color:var(--azul-dim);transform:translateY(-3px);}
-.razon-num{font-family:'Bebas Neue',sans-serif;font-size:3rem;color:var(--azul2);opacity:0.35;line-height:1;margin-bottom:8px;}
-.razon-title{font-family:'Barlow Condensed',sans-serif;font-size:1.05rem;font-weight:700;letter-spacing:0.04em;margin-bottom:8px;}
-.razon-desc{font-size:0.85rem;color:var(--gris);line-height:1.6;}
+.razones-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:24px;margin-top:48px;}
+.razon-card{background:linear-gradient(135deg,var(--negro3),var(--negro2));border:1px solid var(--line-plata);border-radius:10px;padding:30px 26px;text-align:center;transition:border-color 0.25s,transform 0.25s,box-shadow 0.25s;}
+.razon-card:hover{border-color:var(--azul-dim);transform:translateY(-4px);box-shadow:0 12px 40px rgba(26,111,216,0.15);}
+.razon-num{font-family:'Bebas Neue',sans-serif;font-size:3.2rem;background:linear-gradient(135deg,var(--azul2),var(--plata));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;opacity:0.4;line-height:1;margin-bottom:10px;}
+.razon-title{font-family:'Barlow Condensed',sans-serif;font-size:1.08rem;font-weight:700;letter-spacing:0.04em;margin-bottom:8px;color:var(--plata2);}
+.razon-desc{font-size:0.85rem;color:var(--gris);line-height:1.65;}
 
+/* ── MARCAS ── */
 #vehiculos{background:var(--negro2);}
-.marcas-grid{display:flex;flex-wrap:wrap;gap:12px;margin-top:36px;}
-.marca-pill{padding:8px 20px;background:var(--negro3);border:1px solid var(--line);border-radius:40px;font-size:0.85rem;font-weight:600;color:var(--gris);letter-spacing:0.04em;transition:all 0.2s;}
-.marca-pill:hover{border-color:var(--azul-dim);color:var(--azul2);}
-.tipos-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:40px;}
-.tipo-item{display:flex;align-items:center;gap:12px;font-size:0.9rem;color:#9BB0C4;}
-.tipo-item::before{content:'';width:8px;height:8px;background:var(--azul2);border-radius:50%;flex-shrink:0;}
+.marcas-grid{display:flex;flex-wrap:wrap;gap:10px;margin-top:36px;}
+.marca-pill{padding:8px 20px;background:linear-gradient(135deg,var(--negro3),var(--negro2));border:1px solid var(--line-plata);border-radius:40px;font-size:0.85rem;font-weight:600;color:var(--plata3);letter-spacing:0.04em;transition:all 0.2s;cursor:default;}
+.marca-pill:hover{border-color:var(--azul-dim);color:var(--azul2);background:linear-gradient(135deg,rgba(26,111,216,0.1),var(--negro3));}
+.tipos-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:44px;}
+.tipo-item{display:flex;align-items:center;gap:12px;font-size:0.9rem;color:#8AA0B8;}
+.tipo-dot{width:8px;height:8px;background:linear-gradient(135deg,var(--azul2),var(--plata));border-radius:50%;flex-shrink:0;}
 
-#contacto{background:var(--negro);}
-.contacto-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;margin-top:48px;}
-.info-block{display:flex;flex-direction:column;gap:24px;}
-.info-item{display:flex;gap:16px;align-items:flex-start;}
-.info-icon{width:44px;height:44px;background:rgba(26,111,216,0.1);border:1px solid var(--line);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
-.info-label{font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--azul2);margin-bottom:4px;}
-.info-value{font-size:0.95rem;color:var(--blanco);font-weight:600;}
-.info-value a{color:var(--blanco);text-decoration:none;}
-.info-value a:hover{color:var(--azul2);}
-.info-sub{font-size:0.82rem;color:var(--gris);margin-top:2px;}
-.mapa-box{background:var(--negro3);border:1px solid var(--line);border-radius:8px;overflow:hidden;height:320px;}
-.mapa-box iframe{width:100%;height:100%;border:none;filter:grayscale(50%) hue-rotate(200deg);}
-.horario-table{width:100%;border-collapse:collapse;}
-.horario-table tr{border-bottom:1px solid var(--line);}
-.horario-table td{padding:10px 0;font-size:0.88rem;}
-.horario-table td:first-child{color:var(--gris);}
-.horario-table td:last-child{color:var(--blanco);font-weight:600;text-align:right;}
-.horario-table tr.hoy td{color:var(--azul2);}
-
-.cta-final{background:linear-gradient(135deg,var(--negro3),var(--negro2));border-top:1px solid var(--line);padding:80px 24px;text-align:center;}
-.cta-final h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,5vw,3.5rem);letter-spacing:0.04em;margin-bottom:12px;}
-.cta-final h2 span{color:var(--azul2);}
-.cta-final p{color:var(--gris);font-size:1rem;margin-bottom:32px;}
-.cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
-
-footer{background:var(--negro);border-top:1px solid var(--line);padding:32px 24px;text-align:center;}
-.footer-logo{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:0.08em;color:var(--plata2);margin-bottom:8px;}
-.footer-logo span{color:var(--azul2);}
-.footer-copy{font-size:0.78rem;color:var(--gris);}
-
+/* ── GALERIA ── */
 #galeria{background:var(--negro);}
-.galeria-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:48px;}
+.galeria-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:48px;}
 @media(max-width:900px){.galeria-grid{grid-template-columns:repeat(3,1fr);}}
 @media(max-width:600px){.galeria-grid{grid-template-columns:repeat(2,1fr);}}
 .gal-item{position:relative;aspect-ratio:1;overflow:hidden;border-radius:4px;cursor:pointer;background:var(--negro3);}
-.gal-item img{width:100%;height:100%;object-fit:cover;transition:transform 0.4s,filter 0.4s;filter:brightness(0.85);}
-.gal-item:hover img{transform:scale(1.06);filter:brightness(1);}
-.gal-item .gal-overlay{position:absolute;inset:0;background:rgba(26,111,216,0);display:flex;align-items:center;justify-content:center;transition:background 0.3s;opacity:0;}
-.gal-item:hover .gal-overlay{background:rgba(26,111,216,0.35);opacity:1;}
-.gal-overlay svg{color:#fff;width:32px;height:32px;}
-.lb{position:fixed;inset:0;background:rgba(0,0,0,0.92);display:none;align-items:center;justify-content:center;z-index:1000;padding:20px;}
+.gal-item img,.gal-item video{width:100%;height:100%;object-fit:cover;transition:transform 0.4s,filter 0.4s;filter:brightness(0.82) saturate(0.9);}
+.gal-item:hover img,.gal-item:hover video{transform:scale(1.07);filter:brightness(1) saturate(1.1);}
+.gal-overlay{position:absolute;inset:0;background:rgba(26,111,216,0);display:flex;align-items:center;justify-content:center;transition:background 0.3s;opacity:0;}
+.gal-item:hover .gal-overlay{background:rgba(26,111,216,0.38);opacity:1;}
+.gal-overlay svg{color:#fff;width:32px;height:32px;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.5));}
+.gal-video-badge{position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.7);color:#fff;font-size:0.7rem;font-weight:700;padding:3px 8px;border-radius:4px;letter-spacing:0.05em;z-index:2;}
+
+/* ── LIGHTBOX ── */
+.lb{position:fixed;inset:0;background:rgba(0,0,0,0.95);display:none;align-items:center;justify-content:center;z-index:1000;padding:20px;}
 .lb.open{display:flex;}
-.lb img{max-width:90vw;max-height:88vh;border-radius:6px;box-shadow:0 20px 60px rgba(0,0,0,0.8);}
-.lb-close{position:fixed;top:20px;right:24px;color:#fff;font-size:2rem;cursor:pointer;background:none;border:none;line-height:1;z-index:1001;}
-.lb-prev,.lb-next{position:fixed;top:50%;transform:translateY(-50%);color:#fff;font-size:2.5rem;cursor:pointer;background:rgba(0,0,0,0.4);border:none;padding:12px 16px;border-radius:4px;z-index:1001;transition:background 0.2s;}
-.lb-prev{left:12px;}.lb-next{right:12px;}
-.lb-prev:hover,.lb-next:hover{background:rgba(26,111,216,0.6);}
-.wa-float{position:fixed;bottom:24px;right:24px;z-index:500;width:56px;height:56px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(37,211,102,0.4);transition:transform 0.2s;text-decoration:none;}
-.wa-float:hover{transform:scale(1.1);}
+.lb img,.lb video{max-width:90vw;max-height:88vh;border-radius:6px;box-shadow:0 20px 80px rgba(0,0,0,0.9);}
+.lb video{max-width:92vw;}
+.lb-close{position:fixed;top:18px;right:22px;color:#fff;font-size:2.2rem;cursor:pointer;background:rgba(0,0,0,0.5);border:none;line-height:1;z-index:1001;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:background 0.2s;}
+.lb-close:hover{background:var(--azul-dim);}
+.lb-prev,.lb-next{position:fixed;top:50%;transform:translateY(-50%);color:#fff;font-size:2.5rem;cursor:pointer;background:rgba(0,0,0,0.45);border:none;padding:12px 18px;border-radius:6px;z-index:1001;transition:background 0.2s;}
+.lb-prev{left:10px;}.lb-next{right:10px;}
+.lb-prev:hover,.lb-next:hover{background:rgba(26,111,216,0.7);}
+.lb-counter{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);color:var(--plata3);font-size:0.82rem;letter-spacing:0.1em;background:rgba(0,0,0,0.6);padding:4px 14px;border-radius:20px;}
 
-/* Stats strip */
-.stats-strip{background:var(--azul-dark);border-top:1px solid var(--azul-dim);border-bottom:1px solid var(--azul-dim);padding:32px 24px;}
-.stats-inner{max-width:1100px;margin:0 auto;display:flex;justify-content:space-around;flex-wrap:wrap;gap:24px;}
-.stat-item{text-align:center;}
-.stat-num{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;color:var(--plata2);letter-spacing:0.04em;line-height:1;}
-.stat-label{font-size:0.78rem;color:var(--plata);letter-spacing:0.1em;text-transform:uppercase;margin-top:4px;}
+/* ── CONTACTO ── */
+#contacto{background:var(--negro);}
+.contacto-grid{display:grid;grid-template-columns:1fr 1fr;gap:52px;margin-top:48px;}
+.info-block{display:flex;flex-direction:column;gap:26px;}
+.info-item{display:flex;gap:16px;align-items:flex-start;}
+.info-icon{width:46px;height:46px;background:linear-gradient(135deg,rgba(26,111,216,0.15),rgba(26,111,216,0.05));border:1px solid var(--line);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;box-shadow:inset 0 1px 0 rgba(200,216,232,0.08);}
+.info-label{font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--azul2);margin-bottom:4px;}
+.info-value{font-size:0.96rem;color:var(--blanco);font-weight:600;}
+.info-value a{color:var(--blanco);text-decoration:none;transition:color 0.2s;}
+.info-value a:hover{color:var(--azul2);}
+.info-sub{font-size:0.82rem;color:var(--gris);margin-top:3px;}
+.horario-box{background:linear-gradient(135deg,var(--negro3),var(--negro2));border:1px solid var(--line-plata);border-radius:10px;padding:24px;}
+.horario-table{width:100%;border-collapse:collapse;}
+.horario-table tr{border-bottom:1px solid var(--line-plata);}
+.horario-table tr:last-child{border-bottom:none;}
+.horario-table td{padding:10px 0;font-size:0.88rem;}
+.horario-table td:first-child{color:var(--plata3);}
+.horario-table td:last-child{color:var(--blanco);font-weight:600;text-align:right;}
+.horario-table tr.hoy td{color:var(--azul2);}
+.fb-card{background:linear-gradient(135deg,#0D2E5A,#091A36);border:1px solid rgba(42,139,240,0.3);border-radius:10px;padding:28px;display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;text-decoration:none;transition:all 0.25s;}
+.fb-card:hover{border-color:var(--azul2);transform:translateY(-2px);box-shadow:0 10px 30px rgba(26,111,216,0.2);}
+.fb-icon{width:56px;height:56px;background:#1877F2;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;}
+.fb-card h4{font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:700;letter-spacing:0.04em;color:var(--plata2);}
+.fb-card p{font-size:0.82rem;color:var(--plata3);}
 
+/* ── CTA FINAL ── */
+.cta-final{background:linear-gradient(135deg,var(--negro3),var(--negro2));border-top:1px solid var(--line);padding:88px 24px;text-align:center;position:relative;overflow:hidden;}
+.cta-final::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:600px;height:1px;background:linear-gradient(90deg,transparent,var(--azul2),transparent);}
+.cta-final h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,5vw,3.8rem);letter-spacing:0.04em;margin-bottom:14px;}
+.cta-final h2 .blue{color:var(--azul2);}
+.cta-final h2 .silver{background:var(--plata-metal);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.cta-final p{color:var(--plata3);font-size:1rem;margin-bottom:36px;max-width:520px;margin-left:auto;margin-right:auto;}
+.cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+
+/* ── FOOTER ── */
+footer{background:var(--negro);border-top:1px solid var(--line);padding:36px 24px;text-align:center;}
+.footer-logo{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:0.08em;margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:10px;}
+.footer-logo-txt{background:var(--plata-metal);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.footer-logo span{color:var(--azul2);-webkit-text-fill-color:var(--azul2);}
+.footer-copy{font-size:0.78rem;color:var(--gris);}
+.footer-links{display:flex;justify-content:center;gap:24px;margin-bottom:16px;}
+.footer-links a{font-size:0.8rem;color:var(--plata3);text-decoration:none;transition:color 0.2s;}
+.footer-links a:hover{color:var(--azul2);}
+
+/* ── WA FLOAT ── */
+.wa-float{position:fixed;bottom:24px;right:24px;z-index:500;width:58px;height:58px;background:linear-gradient(135deg,#25D366,#1DAA55);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 24px rgba(37,211,102,0.45);transition:transform 0.2s;text-decoration:none;}
+.wa-float:hover{transform:scale(1.12);}
+
+/* ── ADMIN BTN ── */
+.admin-btn{padding:7px 13px;border-radius:4px;background:transparent;border:1px solid rgba(200,216,232,0.25);color:var(--plata3);font-size:0.74rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;transition:all 0.2s;}
+.admin-btn:hover{background:rgba(26,111,216,0.1);border-color:var(--azul-dim);color:var(--azul2);}
+
+/* ── LOGO HERO ── */
+.hero-logo-wrap{margin-bottom:24px;}
+.hero-logo-img{width:120px;height:120px;object-fit:cover;border-radius:50%;border:3px solid var(--azul2);box-shadow:0 0 0 6px rgba(42,139,240,0.12),0 0 40px rgba(42,139,240,0.35);}
+
+/* ── RESPONSIVE ── */
 @media(max-width:768px){
   .hero-inner{grid-template-columns:1fr;}
-  .hero-badge{display:none;}
+  .hero-card{display:none;}
   .contacto-grid{grid-template-columns:1fr;}
   .tipos-grid{grid-template-columns:1fr;}
   .nav-links,.nav-cta{display:none;}
   .hamburger{display:flex;}
-  .rescate-banner{flex-direction:column;padding:32px 24px;text-align:center;}
-  .stats-inner{gap:16px;}
+  .banner-servicio{flex-direction:column;padding:32px 24px;text-align:center;}
+  .banner-servicio::after{display:none;}
+  .stat-divider{display:none;}
 }
-@media(max-width:480px){section{padding:60px 20px;}.hero{padding:60px 20px;}}
+@media(max-width:480px){section{padding:64px 20px;}.hero{padding:64px 20px;}}
 </style>
 </head>
 <body>
 
+<!-- TOPBAR -->
 <div class="topbar">
-  <a href="tel:+50660000000">📞 Llamar al taller</a>
-  <a href="https://wa.me/50660000000" target="_blank">💬 WhatsApp</a>
-  <a href="#contacto">📍 Ubicacion</a>
+  <a href="tel:+50664578000">📞 (506) 6457-8000</a>
+  <a href="mailto:diaz.joseangel@icloud.com">✉️ diaz.joseangel@icloud.com</a>
+  <a href="https://wa.me/50664578000" target="_blank">💬 WhatsApp</a>
 </div>
 
+<!-- NAV -->
 <nav>
   <div class="nav-inner">
-    <a href="#" class="nav-logo">ANGEL<span>.</span>MOTORS</a>
+    <a href="#" class="nav-logo">
+      <img src="logoM.jpeg" alt="Angel Motors">
+      <span class="nav-logo-txt">ANGEL<span>.</span>MOTORS</span>
+    </a>
     <ul class="nav-links">
       <li><a href="#servicios">Servicios</a></li>
       <li><a href="#galeria">Galeria</a></li>
@@ -193,9 +264,9 @@ footer{background:var(--negro);border-top:1px solid var(--line);padding:32px 24p
       <li><a href="#vehiculos">Motos</a></li>
       <li><a href="#contacto">Contacto</a></li>
     </ul>
-    <div style="display:flex;gap:8px;align-items:center;">
-      <a href="/sistema.html" style="padding:6px 12px;border-radius:4px;background:transparent;border:1px solid var(--azul-dim);color:var(--azul2);font-size:0.75rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;transition:all 0.2s;" onmouseover="this.style.background='rgba(26,111,216,0.1)'" onmouseout="this.style.background='transparent'">⚙ Admin</a>
-      <a href="https://wa.me/50660000000?text=Hola,%20necesito%20informacion%20sobre%20sus%20servicios" target="_blank" class="nav-cta">Contactar</a>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <a href="/sistema.html" class="admin-btn">⚙ Admin</a>
+      <a href="https://wa.me/50664578000?text=Hola,%20necesito%20informacion%20sobre%20sus%20servicios" target="_blank" class="nav-cta">Contactar</a>
     </div>
     <button class="hamburger" onclick="toggleMenu()" aria-label="Menu">
       <span></span><span></span><span></span>
@@ -208,28 +279,34 @@ footer{background:var(--negro);border-top:1px solid var(--line);padding:32px 24p
     <a href="#vehiculos" onclick="toggleMenu()">Motos</a>
     <a href="#contacto" onclick="toggleMenu()">Contacto</a>
     <a href="/sistema.html">⚙ Sistema de Gestion</a>
-    <a href="https://wa.me/50660000000" target="_blank">📲 WhatsApp</a>
+    <a href="https://wa.me/50664578000" target="_blank">📲 WhatsApp</a>
   </div>
 </nav>
 
+<!-- HERO -->
 <section class="hero">
   <div class="hero-bg"></div>
-  <div class="circuit-lines"></div>
+  <div class="grid-lines"></div>
+  <div class="hero-glow"></div>
   <div class="hero-inner">
     <div>
-      <div style="margin-bottom:20px;">
-        <div style="width:110px;height:110px;border-radius:50%;border:3px solid var(--azul2);box-shadow:0 0 28px rgba(26,111,216,0.4);display:flex;align-items:center;justify-content:center;background:var(--negro3);font-size:3rem;">🏍️</div>
+      <div class="hero-logo-wrap">
+        <img src="logoM.jpeg" alt="Angel Motors Logo" class="hero-logo-img">
       </div>
       <div class="hero-eyebrow">Especialistas en Motos y Cuadraciclos · Costa Rica</div>
-      <h1 class="hero-title">ANGEL<br><span class="azul">MOTORS</span><br><span class="plata">TALLER</span></h1>
-      <p class="hero-sub">Mecanico & Electrico · Motos · Cuadraciclos</p>
+      <h1 class="hero-title">
+        <span class="silver">ANGEL</span><br>
+        <span class="blue">MOTORS</span><br>
+        <span class="silver">TALLER</span>
+      </h1>
+      <p class="hero-sub">Mecanico &amp; Electrico · Motos · Cuadraciclos</p>
       <p class="hero-desc">Servicio tecnico especializado en motocicletas y cuadraciclos. Reparacion mecanica y electrica, venta de repuestos y accesorios. Tu moto en manos expertas.</p>
       <div class="hero-btns">
-        <a href="https://wa.me/50660000000?text=Hola,%20necesito%20servicio%20para%20mi%20moto" target="_blank" class="btn-primary">📲 Agendar servicio</a>
+        <a href="https://wa.me/50664578000?text=Hola,%20necesito%20servicio%20para%20mi%20moto" target="_blank" class="btn-primary">📲 Agendar servicio</a>
         <a href="#servicios" class="btn-secondary">Ver servicios</a>
       </div>
     </div>
-    <div class="hero-badge">
+    <div class="hero-card">
       <div class="badge-item">
         <div class="badge-icon">🔧</div>
         <div class="badge-text"><strong>Mecanica Especializada</strong><span>Motor, transmision, frenos, suspension</span></div>
@@ -247,57 +324,94 @@ footer{background:var(--negro);border-top:1px solid var(--line);padding:32px 24p
   <div class="scroll-indicator"><div class="scroll-line"></div><span>Explorar</span></div>
 </section>
 
+<!-- STATS -->
 <div class="stats-strip">
   <div class="stats-inner">
     <div class="stat-item"><div class="stat-num">+500</div><div class="stat-label">Motos Atendidas</div></div>
+    <div class="stat-divider"></div>
     <div class="stat-item"><div class="stat-num">+10</div><div class="stat-label">Anos de Experiencia</div></div>
+    <div class="stat-divider"></div>
     <div class="stat-item"><div class="stat-num">Todas</div><div class="stat-label">Las Marcas</div></div>
-    <div class="stat-item"><div class="stat-num">100%</div><div class="stat-label">Servicio Garantizado</div></div>
+    <div class="stat-divider"></div>
+    <div class="stat-item"><div class="stat-num">100%</div><div class="stat-label">Garantia en Trabajos</div></div>
   </div>
 </div>
 
+<!-- SERVICIOS -->
 <section id="servicios">
   <div class="section-inner">
     <div class="section-eyebrow">Lo que hacemos</div>
-    <h2 class="section-title">NUESTROS <span>SERVICIOS</span></h2>
+    <h2 class="section-title">NUESTROS <span class="blue">SERVICIOS</span></h2>
     <div class="divider"></div>
     <p class="section-desc">Taller completo especializado en motocicletas y cuadraciclos de todas las marcas. Mecanica general, electrica y venta de repuestos.</p>
     <div class="servicios-grid">
-      <div class="servicio-card"><span class="svc-icon">🔩</span><div class="svc-name">Mecanica General</div><p class="svc-desc">Reparacion de motor, transmision, frenos y suspension. Mantenimiento preventivo y correctivo para toda clase de motocicletas.</p><span class="svc-tag">Todas las marcas</span></div>
-      <div class="servicio-card"><span class="svc-icon">⚡</span><div class="svc-name">Electrica y Electronica</div><p class="svc-desc">Diagnostico de fallas electricas, sistema de carga, encendido electronico, instrumentos y luces. Solucion rapida y precisa.</p><span class="svc-tag">Diagnostico digital</span></div>
-      <div class="servicio-card"><span class="svc-icon">🛞</span><div class="svc-name">Frenos y Suspension</div><p class="svc-desc">Revision y cambio de pastillas, discos, balatas y cables. Ajuste y reparacion de suspension delantera y trasera.</p><span class="svc-tag">Seguridad vial</span></div>
-      <div class="servicio-card"><span class="svc-icon">🔋</span><div class="svc-name">Sistema de Carga</div><p class="svc-desc">Revision y reparacion de reguladores, alternadores, baterias y sistema electrico completo de la motocicleta.</p><span class="svc-tag">Electrica</span></div>
-      <div class="servicio-card"><span class="svc-icon">🏎️</span><div class="svc-name">Cuadraciclos ATV</div><p class="svc-desc">Servicio tecnico especializado en cuadraciclos y ATVs. Mecanica, electrica y repuestos para todas las marcas del mercado.</p><span class="svc-tag">ATV · Cuadras</span></div>
-      <div class="servicio-card"><span class="svc-icon">🛒</span><div class="svc-name">Repuestos y Accesorios</div><p class="svc-desc">Venta de repuestos originales y alternativos para motos y cuadraciclos. Accesorios, cascos y equipamiento para el motociclista.</p><span class="svc-tag">Repuestos · Accesorios</span></div>
-    </div>
-    <div class="rescate-banner">
-      <div class="rescate-text">
-        <h3>🏍️ SERVICIO TECNICO RAPIDO Y GARANTIZADO</h3>
-        <p>Diagnostico honesto, repuestos de calidad y mano de obra garantizada. Tu moto lista en el menor tiempo posible.</p>
+      <div class="servicio-card">
+        <span class="svc-icon">🔩</span>
+        <div class="svc-name">Mecanica General</div>
+        <p class="svc-desc">Reparacion de motor, transmision, frenos y suspension. Mantenimiento preventivo y correctivo para toda clase de motocicletas y cuadraciclos.</p>
+        <span class="svc-tag">Todas las marcas</span>
       </div>
-      <a href="https://wa.me/50660000000?text=Necesito%20servicio%20tecnico%20para%20mi%20moto" target="_blank" class="rescate-btn">Escribir ahora</a>
+      <div class="servicio-card">
+        <span class="svc-icon">⚡</span>
+        <div class="svc-name">Electrica y Electronica</div>
+        <p class="svc-desc">Diagnostico de fallas electricas, sistema de carga, encendido electronico, instrumentos y luces. Solucion rapida y precisa.</p>
+        <span class="svc-tag">Diagnostico digital</span>
+      </div>
+      <div class="servicio-card">
+        <span class="svc-icon">🛞</span>
+        <div class="svc-name">Frenos y Suspension</div>
+        <p class="svc-desc">Revision y cambio de pastillas, discos, balatas y cables. Ajuste y reparacion de suspension delantera y trasera.</p>
+        <span class="svc-tag">Seguridad vial</span>
+      </div>
+      <div class="servicio-card">
+        <span class="svc-icon">🔋</span>
+        <div class="svc-name">Sistema de Carga</div>
+        <p class="svc-desc">Revision y reparacion de reguladores, alternadores, baterias y sistema electrico completo de la motocicleta.</p>
+        <span class="svc-tag">Electrica</span>
+      </div>
+      <div class="servicio-card">
+        <span class="svc-icon">🏎️</span>
+        <div class="svc-name">Cuadraciclos ATV</div>
+        <p class="svc-desc">Servicio tecnico especializado en cuadraciclos y ATVs. Mecanica, electrica y repuestos para todas las marcas del mercado.</p>
+        <span class="svc-tag">ATV · Cuadras</span>
+      </div>
+      <div class="servicio-card">
+        <span class="svc-icon">🛒</span>
+        <div class="svc-name">Repuestos y Accesorios</div>
+        <p class="svc-desc">Venta de repuestos originales y alternativos para motos y cuadraciclos. Accesorios, equipamiento y lubricantes de las mejores marcas.</p>
+        <span class="svc-tag">Repuestos · Accesorios</span>
+      </div>
+    </div>
+    <div class="banner-servicio">
+      <div class="banner-text">
+        <h3>SERVICIO TECNICO RAPIDO Y GARANTIZADO</h3>
+        <p>Diagnostico honesto, repuestos de calidad y mano de obra con garantia. Tu moto lista en el menor tiempo posible. Llamanos al 6457-8000.</p>
+      </div>
+      <a href="https://wa.me/50664578000?text=Necesito%20servicio%20tecnico%20para%20mi%20moto" target="_blank" class="banner-btn">📲 Escribir ahora</a>
     </div>
   </div>
 </section>
 
+<!-- NOSOTROS -->
 <section id="nosotros">
   <div class="section-inner">
     <div class="section-eyebrow">Por que elegirnos</div>
-    <h2 class="section-title">EXPERTOS EN <span>MOTOCICLETAS</span></h2>
+    <h2 class="section-title">EXPERTOS EN <span class="blue">MOTOCICLETAS</span></h2>
     <div class="divider"></div>
     <div class="razones-grid">
       <div class="razon-card"><div class="razon-num">01</div><div class="razon-title">Experiencia Real</div><p class="razon-desc">Anos de experiencia en mecanica y electrica de motocicletas y cuadraciclos de todas las marcas y cilindradas.</p></div>
-      <div class="razon-card"><div class="razon-num">02</div><div class="razon-title">Multimarca</div><p class="razon-desc">Trabajamos con Honda, Yamaha, Suzuki, Kawasaki, Bajaj, AKT, TVS y muchas marcas mas del mercado.</p></div>
-      <div class="razon-card"><div class="razon-num">03</div><div class="razon-title">Repuestos Disponibles</div><p class="razon-desc">Stock de repuestos y accesorios para que tu moto quede lista sin esperas innecesarias.</p></div>
-      <div class="razon-card"><div class="razon-num">04</div><div class="razon-title">Precio Justo</div><p class="razon-desc">Diagnostico honesto y presupuesto claro antes de iniciar. Sin sorpresas en la factura.</p></div>
+      <div class="razon-card"><div class="razon-num">02</div><div class="razon-title">Multimarca</div><p class="razon-desc">Trabajamos con Honda, Yamaha, Suzuki, Kawasaki, Bajaj, KTM, Benelli y muchas marcas mas del mercado costarricense.</p></div>
+      <div class="razon-card"><div class="razon-num">03</div><div class="razon-title">Repuestos Disponibles</div><p class="razon-desc">Stock de repuestos y accesorios para que tu moto quede lista sin esperas innecesarias. Marcas como Yamalube, Bel-Ray, Motul.</p></div>
+      <div class="razon-card"><div class="razon-num">04</div><div class="razon-title">Precio Justo</div><p class="razon-desc">Diagnostico honesto y presupuesto claro antes de iniciar. Sin sorpresas en la factura. Tu confianza es nuestra prioridad.</p></div>
     </div>
   </div>
 </section>
 
+<!-- MARCAS -->
 <section id="vehiculos">
   <div class="section-inner">
     <div class="section-eyebrow">Compatibilidad</div>
-    <h2 class="section-title">TODAS LAS <span>MARCAS</span></h2>
+    <h2 class="section-title">TODAS LAS <span class="blue">MARCAS</span></h2>
     <div class="divider"></div>
     <p class="section-desc">Especializados en motocicletas y cuadraciclos de todas las marcas. Sport, naked, enduro, scooter, ATV y mas.</p>
     <div class="marcas-grid">
@@ -306,118 +420,231 @@ footer{background:var(--negro);border-top:1px solid var(--line);padding:32px 24p
       <div class="marca-pill">Suzuki</div>
       <div class="marca-pill">Kawasaki</div>
       <div class="marca-pill">Bajaj</div>
-      <div class="marca-pill">AKT</div>
-      <div class="marca-pill">TVS</div>
       <div class="marca-pill">KTM</div>
-      <div class="marca-pill">Royal Enfield</div>
       <div class="marca-pill">Benelli</div>
+      <div class="marca-pill">Royal Enfield</div>
+      <div class="marca-pill">CF Moto</div>
       <div class="marca-pill">Can-Am</div>
       <div class="marca-pill">Polaris</div>
-      <div class="marca-pill">CF Moto</div>
+      <div class="marca-pill">AKT</div>
+      <div class="marca-pill">TVS</div>
+      <div class="marca-pill">Formula Motos</div>
       <div class="marca-pill">Y mas...</div>
     </div>
     <div class="tipos-grid">
-      <div class="tipo-item">Motos Sport y Naked</div>
-      <div class="tipo-item">Motos Enduro y Trail</div>
-      <div class="tipo-item">Scooters y Automaticas</div>
-      <div class="tipo-item">Cuadraciclos ATV</div>
-      <div class="tipo-item">Motos de Trabajo</div>
-      <div class="tipo-item">Motos de Ruta</div>
+      <div class="tipo-item"><div class="tipo-dot"></div>Motos Sport y Naked</div>
+      <div class="tipo-item"><div class="tipo-dot"></div>Motos Enduro y Trail</div>
+      <div class="tipo-item"><div class="tipo-dot"></div>Scooters y Automaticas</div>
+      <div class="tipo-item"><div class="tipo-dot"></div>Cuadraciclos ATV</div>
+      <div class="tipo-item"><div class="tipo-dot"></div>Motos de Trabajo</div>
+      <div class="tipo-item"><div class="tipo-dot"></div>Motos de Ruta</div>
     </div>
   </div>
 </section>
 
+<!-- GALERIA -->
+<section id="galeria">
+  <div class="section-inner">
+    <div class="section-eyebrow">Nuestro trabajo</div>
+    <h2 class="section-title">GALERIA DE <span class="blue">TRABAJOS</span></h2>
+    <div class="divider"></div>
+    <p class="section-desc">Reparaciones, mantenimientos y trabajos realizados en el taller. Cada moto recibe atencion personalizada y garantizada.</p>
+    <div class="galeria-grid" id="galeria-grid">
+      <!-- fotos 1-19 -->
+      <div class="gal-item" onclick="openLb(0)"><img src="1.jpeg" alt="Trabajo Angel Motors" loading="lazy"><div class="gal-overlay"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 3l2.3 2.3-2.89 2.87 1.42 1.42L18.7 6.7 21 9V3h-6zM3 9l2.3-2.3 2.87 2.89 1.42-1.42L6.7 5.3 9 3H3v6zm6 12l-2.3-2.3 2.89-2.87-1.42-1.42L5.3 17.3 3 15v6h6zm12-6l-2.3 2.3-2.87-2.89-1.42 1.42 2.89 2.87L15 21h6v-6z"/></svg></div></div>
+      <div class="gal-item" onclick="openLb(1)"><img src="2.jpeg" alt="Trabajo Angel Motors" loading="lazy"><div class="gal-overlay"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 3l2.3 2.3-2.89 2.87 1.42 1.42L18.7 6.7 21 9V3h-6zM3 9l2.3-2.3 2.87 2.89 1.42-1.42L6.7 5.3 9 3H3v6zm6 12l-2.3-2.3 2.89-2.87-1.42-1.42L5.3 17.3 3 15v6h6zm12-6l-2.3 2.3-2.87-2.89-1.42 1.42 2.89 2.87L15 21h6v-6z"/></svg></div></div>
+      <div class="gal-item" onclick="openLb(2)"><img src="3.jpeg" alt="Trabajo Angel Motors" loading="lazy"><div class="gal-overlay"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 3l2.3 2.3-2.89 2.87 1.42 1.42L18.7 6.7 21 9V3h-6zM3 9l2.3-2.3 2.87 2.89 1.42-1.42L6.7 5.3 9 3H3v6zm6 12l-2.3-2.3 2.89-2.87-1.42-1.42L5.3 17.3 3 15v6h6zm12-6l-2.3 2.3-2.87-2.89-1.42 1.42 2.89 2.87L15 21h6v-6z"/></svg></div></div>
+      <div class="gal-item" onclick="openLb(3)"><img src="4.jpeg" alt="Trabajo Angel Motors" loading="lazy"><div class="gal-overlay"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 3l2.3 2.3-2.89 2.87 1.42 1.42L18.7 6.7 21 9V3h-6zM3 9l2.3-2.3 2.87 2.89 1.42-1.42L6.7 5.3 9 3H3v6zm6 12l-2.3-2.3 2.89-2.87-1.42-1.42L5.3 17.3 3 15v6h6zm12-6l-2.3 2.3-2.87-2.89-1.42 1.42 2.89 2.87L15 21h6v-6z"/></svg></div></div>
+      <div class="gal-item" onclick="openLb(4)"><img src="5.jpeg" alt="Trabajo Angel Motors" loading="lazy"><div class="gal-overlay"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 3l2.3 2.3-2.89 2.87 1.42 1.42L18.7 6.7 21 9V3h-6zM3 9l2.3-2.3 2.87 2.89 1.42-1.42L6.7 5.3 9 3H3v6zm6 12l-2.3-2.3 2.89-2.87-1.42-1.42L5.3 17.3 3 15v6h6zm12-6l-2.3 2.3-2.87-2.89-1.42 1.42 2.89 2.87L15 21h6v-6z"/></svg></div></div>
+      <div class="gal-item" onclick="openLb(5)"><img src="6.jpeg" alt="Trabajo Angel Motors" loading="lazy"><div class="gal-overlay"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 3l2.3 2.3-2.89 2.87 1.42 1.42L18.7 6.7 21 9V3h-6zM3 9l2.3-2.3 2.87 2.89 1.42-1.42L6.7 5.3 9 3H3v6zm6 12l-2.3-2.3 2.89-2.87-1.42-1.42L5.3 17.3 3 15v6h6zm12-6l-2.3 2.3-2.87-2.89-1.42 1.42 2.89 2.87L15 21h6v-6z"/></svg></div></div>
+      <div class="gal-item" onclick="openLb(6)"><img src="7.jpeg" alt="Trabajo Angel Motors" loading="lazy"><div class="gal-overlay"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 3l2.3 2.3-2.89 2.87 1.42 1.42L18.7 6.7 21 9V3h-6zM3 9l2.3-2.3 2.87 2.89 1.42-1.42L6.7 5.3 9 3H3v6zm6 12l-2.3-2.3 2.89-2.87-1.42-1.42L5.3 17.3 3 15v6h6zm12-6l-2.3 2.3-2.87-2.89-1.42 1.42 2.89 2.87L15 21h6v-6z"/></svg></div></div>
+      <div class="gal-item" onclick="openLb(7)"><img src="8.jpeg" alt="Trabajo Angel Motors" loading="lazy"><div class="gal-overlay"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 3l2.3 2.3-2.89 2.87 1.42 1.42L18.7 6.7 21 9V3h-6zM3 9l2.3-2.3 2.87 2.89 1.42-1.42L6.7 5.3 9 3H3v6zm6 12l-2.3-2.3 2.89-2.87-1.42-1.42L5.3 17.3 3 15v6h6zm12-6l-2.3 2.3-2.87-2.89-1.42 1.42 2.89 2.87L15 21h6v-6z"/></svg></div></div>
+      <div class="gal-item" onclick="openLb(8)"><img src="9.jpeg" alt="Trabajo Angel Motors" loading="lazy"><div class="gal-overlay"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 3l2.3 2.3-2.89 2.87 1.42 1.42L18.7 6.7 21 9V3h-6zM3 9l2.3-2.3 2.87 2.89 1.42-1.42L6.7 5.3 9 3H3v6zm6 12l-2.3-2.3 2.89-2.87-1.42-1.42L5.3 17.3 3 15v6h6zm12-6l-2.3 2.3-2.87-2.89-1.42 1.42 2.89 2.87L15 21h6v-6z"/></svg></div></div>
+      <div class="gal-item" onclick="openLb(9)"><img src="10.jpeg" alt="Trabajo Angel Motors" loading="lazy"><div class="gal-overlay"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 3l2.3 2.3-2.89 2.87 1.42 1.42L18.7 6.7 21 9V3h-6zM3 9l2.3-2.3 2.87 2.89 1.42-1.42L6.7 5.3 9 3H3v6zm6 12l-2.3-2.3 2.89-2.87-1.42-1.42L5.3 17.3 3 15v6h6zm12-6l-2.3 2.3-2.87-2.89-1.42 1.42 2.89 2.87L15 21h6v-6z"/></svg></div></div>
+      <div class="gal-item" onclick="openLb(10)"><img src="11.jpeg" alt="Trabajo Angel Motors" loading="lazy"><div class="gal-overlay"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 3l2.3 2.3-2.89 2.87 1.42 1.42L18.7 6.7 21 9V3h-6zM3 9l2.3-2.3 2.87 2.89 1.42-1.42L6.7 5.3 9 3H3v6zm6 12l-2.3-2.3 2.89-2.87-1.42-1.42L5.3 17.3 3 15v6h6zm12-6l-2.3 2.3-2.87-2.89-1.42 1.42 2.89 2.87L15 21h6v-6z"/></svg></div></div>
+      <div class="gal-item" onclick="openLb(11)"><img src="12.jpeg" alt="Trabajo Angel Motors" loading="lazy"><div class="gal-overlay"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 3l2.3 2.3-2.89 2.87 1.42 1.42L18.7 6.7 21 9V3h-6zM3 9l2.3-2.3 2.87 2.89 1.42-1.42L6.7 5.3 9 3H3v6zm6 12l-2.3-2.3 2.89-2.87-1.42-1.42L5.3 17.3 3 15v6h6zm12-6l-2.3 2.3-2.87-2.89-1.42 1.42 2.89 2.87L15 21h6v-6z"/></svg></div></div>
+      <div class="gal-item" onclick="openLb(12)"><img src="13.jpeg" alt="Trabajo Angel Motors" loading="lazy"><div class="gal-overlay"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 3l2.3 2.3-2.89 2.87 1.42 1.42L18.7 6.7 21 9V3h-6zM3 9l2.3-2.3 2.87 2.89 1.42-1.42L6.7 5.3 9 3H3v6zm6 12l-2.3-2.3 2.89-2.87-1.42-1.42L5.3 17.3 3 15v6h6zm12-6l-2.3 2.3-2.87-2.89-1.42 1.42 2.89 2.87L15 21h6v-6z"/></svg></div></div>
+      <div class="gal-item" onclick="openLb(13)"><img src="14.jpeg" alt="Trabajo Angel Motors" loading="lazy"><div class="gal-overlay"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 3l2.3 2.3-2.89 2.87 1.42 1.42L18.7 6.7 21 9V3h-6zM3 9l2.3-2.3 2.87 2.89 1.42-1.42L6.7 5.3 9 3H3v6zm6 12l-2.3-2.3 2.89-2.87-1.42-1.42L5.3 17.3 3 15v6h6zm12-6l-2.3 2.3-2.87-2.89-1.42 1.42 2.89 2.87L15 21h6v-6z"/></svg></div></div>
+      <div class="gal-item" onclick="openLb(14)"><img src="15.jpeg" alt="Trabajo Angel Motors" loading="lazy"><div class="gal-overlay"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 3l2.3 2.3-2.89 2.87 1.42 1.42L18.7 6.7 21 9V3h-6zM3 9l2.3-2.3 2.87 2.89 1.42-1.42L6.7 5.3 9 3H3v6zm6 12l-2.3-2.3 2.89-2.87-1.42-1.42L5.3 17.3 3 15v6h6zm12-6l-2.3 2.3-2.87-2.89-1.42 1.42 2.89 2.87L15 21h6v-6z"/></svg></div></div>
+      <div class="gal-item" onclick="openLb(15)"><img src="16.jpeg" alt="Trabajo Angel Motors" loading="lazy"><div class="gal-overlay"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 3l2.3 2.3-2.89 2.87 1.42 1.42L18.7 6.7 21 9V3h-6zM3 9l2.3-2.3 2.87 2.89 1.42-1.42L6.7 5.3 9 3H3v6zm6 12l-2.3-2.3 2.89-2.87-1.42-1.42L5.3 17.3 3 15v6h6zm12-6l-2.3 2.3-2.87-2.89-1.42 1.42 2.89 2.87L15 21h6v-6z"/></svg></div></div>
+      <div class="gal-item" onclick="openLb(16)"><img src="17.jpeg" alt="Trabajo Angel Motors" loading="lazy"><div class="gal-overlay"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 3l2.3 2.3-2.89 2.87 1.42 1.42L18.7 6.7 21 9V3h-6zM3 9l2.3-2.3 2.87 2.89 1.42-1.42L6.7 5.3 9 3H3v6zm6 12l-2.3-2.3 2.89-2.87-1.42-1.42L5.3 17.3 3 15v6h6zm12-6l-2.3 2.3-2.87-2.89-1.42 1.42 2.89 2.87L15 21h6v-6z"/></svg></div></div>
+      <div class="gal-item" onclick="openLb(17)"><img src="18.jpeg" alt="Trabajo Angel Motors" loading="lazy"><div class="gal-overlay"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 3l2.3 2.3-2.89 2.87 1.42 1.42L18.7 6.7 21 9V3h-6zM3 9l2.3-2.3 2.87 2.89 1.42-1.42L6.7 5.3 9 3H3v6zm6 12l-2.3-2.3 2.89-2.87-1.42-1.42L5.3 17.3 3 15v6h6zm12-6l-2.3 2.3-2.87-2.89-1.42 1.42 2.89 2.87L15 21h6v-6z"/></svg></div></div>
+      <div class="gal-item" onclick="openLb(18)"><img src="19.jpeg" alt="Trabajo Angel Motors" loading="lazy"><div class="gal-overlay"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 3l2.3 2.3-2.89 2.87 1.42 1.42L18.7 6.7 21 9V3h-6zM3 9l2.3-2.3 2.87 2.89 1.42-1.42L6.7 5.3 9 3H3v6zm6 12l-2.3-2.3 2.89-2.87-1.42-1.42L5.3 17.3 3 15v6h6zm12-6l-2.3 2.3-2.87-2.89-1.42 1.42 2.89 2.87L15 21h6v-6z"/></svg></div></div>
+      <!-- VIDEO -->
+      <div class="gal-item" onclick="openLb(19)" style="grid-column:span 1;">
+        <span class="gal-video-badge">▶ VIDEO</span>
+        <video src="v1.mp4" muted loop playsinline preload="metadata" style="pointer-events:none;"></video>
+        <div class="gal-overlay"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACTO -->
 <section id="contacto">
   <div class="section-inner">
     <div class="section-eyebrow">Encuéntranos</div>
-    <h2 class="section-title">CONTACTO Y <span>UBICACION</span></h2>
+    <h2 class="section-title">CONTACTO Y <span class="blue">UBICACION</span></h2>
     <div class="divider"></div>
     <div class="contacto-grid">
       <div class="info-block">
         <div class="info-item">
           <div class="info-icon">📞</div>
-          <div><div class="info-label">Telefono</div><div class="info-value"><a href="tel:+50660000000">Contactar por llamada</a></div><div class="info-sub">Llamadas y WhatsApp</div></div>
+          <div>
+            <div class="info-label">Telefono</div>
+            <div class="info-value"><a href="tel:+50664578000">(506) 6457-8000</a></div>
+            <div class="info-sub">Llamadas y WhatsApp</div>
+          </div>
+        </div>
+        <div class="info-item">
+          <div class="info-icon">✉️</div>
+          <div>
+            <div class="info-label">Correo</div>
+            <div class="info-value"><a href="mailto:diaz.joseangel@icloud.com">diaz.joseangel@icloud.com</a></div>
+          </div>
         </div>
         <div class="info-item">
           <div class="info-icon">📍</div>
-          <div><div class="info-label">Ubicacion</div><div class="info-value">Costa Rica</div><div class="info-sub">Consultar direccion exacta por WhatsApp</div></div>
+          <div>
+            <div class="info-label">Ubicacion</div>
+            <div class="info-value">Costa Rica</div>
+            <div class="info-sub">Consultar direccion exacta por WhatsApp</div>
+          </div>
         </div>
-        <div class="info-item">
-          <div class="info-icon">📘</div>
-          <div><div class="info-label">Facebook</div><div class="info-value"><a href="https://www.facebook.com/p/ANGEL-Motors-100068155398029/" target="_blank">ANGEL Motors</a></div><div class="info-sub">Seguinos en Facebook</div></div>
+        <div class="horario-box">
+          <table class="horario-table">
+            <tr><td>Lunes – Viernes</td><td>7:00 am – 6:00 pm</td></tr>
+            <tr><td>Sabado</td><td>7:00 am – 12:00 pm</td></tr>
+            <tr><td>Domingo</td><td>Solo emergencias</td></tr>
+          </table>
         </div>
-        <table class="horario-table">
-          <tr><td>Lunes – Viernes</td><td>7:00 am – 6:00 pm</td></tr>
-          <tr><td>Sabado</td><td>7:00 am – 12:00 pm</td></tr>
-          <tr><td>Domingo</td><td>Solo emergencias</td></tr>
-        </table>
-        <a href="https://wa.me/50660000000?text=Hola,%20quiero%20agendar%20una%20revision%20de%20mi%20moto" target="_blank" class="btn-primary" style="width:fit-content">📲 Escribir por WhatsApp</a>
+        <a href="https://wa.me/50664578000?text=Hola,%20quiero%20agendar%20una%20revision%20de%20mi%20moto" target="_blank" class="btn-primary" style="width:fit-content;">📲 Escribir por WhatsApp</a>
       </div>
-      <div>
-        <div class="mapa-box" style="display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;">
-          <span style="font-size:3rem;">📍</span>
-          <p style="color:var(--gris);font-size:0.9rem;text-align:center;">Ubicacion disponible<br>por WhatsApp</p>
-          <a href="https://wa.me/50660000000?text=Hola,%20me%20pueden%20dar%20la%20direccion%20del%20taller?" target="_blank" class="btn-primary">Como llegar</a>
+      <div style="display:flex;flex-direction:column;gap:20px;">
+        <a href="https://www.facebook.com/p/ANGEL-Motors-100068155398029/" target="_blank" class="fb-card">
+          <div class="fb-icon">📘</div>
+          <h4>ANGEL Motors en Facebook</h4>
+          <p>Siguenos para ver los ultimos trabajos, ofertas y novedades del taller</p>
+          <span style="font-size:0.8rem;color:var(--azul2);font-weight:600;letter-spacing:0.06em;">VER PAGINA →</span>
+        </a>
+        <div style="background:linear-gradient(135deg,var(--negro3),var(--negro2));border:1px solid var(--line-plata);border-radius:10px;padding:28px;text-align:center;">
+          <p style="font-size:0.9rem;color:var(--plata3);margin-bottom:16px;">¿Necesitas saber como llegar?</p>
+          <a href="https://wa.me/50664578000?text=Hola,%20me%20pueden%20dar%20la%20direccion%20del%20taller?" target="_blank" class="btn-primary">📍 Como llegar</a>
         </div>
-        <p style="margin-top:12px;font-size:0.8rem;color:var(--gris);">📘 Facebook: ANGEL Motors · Taller Mecanico y Electrico Motocicletas y Cuadraciclos</p>
       </div>
     </div>
   </div>
 </section>
 
-<section id="galeria">
-  <div class="section-inner">
-    <div class="section-eyebrow">Nuestro trabajo</div>
-    <h2 class="section-title">GALERIA DE <span>TRABAJOS</span></h2>
-    <div class="divider"></div>
-    <p class="section-desc">Reparaciones, mantenimientos y trabajos realizados en el taller. Cada moto recibe atencion personalizada y garantizada.</p>
-    <div class="galeria-grid">
-      <div class="gal-item" onclick="openLb(0)"><img src="moto1.jpeg" alt="Trabajo en taller" loading="lazy"><div class="gal-overlay"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 3l2.3 2.3-2.89 2.87 1.42 1.42L18.7 6.7 21 9V3h-6zM3 9l2.3-2.3 2.87 2.89 1.42-1.42L6.7 5.3 9 3H3v6zm6 12l-2.3-2.3 2.89-2.87-1.42-1.42L5.3 17.3 3 15v6h6zm12-6l-2.3 2.3-2.87-2.89-1.42 1.42 2.89 2.87L15 21h6v-6z"/></svg></div></div>
-      <div class="gal-item" onclick="openLb(1)"><img src="moto2.jpeg" alt="Servicio mecanico" loading="lazy"><div class="gal-overlay"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 3l2.3 2.3-2.89 2.87 1.42 1.42L18.7 6.7 21 9V3h-6zM3 9l2.3-2.3 2.87 2.89 1.42-1.42L6.7 5.3 9 3H3v6zm6 12l-2.3-2.3 2.89-2.87-1.42-1.42L5.3 17.3 3 15v6h6zm12-6l-2.3 2.3-2.87-2.89-1.42 1.42 2.89 2.87L15 21h6v-6z"/></svg></div></div>
-      <div class="gal-item" onclick="openLb(2)"><img src="moto3.jpeg" alt="Reparacion electrica" loading="lazy"><div class="gal-overlay"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 3l2.3 2.3-2.89 2.87 1.42 1.42L18.7 6.7 21 9V3h-6zM3 9l2.3-2.3 2.87 2.89 1.42-1.42L6.7 5.3 9 3H3v6zm6 12l-2.3-2.3 2.89-2.87-1.42-1.42L5.3 17.3 3 15v6h6zm12-6l-2.3 2.3-2.87-2.89-1.42 1.42 2.89 2.87L15 21h6v-6z"/></svg></div></div>
-      <div class="gal-item" onclick="openLb(3)"><img src="moto4.jpeg" alt="Cuadraciclo ATV" loading="lazy"><div class="gal-overlay"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M15 3l2.3 2.3-2.89 2.87 1.42 1.42L18.7 6.7 21 9V3h-6zM3 9l2.3-2.3 2.87 2.89 1.42-1.42L6.7 5.3 9 3H3v6zm6 12l-2.3-2.3 2.89-2.87-1.42-1.42L5.3 17.3 3 15v6h6zm12-6l-2.3 2.3-2.87-2.89-1.42 1.42 2.89 2.87L15 21h6v-6z"/></svg></div></div>
-    </div>
-  </div>
-</section>
-
+<!-- LIGHTBOX -->
 <div class="lb" id="lb" onclick="if(event.target===this)closeLb()">
   <button class="lb-close" onclick="closeLb()">✕</button>
   <button class="lb-prev" onclick="lbNav(-1)">‹</button>
-  <img id="lb-img" src="" alt="">
+  <div id="lb-content"></div>
   <button class="lb-next" onclick="lbNav(1)">›</button>
+  <div class="lb-counter" id="lb-counter"></div>
 </div>
 
+<!-- CTA FINAL -->
 <div class="cta-final">
-  <h2>TU MOTO MERECE <span>EL MEJOR SERVICIO</span></h2>
-  <p>Contactanos ahora y agendá tu revision. Atencion rapida y garantizada.</p>
+  <h2>TU MOTO MERECE <span class="blue">EL MEJOR</span> <span class="silver">SERVICIO</span></h2>
+  <p>Contactanos ahora y agenda tu revision. Atencion rapida, honesta y garantizada en Angel Motors.</p>
   <div class="cta-btns">
-    <a href="https://wa.me/50660000000?text=Hola,%20necesito%20servicio%20para%20mi%20moto" target="_blank" class="btn-primary">📲 WhatsApp</a>
-    <a href="tel:+50660000000" class="btn-secondary">📞 Llamar</a>
+    <a href="https://wa.me/50664578000?text=Hola,%20necesito%20servicio%20para%20mi%20moto" target="_blank" class="btn-primary">📲 WhatsApp</a>
+    <a href="tel:+50664578000" class="btn-secondary">📞 6457-8000</a>
   </div>
 </div>
 
+<!-- FOOTER -->
 <footer>
-  <div style="max-width:1100px;margin:0 auto;">
-    <div class="footer-logo">ANGEL MOTORS<span>.</span></div>
-    <p class="footer-copy">© 2026 Angel Motors · Taller Mecanico y Electrico · Motocicletas y Cuadraciclos · Costa Rica · Todos los derechos reservados</p>
+  <div style="max-width:1140px;margin:0 auto;">
+    <div class="footer-logo">
+      <img src="logoM.jpeg" alt="logo" style="width:32px;height:32px;border-radius:50%;object-fit:cover;border:1px solid var(--azul2);">
+      <span class="footer-logo-txt">ANGEL MOTORS<span>.</span></span>
+    </div>
+    <div class="footer-links">
+      <a href="#servicios">Servicios</a>
+      <a href="#galeria">Galeria</a>
+      <a href="#nosotros">Nosotros</a>
+      <a href="#contacto">Contacto</a>
+      <a href="https://wa.me/50664578000" target="_blank">WhatsApp</a>
+    </div>
+    <p class="footer-copy">© 2026 Angel Motors · Taller Mecanico y Electrico · Motocicletas y Cuadraciclos · Costa Rica</p>
   </div>
 </footer>
 
-<a href="https://wa.me/50660000000?text=Hola,%20necesito%20informacion" target="_blank" class="wa-float" aria-label="WhatsApp">
+<!-- WA FLOAT -->
+<a href="https://wa.me/50664578000?text=Hola,%20necesito%20informacion" target="_blank" class="wa-float" aria-label="WhatsApp">
   <svg width="28" height="28" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
 </a>
 
 <script>
-const LB_IMGS = ['moto1.jpeg','moto2.jpeg','moto3.jpeg','moto4.jpeg'];
+// Galeria media array: 19 fotos + 1 video
+const MEDIA = [
+  {type:'img',src:'1.jpeg'},{type:'img',src:'2.jpeg'},{type:'img',src:'3.jpeg'},
+  {type:'img',src:'4.jpeg'},{type:'img',src:'5.jpeg'},{type:'img',src:'6.jpeg'},
+  {type:'img',src:'7.jpeg'},{type:'img',src:'8.jpeg'},{type:'img',src:'9.jpeg'},
+  {type:'img',src:'10.jpeg'},{type:'img',src:'11.jpeg'},{type:'img',src:'12.jpeg'},
+  {type:'img',src:'13.jpeg'},{type:'img',src:'14.jpeg'},{type:'img',src:'15.jpeg'},
+  {type:'img',src:'16.jpeg'},{type:'img',src:'17.jpeg'},{type:'img',src:'18.jpeg'},
+  {type:'img',src:'19.jpeg'},
+  {type:'video',src:'v1.mp4'}
+];
+
 let lbCurrent = 0;
-function openLb(i){lbCurrent=i;document.getElementById('lb-img').src=LB_IMGS[i];document.getElementById('lb').classList.add('open');document.body.style.overflow='hidden';}
-function closeLb(){document.getElementById('lb').classList.remove('open');document.body.style.overflow='';}
-function lbNav(dir){lbCurrent=(lbCurrent+dir+LB_IMGS.length)%LB_IMGS.length;document.getElementById('lb-img').src=LB_IMGS[lbCurrent];}
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeLb();if(e.key==='ArrowRight')lbNav(1);if(e.key==='ArrowLeft')lbNav(-1);});
-function toggleMenu(){document.getElementById('mobile-menu').classList.toggle('open');}
-const hoy=new Date().getDay();
-document.querySelectorAll('.horario-table tr').forEach((tr,i)=>{
-  if((hoy>=1&&hoy<=5&&i===0)||(hoy===6&&i===1)||(hoy===0&&i===2))tr.classList.add('hoy');
+
+function openLb(i) {
+  lbCurrent = i;
+  renderLb();
+  document.getElementById('lb').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLb() {
+  const v = document.querySelector('#lb-content video');
+  if(v) v.pause();
+  document.getElementById('lb').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function lbNav(dir) {
+  const v = document.querySelector('#lb-content video');
+  if(v) v.pause();
+  lbCurrent = (lbCurrent + dir + MEDIA.length) % MEDIA.length;
+  renderLb();
+}
+
+function renderLb() {
+  const m = MEDIA[lbCurrent];
+  const cont = document.getElementById('lb-content');
+  if(m.type === 'video') {
+    cont.innerHTML = '<video src="'+m.src+'" controls autoplay style="max-width:92vw;max-height:88vh;border-radius:6px;"></video>';
+  } else {
+    cont.innerHTML = '<img src="'+m.src+'" alt="Angel Motors" style="max-width:90vw;max-height:88vh;border-radius:6px;box-shadow:0 20px 80px rgba(0,0,0,0.9);">';
+  }
+  document.getElementById('lb-counter').textContent = (lbCurrent+1) + ' / ' + MEDIA.length;
+}
+
+document.addEventListener('keydown', e => {
+  if(!document.getElementById('lb').classList.contains('open')) return;
+  if(e.key === 'Escape') closeLb();
+  if(e.key === 'ArrowRight') lbNav(1);
+  if(e.key === 'ArrowLeft') lbNav(-1);
+});
+
+function toggleMenu() { document.getElementById('mobile-menu').classList.toggle('open'); }
+
+// Horario hoy
+const hoy = new Date().getDay();
+document.querySelectorAll('.horario-table tr').forEach((tr, i) => {
+  if((hoy >= 1 && hoy <= 5 && i === 0) || (hoy === 6 && i === 1) || (hoy === 0 && i === 2))
+    tr.classList.add('hoy');
+});
+
+// Video en galeria: play on hover
+document.querySelectorAll('.gal-item video').forEach(v => {
+  v.parentElement.addEventListener('mouseenter', () => v.play());
+  v.parentElement.addEventListener('mouseleave', () => { v.pause(); v.currentTime = 0; });
 });
 </script>
 </body>
