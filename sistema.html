@@ -1165,14 +1165,22 @@ function updateConnectionBadge(online){
 window.addEventListener('online',  ()=>{ IS_ONLINE=true;  updateConnectionBadge(true);  if(IS_ELECTRON) syncPendingQueue(); });
 window.addEventListener('offline', ()=>{ IS_ONLINE=false; updateConnectionBadge(false); });
 
-// Ping real cada 20s para detectar internet sin depender de navigator.onLine
-setInterval(()=>{
-  fetch('https://www.gstatic.com/generate_204',{method:'HEAD',mode:'no-cors',cache:'no-store'})
-    .then(()=>updateConnectionBadge(true))
-    .catch(()=>updateConnectionBadge(false));
-}, 20000);
-// Badge inicial después de que el DOM esté listo
-setTimeout(()=>updateConnectionBadge(navigator.onLine), 1500);
+// Verificar conexión real intentando llegar a Firestore
+async function checkRealConnection(){
+  try{
+    await db.collection('_ping').limit(1).get();
+    updateConnectionBadge(true);
+  } catch(e){
+    // code unavailable = sin red, permission-denied = hay red pero sin permiso (igual hay internet)
+    if(e.code === 'unavailable' || e.message.includes('network')){
+      updateConnectionBadge(false);
+    } else {
+      updateConnectionBadge(true); // permission-denied etc = hay internet
+    }
+  }
+}
+setInterval(checkRealConnection, 20000);
+setTimeout(()=>{ updateConnectionBadge(navigator.onLine); checkRealConnection(); }, 1500);
 
 // ── Persistencia Firestore (cache navegador) ──────────────────────────────
 db.enablePersistence({synchronizeTabs:false}).catch(()=>{});
@@ -1245,55 +1253,83 @@ if(IS_ELECTRON){
   setTimeout(syncPendingQueue, 4000);
 }
 
+// ── Limpiar datos para guardar local (sin objetos Firestore) ─────────────
+function limpiarParaLocal(datos){
+  const clean = {};
+  for(const [k,v] of Object.entries(datos)){
+    // Excluir FieldValue de Firestore (serverTimestamp, etc)
+    if(v && typeof v === 'object' && v.constructor && v.constructor.name && v.constructor.name.includes('FieldValue')) continue;
+    if(v && typeof v === 'object' && '_methodName' in v) continue;
+    clean[k] = v;
+  }
+  // Agregar timestamp local como string ISO
+  if(!clean.createdAt) clean.createdAt = new Date().toISOString();
+  return clean;
+}
+
 // ── dbAdd: guardar con fallback local ────────────────────────────────────
 async function dbAdd(col, datos){
+  // Siempre limpiar datos antes de usar (por si vienen con serverTimestamp)
+  const datosLimpios = limpiarParaLocal(datos);
+
   if(IS_ONLINE){
     try{
       const r = await db.collection(col).add({
-        ...datos,
+        ...datosLimpios,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
-      await cacheGuardar(col, r.id, datos);
+      await cacheGuardar(col, r.id, datosLimpios);
       return r;
     } catch(e){
       console.warn('[dbAdd] Firebase falló, guardando local:', e.message);
-      if(IS_ELECTRON) return dbAddLocal(col, datos);
+      if(IS_ELECTRON) return dbAddLocal(col, datosLimpios);
       throw e;
     }
   } else if(IS_ELECTRON){
-    return dbAddLocal(col, datos);
+    return dbAddLocal(col, datosLimpios);
   } else {
     throw new Error('Sin conexión a internet');
   }
 }
 
-async function dbAddLocal(col, datos){
+async function dbAddLocal(col, datosLimpios){
   const lid = 'local_' + Date.now() + '_' + Math.random().toString(36).substr(2,5);
-  const datosConId = {...datos, _localId: lid, _pendingSync: true};
+  const datosConId = {...datosLimpios, id: lid, _localId: lid, _pendingSync: true};
   await cacheGuardar(col, lid, datosConId);
-  await queueAdd(col, lid, 'add', datos);
+  await queueAdd(col, lid, 'add', datosLimpios);
+  // Actualizar array en memoria para que aparezca en pantalla SIN recargar
+  if(col === 'clientes')   { clientes.push(datosConId);   renderClientes(); }
+  if(col === 'vehiculos')  { vehiculos.push(datosConId);  renderVehiculos(); }
+  if(col === 'repuestos')  { repuestos.push(datosConId);  renderRepuestos(); }
+  if(col === 'facturas')   { facturas.push(datosConId);   renderFacturas(); }
+  if(col === 'ordenes')    { ordenes.push(datosConId);    renderOrdenes(); }
+  if(col === 'citas')      { citas.push(datosConId);      renderCitas(); }
+  if(col === 'proveedores'){ proveedores.push(datosConId); renderProveedores(); }
+  if(col === 'reparaciones'){ reps.push(datosConId);      renderReps(); loadDash(); }
   console.log('[dbAdd] Guardado local:', col, lid);
   return { id: lid };
 }
 
 // ── dbUpdate ─────────────────────────────────────────────────────────────
 async function dbUpdate(col, id, datos){
+  const datosLimpios = limpiarParaLocal(datos);
+  if(!datosLimpios.updatedAt) datosLimpios.updatedAt = new Date().toISOString();
   const esLocal = id && id.startsWith('local_');
   if(IS_ONLINE && !esLocal){
     try{
       await db.collection(col).doc(id).update({
-        ...datos,
+        ...datosLimpios,
         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
       });
-      await cacheGuardar(col, id, datos);
+      await cacheGuardar(col, id, datosLimpios);
       return;
     } catch(e){
       console.warn('[dbUpdate] Firebase falló, guardando local:', e.message);
     }
   }
   if(IS_ELECTRON){
-    await cacheGuardar(col, id, datos);
-    await queueAdd(col, id, 'update', datos);
+    await cacheGuardar(col, id, datosLimpios);
+    await queueAdd(col, id, 'update', datosLimpios);
   } else {
     throw new Error('Sin conexión');
   }
@@ -1790,7 +1826,7 @@ async function guardarRep(){
 }
 
 async function guardarCliente(){
-  const data={nombre:document.getElementById('cli-nombre').value.trim(),tel:document.getElementById('cli-tel').value.trim(),correo:document.getElementById('cli-correo').value.trim(),cedula:document.getElementById('cli-cedula').value.trim(),direccion:document.getElementById('cli-dir').value.trim(),notas:document.getElementById('cli-notas').value.trim(),creadoPor:currentUser?.nombre||'—',createdAt:firebase.firestore.FieldValue.serverTimestamp()};
+  const data={nombre:document.getElementById('cli-nombre').value.trim(),tel:document.getElementById('cli-tel').value.trim(),correo:document.getElementById('cli-correo').value.trim(),cedula:document.getElementById('cli-cedula').value.trim(),direccion:document.getElementById('cli-dir').value.trim(),notas:document.getElementById('cli-notas').value.trim(),creadoPor:currentUser?.nombre||'—'};
   if(!data.nombre){alert('El nombre es requerido.');return;}
   try{
     const btn=document.getElementById('btn-guardar-cliente');
@@ -1845,7 +1881,7 @@ async function guardarVehiculo(){
 
 async function guardarRepuesto(){
   const prov=proveedores.find(p=>p.id===document.getElementById('rp-proveedor').value);
-  const data={codigo:document.getElementById('rp-codigo').value.trim(),nombre:document.getElementById('rp-nombre').value.trim(),stock:parseInt(document.getElementById('rp-stock').value)||0,minimo:parseInt(document.getElementById('rp-minimo').value)||1,costo:parseFloat(document.getElementById('rp-costo').value)||0,venta:parseFloat(document.getElementById('rp-venta').value)||0,proveedorId:prov?.id||'',proveedorNombre:prov?.nombre||'—',ubicacion:document.getElementById('rp-ubic').value.trim(),descripcion:document.getElementById('rp-desc').value.trim(),creadoPor:currentUser?.nombre||'—',createdAt:firebase.firestore.FieldValue.serverTimestamp()};
+  const data={codigo:document.getElementById('rp-codigo').value.trim(),nombre:document.getElementById('rp-nombre').value.trim(),stock:parseInt(document.getElementById('rp-stock').value)||0,minimo:parseInt(document.getElementById('rp-minimo').value)||1,costo:parseFloat(document.getElementById('rp-costo').value)||0,venta:parseFloat(document.getElementById('rp-venta').value)||0,proveedorId:prov?.id||'',proveedorNombre:prov?.nombre||'—',ubicacion:document.getElementById('rp-ubic').value.trim(),descripcion:document.getElementById('rp-desc').value.trim(),creadoPor:currentUser?.nombre||'—'};
   if(!data.nombre){alert('El nombre es requerido.');return;}
   try{
     const btn=document.getElementById('btn-guardar-repuesto');
@@ -1942,7 +1978,7 @@ async function guardarCita(){
 
 async function guardarFactura(){
   const cli=clientes.find(c=>c.id===document.getElementById('fac-cliente').value);
-  const data={clienteId:cli?.id||'',clienteNombre:cli?.nombre||'—',fecha:document.getElementById('fac-fecha').value||new Date().toISOString().split('T')[0],descripcion:document.getElementById('fac-desc').value.trim(),manoObra:parseFloat(document.getElementById('fac-mano').value)||0,repuestos:parseFloat(document.getElementById('fac-repuestos').value)||0,otros:parseFloat(document.getElementById('fac-otros').value)||0,total:parseFloat(document.getElementById('fac-total').value)||0,estado:document.getElementById('fac-estado').value,notas:document.getElementById('fac-notas').value.trim(),creadoPor:currentUser?.nombre||'—',createdAt:firebase.firestore.FieldValue.serverTimestamp()};
+  const data={clienteId:cli?.id||'',clienteNombre:cli?.nombre||'—',fecha:document.getElementById('fac-fecha').value||new Date().toISOString().split('T')[0],descripcion:document.getElementById('fac-desc').value.trim(),manoObra:parseFloat(document.getElementById('fac-mano').value)||0,repuestos:parseFloat(document.getElementById('fac-repuestos').value)||0,otros:parseFloat(document.getElementById('fac-otros').value)||0,total:parseFloat(document.getElementById('fac-total').value)||0,estado:document.getElementById('fac-estado').value,notas:document.getElementById('fac-notas').value.trim(),creadoPor:currentUser?.nombre||'—'};
   if(!data.clienteNombre||data.clienteNombre==='—'){alert('Seleccioná un cliente.');return;}
   if(!data.descripcion){alert('La descripción es requerida.');return;}
   try{
@@ -1959,7 +1995,7 @@ async function guardarFactura(){
 }
 
 async function guardarProveedor(){
-  const data={nombre:document.getElementById('prov-nombre').value.trim(),contacto:document.getElementById('prov-contacto').value.trim(),tel:document.getElementById('prov-tel').value.trim(),correo:document.getElementById('prov-correo').value.trim(),direccion:document.getElementById('prov-dir').value.trim(),notas:document.getElementById('prov-notas').value.trim(),creadoPor:currentUser?.nombre||'—',createdAt:firebase.firestore.FieldValue.serverTimestamp()};
+  const data={nombre:document.getElementById('prov-nombre').value.trim(),contacto:document.getElementById('prov-contacto').value.trim(),tel:document.getElementById('prov-tel').value.trim(),correo:document.getElementById('prov-correo').value.trim(),direccion:document.getElementById('prov-dir').value.trim(),notas:document.getElementById('prov-notas').value.trim(),creadoPor:currentUser?.nombre||'—'};
   if(!data.nombre){alert('El nombre es requerido.');return;}
   try{
     const btn=document.getElementById('btn-guardar-proveedor');
