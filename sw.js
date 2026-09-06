@@ -1,4 +1,4 @@
-const CACHE = 'taller-diaz-v6';
+const CACHE = 'taller-diaz-v7';
 const ASSETS = ['/sistema.html', '/manifest.json', '/logo.jpeg', '/logo-negro.jpg', '/angel-motors-landing.html'];
 
 const NETWORK_FIRST = ['/sistema.html', '/angel-motors-landing.html'];
