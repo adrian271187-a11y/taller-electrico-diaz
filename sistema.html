@@ -1144,126 +1144,229 @@ const db=firebase.firestore();
 const IS_ELECTRON = !!(window.electronAPI);
 let IS_ONLINE = navigator.onLine;
 
+// ── Badge de conexión ────────────────────────────────────────────────────
 function updateConnectionBadge(online){
-  const dot=document.getElementById('conn-dot');
-  const txt=document.getElementById('conn-text');
-  const badge=document.getElementById('conn-badge-sidebar');
-  if(!badge) return;
-  IS_ONLINE = online;
-  if(online){
-    badge.style.cssText='display:flex;align-items:center;gap:7px;padding:7px 10px;border-radius:8px;margin-bottom:8px;font-size:0.72rem;font-weight:600;letter-spacing:0.04em;transition:all 0.3s;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);color:#22c55e;';
-    if(dot){dot.style.cssText='width:8px;height:8px;border-radius:50%;flex-shrink:0;background:#22c55e;box-shadow:0 0 6px rgba(34,197,94,0.6);';}
-    if(txt) txt.textContent='En línea';
-  } else {
-    badge.style.cssText='display:flex;align-items:center;gap:7px;padding:7px 10px;border-radius:8px;margin-bottom:8px;font-size:0.72rem;font-weight:600;letter-spacing:0.04em;transition:all 0.3s;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.25);color:#f59e0b;';
-    if(dot){dot.style.cssText='width:8px;height:8px;border-radius:50%;flex-shrink:0;background:#f59e0b;box-shadow:0 0 6px rgba(245,158,11,0.6);';}
-    if(txt) txt.textContent='Sin conexión — modo local';
-  }
-}
-window.addEventListener('online',  ()=>{ IS_ONLINE=true;  updateConnectionBadge(true);  if(IS_ELECTRON) syncPendingQueue(); });
-window.addEventListener('offline', ()=>{ IS_ONLINE=false; updateConnectionBadge(false); });
-setTimeout(()=>updateConnectionBadge(navigator.onLine), 1200);
-setInterval(()=>{
-  fetch('https://www.gstatic.com/generate_204',{method:'HEAD',mode:'no-cors',cache:'no-store'})
-    .then(()=>updateConnectionBadge(true)).catch(()=>updateConnectionBadge(false));
-}, 15000);
-
-// Habilitar persistencia Firestore (cache local del navegador también)
-db.enablePersistence({synchronizeTabs:true}).catch(()=>{});
-
-// Cache y cola (solo Electron con SQLite)
-async function cacheGuardar(col,id,datos){ if(IS_ELECTRON) await window.electronAPI.setCacheDoc(col,id,datos); }
-async function cacheEliminar(col,id){ if(IS_ELECTRON) await window.electronAPI.deleteCacheDoc(col,id); }
-async function cacheObtener(col){ if(!IS_ELECTRON) return null; return window.electronAPI.getCacheColeccion(col); }
-async function queueAdd(col,id,op,datos){ if(IS_ELECTRON) await window.electronAPI.queuePush(col,id,op,datos); }
-
-async function syncPendingQueue(){
-  if(!IS_ELECTRON||!IS_ONLINE) return;
-  try{
-    const pending = await window.electronAPI.queueGetPending();
-    for(const item of pending){
-      try{
-        if(item.operacion==='add'){ const r=await db.collection(item.coleccion).add({...item.datos,createdAt:firebase.firestore.FieldValue.serverTimestamp()}); await cacheGuardar(item.coleccion,r.id,item.datos); }
-        else if(item.operacion==='update'){ await db.collection(item.coleccion).doc(item.docId).update({...item.datos,updatedAt:firebase.firestore.FieldValue.serverTimestamp()}); await cacheGuardar(item.coleccion,item.docId,item.datos); }
-        else if(item.operacion==='delete'){ await db.collection(item.coleccion).doc(item.docId).delete(); await cacheEliminar(item.coleccion,item.docId); }
-        await window.electronAPI.queueMarkSynced(item.id);
-      }catch(e){ console.warn('[SYNC] item error:',e); }
-    }
-    await window.electronAPI.clearSynced();
-    if(pending.length) console.log('[SYNC]',pending.length,'operaciones sincronizadas');
-  }catch(e){ console.error('[SYNC]',e); }
-}
-if(IS_ELECTRON){ setInterval(()=>{ if(IS_ONLINE) syncPendingQueue(); },30000); setTimeout(syncPendingQueue,3000); }
-
-// Wrappers de escritura con fallback offline
-async function dbAdd(col,datos){
-  const payload={...datos, createdAt:firebase.firestore.FieldValue.serverTimestamp()};
-  if(IS_ONLINE){
-    try{ const r=await db.collection(col).add(payload); await cacheGuardar(col,r.id,datos); return r; }
-    catch(e){ if(IS_ELECTRON){ const lid='local_'+Date.now(); await cacheGuardar(col,lid,datos); await queueAdd(col,null,'add',datos); return{id:lid}; } throw e; }
-  } else if(IS_ELECTRON){
-    const lid='local_'+Date.now(); await cacheGuardar(col,lid,datos); await queueAdd(col,null,'add',datos); return{id:lid};
-  } else { throw new Error('Sin conexión'); }
-}
-async function dbUpdate(col,id,datos){
-  if(IS_ONLINE){
-    try{ await db.collection(col).doc(id).update({...datos,updatedAt:firebase.firestore.FieldValue.serverTimestamp()}); await cacheGuardar(col,id,datos); }
-    catch(e){ if(IS_ELECTRON) await queueAdd(col,id,'update',datos); else throw e; }
-  } else if(IS_ELECTRON){ await cacheGuardar(col,id,datos); await queueAdd(col,id,'update',datos); }
-  else throw new Error('Sin conexión');
-}
-async function dbDelete(col,id){
-  if(IS_ONLINE){
-    try{ await db.collection(col).doc(id).delete(); await cacheEliminar(col,id); }
-    catch(e){ if(IS_ELECTRON) await queueAdd(col,id,'delete',{}); else throw e; }
-  } else if(IS_ELECTRON){ await cacheEliminar(col,id); await queueAdd(col,id,'delete',{}); }
-  else throw new Error('Sin conexión');
-}
-function dbListen(col,callback){
-  if(IS_ONLINE){
-    return db.collection(col).onSnapshot(snap=>{
-      const docs=[]; snap.forEach(d=>{ const data={id:d.id,...d.data()}; docs.push(data); if(IS_ELECTRON) cacheGuardar(col,d.id,d.data()); }); callback(docs);
-    }, async()=>{ if(IS_ELECTRON){ const cached=await cacheObtener(col); if(cached) callback(cached); } });
-  } else if(IS_ELECTRON){
-    cacheObtener(col).then(cached=>{ if(cached&&cached.length) callback(cached); });
-    return ()=>{};
-  }
-  callback([]); return ()=>{};
-}
-// =================== FIN CAPA OFFLINE ===================
-
-// =================== INDICADOR CONEXIÓN ===================
-function updateConnectionBadge(online){
+  IS_ONLINE = !!online;
   const badge = document.getElementById('conn-badge-sidebar');
   const dot   = document.getElementById('conn-dot');
   const txt   = document.getElementById('conn-text');
   if(!badge) return;
-  if(online){
-    badge.style.background='rgba(34,197,94,0.1)';
-    badge.style.border='1px solid rgba(34,197,94,0.25)';
-    badge.style.color='#22c55e';
-    dot.style.background='#22c55e';
-    dot.style.boxShadow='0 0 6px rgba(34,197,94,0.6)';
-    txt.textContent='En línea';
+  if(IS_ONLINE){
+    badge.style.cssText='display:flex;align-items:center;gap:7px;padding:7px 10px;border-radius:8px;margin-bottom:8px;font-size:0.72rem;font-weight:600;letter-spacing:0.04em;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);color:#22c55e;';
+    if(dot) dot.style.cssText='width:8px;height:8px;border-radius:50%;flex-shrink:0;background:#22c55e;box-shadow:0 0 6px rgba(34,197,94,0.6);';
+    if(txt) txt.textContent='En línea';
   } else {
-    badge.style.background='rgba(245,158,11,0.1)';
-    badge.style.border='1px solid rgba(245,158,11,0.25)';
-    badge.style.color='#f59e0b';
-    dot.style.background='#f59e0b';
-    dot.style.boxShadow='0 0 6px rgba(245,158,11,0.6)';
-    txt.textContent='Sin conexión';
+    badge.style.cssText='display:flex;align-items:center;gap:7px;padding:7px 10px;border-radius:8px;margin-bottom:8px;font-size:0.72rem;font-weight:600;letter-spacing:0.04em;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.25);color:#f59e0b;';
+    if(dot) dot.style.cssText='width:8px;height:8px;border-radius:50%;flex-shrink:0;background:#f59e0b;box-shadow:0 0 6px rgba(245,158,11,0.6);';
+    if(txt) txt.textContent='Sin conexión — modo local';
   }
 }
-window.addEventListener('online',  ()=>updateConnectionBadge(true));
-window.addEventListener('offline', ()=>updateConnectionBadge(false));
-// Verificar con ping real a Firebase
-function checkOnline(){
-  fetch('https://firestore.googleapis.com/v1/projects/taller-diaz/databases/(default)/documents',{method:'HEAD',mode:'no-cors'})
+
+window.addEventListener('online',  ()=>{ IS_ONLINE=true;  updateConnectionBadge(true);  if(IS_ELECTRON) syncPendingQueue(); });
+window.addEventListener('offline', ()=>{ IS_ONLINE=false; updateConnectionBadge(false); });
+
+// Ping real cada 20s para detectar internet sin depender de navigator.onLine
+setInterval(()=>{
+  fetch('https://www.gstatic.com/generate_204',{method:'HEAD',mode:'no-cors',cache:'no-store'})
     .then(()=>updateConnectionBadge(true))
-    .catch(()=>updateConnectionBadge(navigator.onLine));
+    .catch(()=>updateConnectionBadge(false));
+}, 20000);
+// Badge inicial después de que el DOM esté listo
+setTimeout(()=>updateConnectionBadge(navigator.onLine), 1500);
+
+// ── Persistencia Firestore (cache navegador) ──────────────────────────────
+db.enablePersistence({synchronizeTabs:false}).catch(()=>{});
+
+// ── Helpers SQLite (Electron) ─────────────────────────────────────────────
+async function cacheGuardar(col,id,datos){
+  if(!IS_ELECTRON) return;
+  try{ await window.electronAPI.setCacheDoc(col, id, datos); }catch(e){ console.warn('[CACHE] set error',e); }
 }
-setTimeout(()=>{updateConnectionBadge(navigator.onLine); checkOnline();}, 800);
-setInterval(checkOnline, 15000);
+async function cacheEliminar(col,id){
+  if(!IS_ELECTRON) return;
+  try{ await window.electronAPI.deleteCacheDoc(col, id); }catch(e){}
+}
+async function cacheObtener(col){
+  if(!IS_ELECTRON) return [];
+  try{ return await window.electronAPI.getCacheColeccion(col) || []; }catch(e){ return []; }
+}
+async function queueAdd(col,id,op,datos){
+  if(!IS_ELECTRON) return;
+  try{ await window.electronAPI.queuePush(col, id, op, datos); }catch(e){ console.warn('[QUEUE] push error',e); }
+}
+
+// ── Sincronización cola → Firebase ───────────────────────────────────────
+let _syncing = false;
+async function syncPendingQueue(){
+  if(!IS_ELECTRON || !IS_ONLINE || _syncing) return;
+  _syncing = true;
+  try{
+    const pending = await window.electronAPI.queueGetPending();
+    if(!pending.length){ _syncing=false; return; }
+    console.log('[SYNC] Sincronizando', pending.length, 'operaciones...');
+    for(const item of pending){
+      try{
+        if(item.operacion==='add'){
+          // Si el docId es local_ no existe en Firebase, hacer add
+          const r = await db.collection(item.coleccion).add({
+            ...item.datos,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+          await cacheGuardar(item.coleccion, r.id, item.datos);
+          // Actualizar cache: eliminar el local_ y guardar con id real
+          await cacheEliminar(item.coleccion, item.docId||'');
+        } else if(item.operacion==='update'){
+          await db.collection(item.coleccion).doc(item.docId).update({
+            ...item.datos,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+          await cacheGuardar(item.coleccion, item.docId, item.datos);
+        } else if(item.operacion==='delete'){
+          await db.collection(item.coleccion).doc(item.docId).delete();
+          await cacheEliminar(item.coleccion, item.docId);
+        }
+        await window.electronAPI.queueMarkSynced(item.id);
+      } catch(e){
+        console.warn('[SYNC] Error en item', item.coleccion, item.operacion, e.message);
+      }
+    }
+    await window.electronAPI.clearSynced();
+    console.log('[SYNC] Completado');
+    // Recargar datos tras sincronizar
+    initListeners();
+  } catch(e){
+    console.error('[SYNC] Error general:', e);
+  } finally {
+    _syncing = false;
+  }
+}
+if(IS_ELECTRON){
+  setInterval(()=>{ if(IS_ONLINE) syncPendingQueue(); }, 30000);
+  setTimeout(syncPendingQueue, 4000);
+}
+
+// ── dbAdd: guardar con fallback local ────────────────────────────────────
+async function dbAdd(col, datos){
+  if(IS_ONLINE){
+    try{
+      const r = await db.collection(col).add({
+        ...datos,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      await cacheGuardar(col, r.id, datos);
+      return r;
+    } catch(e){
+      console.warn('[dbAdd] Firebase falló, guardando local:', e.message);
+      if(IS_ELECTRON) return dbAddLocal(col, datos);
+      throw e;
+    }
+  } else if(IS_ELECTRON){
+    return dbAddLocal(col, datos);
+  } else {
+    throw new Error('Sin conexión a internet');
+  }
+}
+
+async function dbAddLocal(col, datos){
+  const lid = 'local_' + Date.now() + '_' + Math.random().toString(36).substr(2,5);
+  const datosConId = {...datos, _localId: lid, _pendingSync: true};
+  await cacheGuardar(col, lid, datosConId);
+  await queueAdd(col, lid, 'add', datos);
+  console.log('[dbAdd] Guardado local:', col, lid);
+  return { id: lid };
+}
+
+// ── dbUpdate ─────────────────────────────────────────────────────────────
+async function dbUpdate(col, id, datos){
+  const esLocal = id && id.startsWith('local_');
+  if(IS_ONLINE && !esLocal){
+    try{
+      await db.collection(col).doc(id).update({
+        ...datos,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      await cacheGuardar(col, id, datos);
+      return;
+    } catch(e){
+      console.warn('[dbUpdate] Firebase falló, guardando local:', e.message);
+    }
+  }
+  if(IS_ELECTRON){
+    await cacheGuardar(col, id, datos);
+    await queueAdd(col, id, 'update', datos);
+  } else {
+    throw new Error('Sin conexión');
+  }
+}
+
+// ── dbDelete ─────────────────────────────────────────────────────────────
+async function dbDelete(col, id){
+  const esLocal = id && id.startsWith('local_');
+  await cacheEliminar(col, id);
+  if(IS_ONLINE && !esLocal){
+    try{
+      await db.collection(col).doc(id).delete();
+      return;
+    } catch(e){ console.warn('[dbDelete] Firebase falló:', e.message); }
+  }
+  if(IS_ELECTRON && !esLocal){
+    await queueAdd(col, id, 'delete', {});
+  }
+}
+
+// ── dbListen: listener con cache offline ─────────────────────────────────
+// Guardamos los unsubscribe para poder reiniciar listeners tras sync
+const _unsubs = {};
+function dbListen(col, callback){
+  // Cancelar listener anterior si existe
+  if(_unsubs[col]) try{ _unsubs[col](); }catch(e){}
+
+  if(IS_ONLINE){
+    const unsub = db.collection(col).onSnapshot(
+      snap => {
+        const docs = [];
+        snap.forEach(d => {
+          const data = {id:d.id, ...d.data()};
+          docs.push(data);
+          if(IS_ELECTRON) cacheGuardar(col, d.id, d.data());
+        });
+        callback(docs);
+      },
+      async err => {
+        console.warn('[dbListen] Error Firebase en', col, '— usando cache:', err.message);
+        const cached = await cacheObtener(col);
+        callback(cached);
+      }
+    );
+    _unsubs[col] = unsub;
+    return unsub;
+  } else if(IS_ELECTRON){
+    // Sin internet: cargar desde cache SQLite
+    cacheObtener(col).then(cached => {
+      console.log('[dbListen] Offline cache', col, cached.length, 'docs');
+      callback(cached);
+    });
+    _unsubs[col] = ()=>{};
+    return ()=>{};
+  } else {
+    callback([]);
+    return ()=>{};
+  }
+}
+
+// ── initListeners: arrancar/reiniciar todos los listeners ─────────────────
+function initListeners(){
+  dbListen('reparaciones', docs=>{reps=docs;loadDash();if(document.getElementById('screen-reparaciones').classList.contains('active'))renderReps();});
+  dbListen('clientes', docs=>{clientes=docs;if(document.getElementById('screen-clientes').classList.contains('active'))renderClientes();const elC=document.getElementById('est-clientes-total');if(elC)elC.textContent=clientes.length;});
+  dbListen('vehiculos', docs=>{vehiculos=docs;if(document.getElementById('screen-vehiculos').classList.contains('active'))renderVehiculos();});
+  dbListen('repuestos', docs=>{repuestos=docs;if(document.getElementById('screen-repuestos').classList.contains('active'))renderRepuestos();});
+  dbListen('citas', docs=>{citas=docs;if(document.getElementById('screen-agenda').classList.contains('active'))renderCitas();});
+  dbListen('facturas', docs=>{facturas=docs;if(document.getElementById('screen-facturacion').classList.contains('active'))renderFacturas();if(document.getElementById('screen-estadisticas').classList.contains('active'))renderEstadisticas();});
+  dbListen('proveedores', docs=>{proveedores=docs;if(document.getElementById('screen-proveedores').classList.contains('active'))renderProveedores();});
+  dbListen('ordenes', docs=>{ordenes=docs;if(document.getElementById('screen-ordenes').classList.contains('active'))renderOrdenes();});
+  dbListen('movimientos', docs=>{movimientos=docs;if(document.getElementById('screen-historial').classList.contains('active'))renderHistorial();});
+}
+// =================== FIN CAPA OFFLINE ===================
 
 // =================== USUARIOS ===================
 const USUARIOS={
@@ -1455,15 +1558,7 @@ async function initApp(){
   // Limpiar historial si es domingo
   limpiarHistorialSemanal();
 
-  dbListen('reparaciones', docs=>{reps=docs;loadDash();if(document.getElementById('screen-reparaciones').classList.contains('active'))renderReps();});
-  dbListen('clientes', docs=>{clientes=docs;if(document.getElementById('screen-clientes').classList.contains('active'))renderClientes();const elC=document.getElementById('est-clientes-total');if(elC)elC.textContent=clientes.length;});
-  dbListen('vehiculos', docs=>{vehiculos=docs;if(document.getElementById('screen-vehiculos').classList.contains('active'))renderVehiculos();});
-  dbListen('repuestos', docs=>{repuestos=docs;if(document.getElementById('screen-repuestos').classList.contains('active'))renderRepuestos();});
-  dbListen('citas', docs=>{citas=docs;if(document.getElementById('screen-agenda').classList.contains('active'))renderCitas();});
-  dbListen('facturas', docs=>{facturas=docs;if(document.getElementById('screen-facturacion').classList.contains('active'))renderFacturas();if(document.getElementById('screen-estadisticas').classList.contains('active'))renderEstadisticas();});
-  dbListen('proveedores', docs=>{proveedores=docs;if(document.getElementById('screen-proveedores').classList.contains('active'))renderProveedores();});
-  dbListen('ordenes', docs=>{ordenes=docs;if(document.getElementById('screen-ordenes').classList.contains('active'))renderOrdenes();});
-  dbListen('movimientos', docs=>{movimientos=docs;if(document.getElementById('screen-historial').classList.contains('active'))renderHistorial();});
+  initListeners();
 }
 
 // Cargar contraseñas de mecánicos desde Firestore
