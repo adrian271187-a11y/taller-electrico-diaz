@@ -223,8 +223,8 @@ footer{background:var(--negro);border-top:1px solid var(--line);padding:36px 24p
 .admin-btn:hover{background:rgba(26,111,216,0.1);border-color:var(--azul-dim);color:var(--azul2);}
 
 /* ── LOGO HERO ── */
-.hero-logo-wrap{margin-bottom:24px;}
-.hero-logo-img{width:120px;height:120px;object-fit:cover;border-radius:50%;border:3px solid var(--azul2);box-shadow:0 0 0 6px rgba(42,139,240,0.12),0 0 40px rgba(42,139,240,0.35);}
+.hero-logo-wrap{margin-bottom:24px;position:relative;z-index:3;}
+.hero-logo-img{width:120px;height:120px;object-fit:cover;border-radius:50%;border:3px solid var(--azul2);box-shadow:0 0 0 6px rgba(42,139,240,0.12),0 0 40px rgba(42,139,240,0.35);display:block;}
 
 /* ── RESPONSIVE ── */
 @media(max-width:768px){
@@ -254,7 +254,7 @@ footer{background:var(--negro);border-top:1px solid var(--line);padding:36px 24p
 <nav>
   <div class="nav-inner">
     <a href="#" class="nav-logo">
-      <img src="logoM.jpeg" alt="Angel Motors">
+      <img src="logoM.jpeg" alt="Angel Motors" style="width:38px;height:38px;border-radius:50%;object-fit:cover;border:2px solid var(--azul2);box-shadow:0 0 10px rgba(42,139,240,0.4);display:block;flex-shrink:0;">
       <span class="nav-logo-txt">ANGEL<span>.</span>MOTORS</span>
     </a>
     <ul class="nav-links">
