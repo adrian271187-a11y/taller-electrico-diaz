@@ -16,11 +16,11 @@
   --azul2:#2A8BF0;
   --azul-dark:#0D2E5A;
   --azul-dim:#1A4A8A;
-  --plata:#C8D8E8;
-  --plata2:#E0EAF4;
-  --plata3:#8FA8C0;
-  --plata-oscuro:#4A6070;
-  --plata-metal:linear-gradient(135deg,#C8D8E8 0%,#E8F0F8 40%,#B0C8E0 70%,#D8E8F4 100%);
+  --plata:#D4E6F5;
+  --plata2:#EAF2FB;
+  --plata3:#A8C4DC;
+  --plata-oscuro:#5A7A90;
+  --plata-metal:linear-gradient(135deg,#C8DCF0 0%,#EEF5FC 35%,#B8D0E8 65%,#E2EDF8 85%,#C0D4EC 100%);
   --blanco:#F4F8FC;
   --gris:#6A8090;
   --line:rgba(42,139,240,0.18);
@@ -77,7 +77,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(6,8,15,0.97);backdrop-filt
 .btn-secondary{background:transparent;color:var(--plata2);padding:14px 28px;border-radius:5px;border:1px solid var(--plata-oscuro);font-size:0.9rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;transition:all 0.25s;}
 .btn-secondary:hover{background:rgba(200,216,232,0.07);border-color:var(--plata2);}
 
-.hero-card{background:linear-gradient(135deg,rgba(16,24,40,0.9),rgba(10,14,26,0.95));border:1px solid var(--line-plata);border-radius:14px;padding:32px;display:flex;flex-direction:column;gap:20px;backdrop-filter:blur(8px);box-shadow:0 20px 60px rgba(0,0,0,0.5),inset 0 1px 0 rgba(200,216,232,0.1);}
+.hero-card{background:linear-gradient(135deg,rgba(16,24,40,0.9),rgba(10,14,26,0.95));border:1px solid rgba(200,220,240,0.2);border-radius:14px;padding:32px;display:flex;flex-direction:column;gap:20px;backdrop-filter:blur(8px);box-shadow:0 20px 60px rgba(0,0,0,0.5),inset 0 1px 0 rgba(210,230,248,0.15),0 0 0 1px rgba(200,220,240,0.05);}
 .badge-item{display:flex;align-items:center;gap:16px;padding-bottom:20px;border-bottom:1px solid var(--line-plata);}
 .badge-item:last-child{border-bottom:none;padding-bottom:0;}
 .badge-icon{width:46px;height:46px;background:linear-gradient(135deg,rgba(26,111,216,0.2),rgba(26,111,216,0.05));border:1px solid rgba(42,139,240,0.4);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.3rem;box-shadow:inset 0 1px 0 rgba(200,216,232,0.1);}
@@ -89,8 +89,9 @@ nav{position:sticky;top:0;z-index:100;background:rgba(6,8,15,0.97);backdrop-filt
 @keyframes pulse{0%,100%{opacity:0.25;}50%{opacity:1;}}
 
 /* ── STATS ── */
-.stats-strip{background:linear-gradient(90deg,var(--negro2),var(--negro3),var(--negro2));border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:36px 24px;position:relative;overflow:hidden;}
-.stats-strip::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(26,111,216,0.06),transparent);}
+.stats-strip{background:linear-gradient(90deg,var(--negro2),var(--negro3),var(--negro2));border-top:1px solid rgba(200,220,240,0.2);border-bottom:1px solid rgba(200,220,240,0.2);padding:36px 24px;position:relative;overflow:hidden;}
+.stats-strip::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(200,220,240,0.04),transparent);}
+.stats-strip::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(200,220,240,0.4),transparent);}
 .stats-inner{max-width:1140px;margin:0 auto;display:flex;justify-content:space-around;flex-wrap:wrap;gap:24px;position:relative;z-index:1;}
 .stat-item{text-align:center;}
 .stat-num{font-family:'Bebas Neue',sans-serif;font-size:3rem;background:var(--plata-metal);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:0.04em;line-height:1;}
@@ -105,7 +106,7 @@ section{padding:90px 24px;}
 .section-title .blue{color:var(--azul2);}
 .section-title .silver{background:var(--plata-metal);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
 .section-desc{font-size:1rem;color:#7A96B0;line-height:1.7;max-width:580px;}
-.divider{width:52px;height:3px;background:linear-gradient(90deg,var(--azul),var(--plata));margin:16px 0 44px;border-radius:2px;}
+.divider{width:52px;height:3px;background:linear-gradient(90deg,var(--azul),#9ACAEC,var(--plata2));margin:16px 0 44px;border-radius:2px;box-shadow:0 0 8px rgba(200,220,240,0.3);}
 
 /* ── SERVICIOS ── */
 #servicios{background:var(--negro2);}
@@ -529,7 +530,16 @@ footer{background:var(--negro);border-top:1px solid var(--line);padding:36px 24p
         </a>
         <div style="background:linear-gradient(135deg,var(--negro3),var(--negro2));border:1px solid var(--line-plata);border-radius:10px;padding:28px;text-align:center;">
           <p style="font-size:0.9rem;color:var(--plata3);margin-bottom:16px;">¿Necesitas saber como llegar?</p>
-          <a href="https://wa.me/50664578000?text=Hola,%20me%20pueden%20dar%20la%20direccion%20del%20taller?" target="_blank" class="btn-primary">📍 Como llegar</a>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <a href="https://maps.app.goo.gl/F1AD24d7gn5LL1MB8?g_st=aw" target="_blank" style="display:flex;align-items:center;gap:10px;padding:13px 22px;border-radius:6px;background:linear-gradient(135deg,#1A6FD8,#0D2E5A);border:1px solid rgba(42,139,240,0.4);color:#fff;font-weight:700;font-size:0.88rem;letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;transition:all 0.2s;box-shadow:0 4px 16px rgba(26,111,216,0.25);" onmouseover="this.style.background='linear-gradient(135deg,#2A8BF0,#1A6FD8)'" onmouseout="this.style.background='linear-gradient(135deg,#1A6FD8,#0D2E5A)'">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+              Google Maps
+            </a>
+            <a href="https://waze.com/ul?ll=9.896,-83.999&navigate=yes" target="_blank" style="display:flex;align-items:center;gap:10px;padding:13px 22px;border-radius:6px;background:linear-gradient(135deg,#1a1a2e,#0D1320);border:1px solid rgba(200,216,232,0.25);color:var(--plata2);font-weight:700;font-size:0.88rem;letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;transition:all 0.2s;" onmouseover="this.style.borderColor='rgba(200,216,232,0.6)'" onmouseout="this.style.borderColor='rgba(200,216,232,0.25)'">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="#00D4E0"><path d="M20.54 6.63C19.3 4.19 16.95 2.5 14.22 2.08c-3.6-.57-7.12 1.37-8.65 4.67C4.21 9.38 4.5 12.5 6.1 15l.1.15c.5.74.78 1.6.78 2.48V19a1 1 0 0 0 1 1h.28a2 2 0 0 0 3.48 0h1.52a2 2 0 0 0 3.48 0H17a1 1 0 0 0 1-1v-2c0-.64.17-1.27.5-1.82l.06-.1c1.46-2.47 1.62-5.58.98-8.45zM9.5 10a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/></svg>
+              Waze
+            </a>
+          </div>
         </div>
       </div>
     </div>
