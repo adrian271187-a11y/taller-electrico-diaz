@@ -1265,94 +1265,134 @@ function limpiarParaLocal(datos){
   return clean;
 }
 
-// ── dbAdd: guardar con fallback local ────────────────────────────────────
+// ── LOCAL FIRST: guarda en SQLite/memoria PRIMERO, sincroniza Firebase después ──
 async function dbAdd(col, datos){
-  const datosLimpios = limpiarParaLocal(datos);
-  // Sin internet → guardar local INMEDIATAMENTE
-  if(!IS_ONLINE){
-    if(IS_ELECTRON) return dbAddLocal(col, datosLimpios);
-    throw new Error('Sin conexión a internet');
-  }
-  // Con internet → Firebase con timeout 4s
-  try{
-    const r = await Promise.race([
-      db.collection(col).add({...datosLimpios, createdAt: firebase.firestore.FieldValue.serverTimestamp()}),
-      new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),4000))
-    ]);
-    await cacheGuardar(col, r.id, datosLimpios);
-    return r;
-  } catch(e){
-    console.warn('[dbAdd] Firebase falló ('+e.message+'), guardando local');
-    updateConnectionBadge(false);
-    if(IS_ELECTRON) return dbAddLocal(col, datosLimpios);
-    throw new Error('Error al guardar. Verifique su conexión.');
-  }
-}
-
-
-async function dbAddLocal(col, datosLimpios){
+  const d = limpiarParaLocal(datos);
   const lid = 'local_' + Date.now() + '_' + Math.random().toString(36).substr(2,5);
-  const datosConId = {...datosLimpios, id: lid, _localId: lid, _pendingSync: true};
-  await cacheGuardar(col, lid, datosConId);
-  await queueAdd(col, lid, 'add', datosLimpios);
-  // Actualizar array en memoria para que aparezca en pantalla SIN recargar
-  if(col === 'clientes')   { clientes.push(datosConId);   renderClientes(); }
-  if(col === 'vehiculos')  { vehiculos.push(datosConId);  renderVehiculos(); }
-  if(col === 'repuestos')  { repuestos.push(datosConId);  renderRepuestos(); }
-  if(col === 'facturas')   { facturas.push(datosConId);   renderFacturas(); }
-  if(col === 'ordenes')    { ordenes.push(datosConId);    renderOrdenes(); }
-  if(col === 'citas')      { citas.push(datosConId);      renderCitas(); }
-  if(col === 'proveedores'){ proveedores.push(datosConId); renderProveedores(); }
-  if(col === 'reparaciones'){ reps.push(datosConId);      renderReps(); loadDash(); }
-  console.log('[dbAdd] Guardado local:', col, lid);
-  return { id: lid };
+  const docLocal = {...d, id:lid, _localId:lid, _pendingSync:true};
+
+  // 1. Guardar en SQLite inmediatamente
+  await cacheGuardar(col, lid, docLocal);
+  await queueAdd(col, lid, 'add', d);
+
+  // 2. Actualizar pantalla inmediatamente
+  _updateMemory(col, 'add', docLocal);
+
+  // 3. Sincronizar con Firebase en background (sin bloquear)
+  _syncToFirebase(col, null, 'add', d, lid);
+
+  return {id: lid};
 }
 
-// ── dbUpdate ─────────────────────────────────────────────────────────────
 async function dbUpdate(col, id, datos){
-  const datosLimpios = limpiarParaLocal(datos);
-  if(!datosLimpios.updatedAt) datosLimpios.updatedAt = new Date().toISOString();
-  const esLocal = id && id.startsWith('local_');
-  // Sin internet o doc local → guardar inmediatamente en local
-  if(!IS_ONLINE || esLocal){
-    if(IS_ELECTRON){ await cacheGuardar(col,id,datosLimpios); await queueAdd(col,id,'update',datosLimpios); return; }
-    throw new Error('Sin conexión');
-  }
-  // Con internet → Firebase con timeout 4s
-  try{
-    await Promise.race([
-      db.collection(col).doc(id).update({...datosLimpios, updatedAt: firebase.firestore.FieldValue.serverTimestamp()}),
-      new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),4000))
-    ]);
-    await cacheGuardar(col, id, datosLimpios);
-  } catch(e){
-    console.warn('[dbUpdate] Firebase falló ('+e.message+'), guardando local');
-    updateConnectionBadge(false);
-    if(IS_ELECTRON){ await cacheGuardar(col,id,datosLimpios); await queueAdd(col,id,'update',datosLimpios); }
-    else throw new Error('Error al guardar. Verifique su conexión.');
-  }
+  const d = limpiarParaLocal(datos);
+  if(!d.updatedAt) d.updatedAt = new Date().toISOString();
+  const docLocal = {...d, id};
+
+  // 1. Guardar en SQLite inmediatamente
+  await cacheGuardar(col, id, docLocal);
+  await queueAdd(col, id, 'update', d);
+
+  // 2. Actualizar pantalla inmediatamente
+  _updateMemory(col, 'update', docLocal);
+
+  // 3. Sincronizar con Firebase en background
+  _syncToFirebase(col, id, 'update', d, null);
 }
 
-
-// ── dbDelete ─────────────────────────────────────────────────────────────
 async function dbDelete(col, id){
-  const esLocal = id && id.startsWith('local_');
+  // 1. Eliminar de SQLite inmediatamente
   await cacheEliminar(col, id);
-  if(!IS_ONLINE || esLocal){
-    if(IS_ELECTRON && !esLocal) await queueAdd(col,id,'delete',{});
-    return;
+  if(!id.startsWith('local_')) await queueAdd(col, id, 'delete', {});
+
+  // 2. Quitar de memoria inmediatamente
+  _updateMemory(col, 'delete', {id});
+
+  // 3. Sincronizar con Firebase en background
+  if(!id.startsWith('local_')) _syncToFirebase(col, id, 'delete', {}, null);
+}
+
+// Actualiza el array en memoria y re-renderiza la pantalla activa
+function _updateMemory(col, op, doc){
+  const maps = {
+    clientes:    [()=>clientes,    v=>clientes=v,    ()=>renderClientes()],
+    vehiculos:   [()=>vehiculos,   v=>vehiculos=v,   ()=>renderVehiculos()],
+    repuestos:   [()=>repuestos,   v=>repuestos=v,   ()=>renderRepuestos()],
+    facturas:    [()=>facturas,    v=>facturas=v,     ()=>{ renderFacturas(); renderEstadisticas(); }],
+    citas:       [()=>citas,       v=>citas=v,        ()=>renderCitas()],
+    proveedores: [()=>proveedores, v=>proveedores=v,  ()=>renderProveedores()],
+    ordenes:     [()=>ordenes,     v=>ordenes=v,      ()=>renderOrdenes()],
+    reparaciones:[()=>reps,        v=>reps=v,         ()=>{ renderReps(); loadDash(); }],
+    movimientos: [()=>movimientos, v=>movimientos=v,  ()=>renderHistorial()],
+  };
+  const m = maps[col];
+  if(!m) return;
+  const [get, set, render] = m;
+  let arr = [...get()];
+  if(op === 'add'){
+    arr.unshift(doc);
+  } else if(op === 'update'){
+    const i = arr.findIndex(x=>x.id===doc.id);
+    if(i>=0) arr[i] = {...arr[i], ...doc};
+    else arr.unshift(doc);
+  } else if(op === 'delete'){
+    arr = arr.filter(x=>x.id!==doc.id);
   }
+  set(arr);
+  try{ render(); }catch(e){ console.warn('[render]',e); }
+}
+
+// Sincroniza con Firebase en background sin bloquear la UI
+async function _syncToFirebase(col, id, op, datos, localId){
+  if(!IS_ONLINE) return; // se reintentará en syncPendingQueue
   try{
-    await Promise.race([
-      db.collection(col).doc(id).delete(),
-      new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),4000))
-    ]);
+    if(op === 'add'){
+      const ref = await db.collection(col).add({...datos, createdAt: firebase.firestore.FieldValue.serverTimestamp()});
+      // Reemplazar id local por id real en memoria y cache
+      await cacheEliminar(col, localId);
+      await cacheGuardar(col, ref.id, {...datos, id: ref.id});
+      _replaceLocalId(col, localId, ref.id);
+      // Marcar como sincronizado en cola
+      const pending = await window.electronAPI.queueGetPending();
+      const item = pending.find(p=>p.docId===localId);
+      if(item) await window.electronAPI.queueMarkSynced(item.id);
+    } else if(op === 'update' && !id.startsWith('local_')){
+      await db.collection(col).doc(id).update({...datos, updatedAt: firebase.firestore.FieldValue.serverTimestamp()});
+      const pending = await window.electronAPI.queueGetPending();
+      const item = pending.find(p=>p.docId===id && p.operacion==='update');
+      if(item) await window.electronAPI.queueMarkSynced(item.id);
+    } else if(op === 'delete' && !id.startsWith('local_')){
+      await db.collection(col).doc(id).delete();
+      const pending = await window.electronAPI.queueGetPending();
+      const item = pending.find(p=>p.docId===id && p.operacion==='delete');
+      if(item) await window.electronAPI.queueMarkSynced(item.id);
+    }
+    await window.electronAPI.clearSynced();
   } catch(e){
-    console.warn('[dbDelete] Firebase falló, encolando:', e.message);
-    updateConnectionBadge(false);
-    if(IS_ELECTRON) await queueAdd(col,id,'delete',{});
+    console.warn('[_syncToFirebase]', op, col, e.message);
+    // Quedará en cola para syncPendingQueue
   }
 }
+
+// Reemplaza un id local por el id real de Firebase en el array en memoria
+function _replaceLocalId(col, localId, realId){
+  const maps = {
+    clientes:    [()=>clientes,    v=>clientes=v],
+    vehiculos:   [()=>vehiculos,   v=>vehiculos=v],
+    repuestos:   [()=>repuestos,   v=>repuestos=v],
+    facturas:    [()=>facturas,    v=>facturas=v],
+    citas:       [()=>citas,       v=>citas=v],
+    proveedores: [()=>proveedores, v=>proveedores=v],
+    ordenes:     [()=>ordenes,     v=>ordenes=v],
+    reparaciones:[()=>reps,        v=>reps=v],
+  };
+  const m = maps[col];
+  if(!m) return;
+  const [get, set] = m;
+  const arr = get().map(x => x.id===localId ? {...x, id:realId, _localId:undefined, _pendingSync:undefined} : x);
+  set(arr);
+}
+
 
 // ── dbListen: listener con cache offline ─────────────────────────────────
 // Guardamos los unsubscribe para poder reiniciar listeners tras sync
