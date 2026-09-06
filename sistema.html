@@ -437,12 +437,23 @@ tr:hover td{background:rgba(255,255,255,0.03);color:var(--blanco);}
 
     <!-- ESTADÍSTICAS -->
     <div class="screen" id="screen-estadisticas">
-      <div class="topbar"><h2 class="page-title">Estadísticas</h2></div>
+      <div class="topbar">
+        <h2 class="page-title">Estadísticas</h2>
+        <select id="est-filtro-periodo" onchange="renderEstadisticas()" style="padding:8px 14px;background:rgba(255,255,255,0.04);border:1px solid var(--line3);border-radius:8px;color:var(--blanco);font-size:0.83rem;font-family:'Inter',sans-serif;">
+          <option value="mes">Este mes</option>
+          <option value="año">Este año</option>
+          <option value="todo">Todo el tiempo</option>
+        </select>
+      </div>
       <div class="stats-grid">
         <div class="stat-card"><div class="stat-label">Total reparaciones</div><div class="stat-val dorado" id="est-total">—</div></div>
         <div class="stat-card"><div class="stat-label">Entregadas</div><div class="stat-val verde" id="est-entregadas">—</div></div>
         <div class="stat-card"><div class="stat-label">En proceso</div><div class="stat-val rojo" id="est-proceso">—</div></div>
+        <div class="stat-card"><div class="stat-label">Facturas emitidas</div><div class="stat-val" id="est-num-facturas">—</div></div>
         <div class="stat-card"><div class="stat-label">Total facturado</div><div class="stat-val dorado" id="est-facturado">—</div></div>
+        <div class="stat-card"><div class="stat-label">Pagado</div><div class="stat-val verde" id="est-pagadas">—</div></div>
+        <div class="stat-card"><div class="stat-label">Por cobrar</div><div class="stat-val rojo" id="est-pendiente">—</div></div>
+        <div class="stat-card"><div class="stat-label">Clientes registrados</div><div class="stat-val" id="est-clientes-total">—</div></div>
       </div>
       <div class="panel">
         <div class="panel-header"><span class="panel-title">Servicios más realizados</span></div>
@@ -1316,11 +1327,11 @@ async function initApp(){
   limpiarHistorialSemanal();
 
   db.collection('reparaciones').orderBy('createdAt','desc').onSnapshot(s=>{reps=[];s.forEach(d=>reps.push({id:d.id,...d.data()}));loadDash();if(document.getElementById('screen-reparaciones').classList.contains('active'))renderReps();});
-  db.collection('clientes').orderBy('nombre').onSnapshot(s=>{clientes=[];s.forEach(d=>clientes.push({id:d.id,...d.data()}));if(document.getElementById('screen-clientes').classList.contains('active'))renderClientes();});
+  db.collection('clientes').orderBy('nombre').onSnapshot(s=>{clientes=[];s.forEach(d=>clientes.push({id:d.id,...d.data()}));if(document.getElementById('screen-clientes').classList.contains('active'))renderClientes();const elC=document.getElementById('est-clientes-total');if(elC)elC.textContent=clientes.length;});
   db.collection('vehiculos').onSnapshot(s=>{vehiculos=[];s.forEach(d=>vehiculos.push({id:d.id,...d.data()}));if(document.getElementById('screen-vehiculos').classList.contains('active'))renderVehiculos();});
   db.collection('repuestos').onSnapshot(s=>{repuestos=[];s.forEach(d=>repuestos.push({id:d.id,...d.data()}));if(document.getElementById('screen-repuestos').classList.contains('active'))renderRepuestos();});
   db.collection('citas').orderBy('fecha').onSnapshot(s=>{citas=[];s.forEach(d=>citas.push({id:d.id,...d.data()}));if(document.getElementById('screen-agenda').classList.contains('active'))renderCitas();});
-  db.collection('facturas').orderBy('createdAt','desc').onSnapshot(s=>{facturas=[];s.forEach(d=>facturas.push({id:d.id,...d.data()}));if(document.getElementById('screen-facturacion').classList.contains('active'))renderFacturas();});
+  db.collection('facturas').orderBy('createdAt','desc').onSnapshot(s=>{facturas=[];s.forEach(d=>facturas.push({id:d.id,...d.data()}));if(document.getElementById('screen-facturacion').classList.contains('active'))renderFacturas();if(document.getElementById('screen-estadisticas').classList.contains('active'))renderEstadisticas();const elC=document.getElementById('est-clientes-total');if(elC)elC.textContent=clientes.length;});
   db.collection('proveedores').orderBy('nombre').onSnapshot(s=>{proveedores=[];s.forEach(d=>proveedores.push({id:d.id,...d.data()}));if(document.getElementById('screen-proveedores').classList.contains('active'))renderProveedores();});
   db.collection('ordenes').orderBy('createdAt','desc').onSnapshot(s=>{ordenes=[];s.forEach(d=>ordenes.push({id:d.id,...d.data()}));if(document.getElementById('screen-ordenes').classList.contains('active'))renderOrdenes();});
   db.collection('movimientos').orderBy('timestamp','desc').limit(200).onSnapshot(s=>{movimientos=[];s.forEach(d=>movimientos.push({id:d.id,...d.data()}));if(document.getElementById('screen-historial').classList.contains('active'))renderHistorial();});
@@ -1739,15 +1750,44 @@ async function guardarProveedor(){
 
 // =================== ESTADÍSTICAS ===================
 function renderEstadisticas(){
-  document.getElementById('est-total').textContent=reps.length;
-  document.getElementById('est-entregadas').textContent=reps.filter(r=>r.estado==='entregado').length;
-  document.getElementById('est-proceso').textContent=reps.filter(r=>r.estado==='proceso'||r.estado==='pendiente').length;
-  const totalFac=facturas.filter(f=>f.estado==='pagada').reduce((a,f)=>a+(f.total||0),0);
-  document.getElementById('est-facturado').textContent='₡'+totalFac.toLocaleString();
+  // Filtro de periodo (mes actual por defecto)
+  const filtro = (document.getElementById('est-filtro-periodo')||{value:'mes'}).value || 'mes';
+  const ahora = new Date();
+
+  function enPeriodo(f){
+    if(filtro === 'todo') return true;
+    const fecha = f.fecha ? new Date(f.fecha) : (f.createdAt?.toDate ? f.createdAt.toDate() : null);
+    if(!fecha) return true;
+    if(filtro === 'mes') return fecha.getMonth()===ahora.getMonth() && fecha.getFullYear()===ahora.getFullYear();
+    if(filtro === 'año') return fecha.getFullYear()===ahora.getFullYear();
+    return true;
+  }
+
+  const facsPeriodo = facturas.filter(enPeriodo);
+  const totalFac = facsPeriodo.reduce((a,f) => a + (Number(f.total)||0), 0);
+  const totalPagadas = facsPeriodo.filter(f=>f.estado==='pagada').reduce((a,f) => a + (Number(f.total)||0), 0);
+  const totalPendiente = facsPeriodo.filter(f=>f.estado!=='pagada').reduce((a,f) => a + (Number(f.total)||0), 0);
+
+  document.getElementById('est-total').textContent = reps.length;
+  document.getElementById('est-entregadas').textContent = reps.filter(r=>r.estado==='entregado').length;
+  document.getElementById('est-proceso').textContent = reps.filter(r=>r.estado==='proceso'||r.estado==='pendiente').length;
+  document.getElementById('est-facturado').textContent = '₡' + totalFac.toLocaleString('es-CR');
+
+  // Cards adicionales si existen
+  const elPagadas = document.getElementById('est-pagadas');
+  const elPendiente = document.getElementById('est-pendiente');
+  const elNumFac = document.getElementById('est-num-facturas');
+  if(elPagadas)   elPagadas.textContent   = '₡' + totalPagadas.toLocaleString('es-CR');
+  if(elPendiente) elPendiente.textContent = '₡' + totalPendiente.toLocaleString('es-CR');
+  if(elNumFac)    elNumFac.textContent    = facsPeriodo.length;
+
+  // Servicios más frecuentes
   const svcCount={};
   reps.forEach(r=>{if(r.servicio)svcCount[r.servicio]=(svcCount[r.servicio]||0)+1;});
   const sorted=Object.entries(svcCount).sort((a,b)=>b[1]-a[1]).slice(0,8);
-  document.getElementById('est-servicios').innerHTML=sorted.length?sorted.map(([s,c])=>`<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)"><span style="flex:1;font-size:0.88rem;">${s}</span><span class="badge badge-pendiente">${c} veces</span></div>`).join(''):'<div class="empty-state">Sin datos aún</div>';
+  document.getElementById('est-servicios').innerHTML=sorted.length
+    ?sorted.map(([s,c])=>`<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)"><span style="flex:1;font-size:0.88rem;">${s}</span><span class="badge badge-pendiente">${c} veces</span></div>`).join('')
+    :'<div class="empty-state">Sin datos aún</div>';
 }
 
 // =================== ENVIAR FACTURA POR CORREO ===================
