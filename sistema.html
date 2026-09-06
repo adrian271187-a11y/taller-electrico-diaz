@@ -1903,7 +1903,7 @@ table.cobros td:last-child{text-align:right;color:#1a1a1a;}
   <div class="footer-txt" style="text-align:right">Gracias por su preferencia<br>${num} &middot; ${f.fecha||''}</div>
 </div>
 <div class="no-print">
-  <button onclick="window.print()" style="padding:12px 32px;background:#1a1a1a;color:#fff;border:none;border-radius:6px;font-size:14px;font-weight:700;cursor:pointer;margin-right:10px;">&#128438; Imprimir / Guardar PDF</button>
+  <button onclick="window.print();window.addEventListener('afterprint',()=>window.close());" style="padding:12px 32px;background:#1a1a1a;color:#fff;border:none;border-radius:6px;font-size:14px;font-weight:700;cursor:pointer;margin-right:10px;">&#128438; Imprimir / Guardar PDF</button>
   <button onclick="window.close()" style="padding:12px 24px;background:#eee;color:#333;border:none;border-radius:6px;font-size:13px;cursor:pointer;">Cerrar</button>
 </div>
 </div></body></html>`;
@@ -2158,13 +2158,13 @@ table.cobros td:last-child{text-align:right;color:#1a1a1a;}
   <div class="footer-txt" style="text-align:right">Gracias por su preferencia<br>${num} &middot; ${f.fecha||''}</div>
 </div>
 <div class="no-print">
-  <button onclick="window.print()" style="padding:12px 32px;background:#1a1a1a;color:#fff;border:none;border-radius:6px;font-size:14px;font-weight:700;cursor:pointer;margin-right:10px;">&#128438; Imprimir / Guardar PDF</button>
+  <button onclick="window.print();window.addEventListener('afterprint',()=>window.close());" style="padding:12px 32px;background:#1a1a1a;color:#fff;border:none;border-radius:6px;font-size:14px;font-weight:700;cursor:pointer;margin-right:10px;">&#128438; Imprimir / Guardar PDF</button>
   <button onclick="window.close()" style="padding:12px 24px;background:#eee;color:#333;border:none;border-radius:6px;font-size:13px;cursor:pointer;">Cerrar</button>
 </div>
 </div></body></html>`);
   ventana.document.close();
   ventana.focus();
-  setTimeout(()=>ventana.print(),600);
+  setTimeout(()=>{ventana.print();ventana.addEventListener('afterprint',()=>ventana.close());},600);
 }
 
 // =================== RESET CONTRASEÑA ===================
@@ -2617,7 +2617,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;font-size:12px;color:#1a1a1a;backgr
 </div>
 
 <div class="no-print">
-  <button onclick="window.print()" style="padding:12px 32px;background:#C9A84C;color:#1a1a1a;border:none;border-radius:8px;font-size:14px;font-weight:800;cursor:pointer;letter-spacing:1px;margin-right:10px;">🖨️ Imprimir / Guardar PDF</button>
+  <button onclick="window.print();window.addEventListener('afterprint',()=>window.close());" style="padding:12px 32px;background:#C9A84C;color:#1a1a1a;border:none;border-radius:8px;font-size:14px;font-weight:800;cursor:pointer;letter-spacing:1px;margin-right:10px;">🖨️ Imprimir / Guardar PDF</button>
   <button onclick="window.close()" style="padding:12px 24px;background:#444;color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer;">Cerrar</button>
 </div>
 </div>
