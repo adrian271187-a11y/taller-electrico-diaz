@@ -1217,16 +1217,14 @@ async function syncPendingQueue(){
         if(item.operacion==='add'){
           // Si el docId es local_ no existe en Firebase, hacer add
           const r = await db.collection(item.coleccion).add({
-            ...item.datos,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            ...item.datos
           });
           await cacheGuardar(item.coleccion, r.id, item.datos);
           // Actualizar cache: eliminar el local_ y guardar con id real
           await cacheEliminar(item.coleccion, item.docId||'');
         } else if(item.operacion==='update'){
           await db.collection(item.coleccion).doc(item.docId).update({
-            ...item.datos,
-            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            ...item.datos
           });
           await cacheGuardar(item.coleccion, item.docId, item.datos);
         } else if(item.operacion==='delete'){
@@ -1269,21 +1267,23 @@ function limpiarParaLocal(datos){
 
 // ── dbAdd: guardar con fallback local ────────────────────────────────────
 async function dbAdd(col, datos){
-  // Siempre limpiar datos antes de usar (por si vienen con serverTimestamp)
   const datosLimpios = limpiarParaLocal(datos);
 
+  // Intentar Firebase con timeout de 5 segundos
   if(IS_ONLINE){
     try{
-      const r = await db.collection(col).add({
-        ...datosLimpios,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      const firebasePromise = db.collection(col).add({
+        ...datosLimpios
       });
+      const timeout = new Promise((_,reject) => setTimeout(()=>reject(new Error('timeout')), 5000));
+      const r = await Promise.race([firebasePromise, timeout]);
       await cacheGuardar(col, r.id, datosLimpios);
       return r;
     } catch(e){
-      console.warn('[dbAdd] Firebase falló, guardando local:', e.message);
+      console.warn('[dbAdd] Firebase falló ('+e.message+'), guardando local');
+      updateConnectionBadge(false); // marcar offline
       if(IS_ELECTRON) return dbAddLocal(col, datosLimpios);
-      throw e;
+      throw new Error('Sin conexión — datos no guardados');
     }
   } else if(IS_ELECTRON){
     return dbAddLocal(col, datosLimpios);
@@ -1318,8 +1318,7 @@ async function dbUpdate(col, id, datos){
   if(IS_ONLINE && !esLocal){
     try{
       await db.collection(col).doc(id).update({
-        ...datosLimpios,
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        ...datosLimpios
       });
       await cacheGuardar(col, id, datosLimpios);
       return;
@@ -1509,7 +1508,7 @@ async function registrarMovimiento(tipo, modulo, descripcion, detalle=''){
   const data={
     tipo, modulo, descripcion, detalle,
     usuario: currentUser?currentUser.nombre:'sistema',
-    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    timestamp: new Date().toISOString(),
     fechaLocal: new Date().toLocaleString('es-CR')
   };
   try{ await dbAdd('movimientos', data); }catch(e){ console.warn('Error registrando movimiento',e); }
@@ -1675,20 +1674,25 @@ function abrirEditRep(id){
 }
 
 async function guardarEditRep(){
+  try{
+
   if(!editRepId)return;
   const data={
     servicio:document.getElementById('edit-rep-servicio').value,
     estado:document.getElementById('edit-rep-estado').value,
     manoObra:parseFloat(document.getElementById('edit-rep-mano').value)||0,
     notas:document.getElementById('edit-rep-notas').value,
-    descripcion:document.getElementById('edit-rep-desc').value,
-    updatedAt:firebase.firestore.FieldValue.serverTimestamp()
+    descripcion:document.getElementById('edit-rep-desc').value
   };
   const rep=reps.find(r=>r.id===editRepId);
   await dbUpdate('reparaciones', editRepId, data);
   registrarMovimiento('editar','reparaciones',`Editada reparación de ${rep?rep.clienteNombre:'cliente'}`,`Estado: ${data.estado}`);
   closeModal('modal-edit-rep');
   editRepId=null;
+  }catch(e){
+    console.error('[guardarEditRep]',e);
+    alert('Error al guardar. Intente de nuevo.');
+  }
 }
 
 // =================== RENDERS ===================
@@ -1809,7 +1813,7 @@ function renderProveedores(){
 async function guardarRep(){
   const cli=clientes.find(c=>c.id===document.getElementById('rep-cliente').value);
   const veh=vehiculos.find(v=>v.id===document.getElementById('rep-vehiculo').value);
-  const data={clienteId:cli?.id||'',clienteNombre:cli?.nombre||'—',vehiculoId:veh?.id||'',vehiculo:veh?`${veh.marca} ${veh.modelo}`:'—',placa:veh?.placa||'—',servicio:document.getElementById('rep-servicio').value,descripcion:document.getElementById('rep-desc').value,fecha:document.getElementById('rep-fecha').value,manoObra:parseFloat(document.getElementById('rep-mano').value)||0,estado:document.getElementById('rep-estado').value,notas:document.getElementById('rep-notas').value,creadoPor:currentUser?.nombre||'—',createdAt:firebase.firestore.FieldValue.serverTimestamp()};
+  const data={clienteId:cli?.id||'',clienteNombre:cli?.nombre||'—',vehiculoId:veh?.id||'',vehiculo:veh?`${veh.marca} ${veh.modelo}`:'—',placa:veh?.placa||'—',servicio:document.getElementById('rep-servicio').value,descripcion:document.getElementById('rep-desc').value,fecha:document.getElementById('rep-fecha').value,manoObra:parseFloat(document.getElementById('rep-mano').value)||0,estado:document.getElementById('rep-estado').value,notas:document.getElementById('rep-notas').value,creadoPor:currentUser?.nombre||'—'};
   if(!data.servicio){alert('El servicio es requerido.');return;}
   try{
     const btn=document.getElementById('btn-guardar-rep');
@@ -1822,21 +1826,25 @@ async function guardarRep(){
     document.getElementById('rep-vehiculo').value='';
     document.getElementById('rep-estado').value='pendiente';
     btn.disabled=false; btn.textContent='Guardar';
-  }catch(e){alert('Error al guardar. Intente de nuevo.');console.error(e);document.getElementById('btn-guardar-rep').disabled=false;document.getElementById('btn-guardar-rep').textContent='Guardar';}
+  } catch(e){console.error('[guardarrep]',e);alert('Error: '+e.message);} finally {document.getElementById('btn-guardar-rep').disabled=false;document.getElementById('btn-guardar-rep').textContent='Guardar';}
 }
 
 async function guardarCliente(){
   const data={nombre:document.getElementById('cli-nombre').value.trim(),tel:document.getElementById('cli-tel').value.trim(),correo:document.getElementById('cli-correo').value.trim(),cedula:document.getElementById('cli-cedula').value.trim(),direccion:document.getElementById('cli-dir').value.trim(),notas:document.getElementById('cli-notas').value.trim(),creadoPor:currentUser?.nombre||'—'};
   if(!data.nombre){alert('El nombre es requerido.');return;}
+  const btn=document.getElementById('btn-guardar-cliente');
+  btn.disabled=true; btn.textContent='Guardando...';
   try{
-    const btn=document.getElementById('btn-guardar-cliente');
-    btn.disabled=true; btn.textContent='Guardando...';
     await dbAdd('clientes', data);
     await registrarMovimiento('crear','clientes',`Nuevo cliente: ${data.nombre}`,`Tel: ${data.tel||'—'}`);
     closeModal('modal-cliente');
     ['cli-nombre','cli-tel','cli-correo','cli-cedula','cli-dir','cli-notas'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  }catch(e){
+    console.error('[guardarCliente]',e);
+    alert('Error al guardar: '+e.message);
+  } finally {
     btn.disabled=false; btn.textContent='Guardar';
-  }catch(e){alert('Error al guardar. Intente de nuevo.');console.error(e);document.getElementById('btn-guardar-cliente').disabled=false;document.getElementById('btn-guardar-cliente').textContent='Guardar';}
+  }
 }
 
 async function guardarVehiculo(){
@@ -1861,7 +1869,7 @@ async function guardarVehiculo(){
       motorNum:document.getElementById('veh-motor-num').value.trim(),
       tipoMoto:document.getElementById('veh-tipo-moto-cat').value
     }),
-    creadoPor:currentUser?.nombre||'—',createdAt:firebase.firestore.FieldValue.serverTimestamp()
+    creadoPor:currentUser?.nombre||'—'
   };
   if(!data.placa){alert('La placa o número de serie es requerido.');return;}
   if(!data.marca){alert('La marca es requerida.');return;}
@@ -1876,7 +1884,7 @@ async function guardarVehiculo(){
     document.getElementById('veh-tipo-carro').checked=true;
     toggleVehTipo();
     btn.disabled=false; btn.textContent='Guardar';
-  }catch(e){alert('Error al guardar. Intente de nuevo.');console.error(e);document.getElementById('btn-guardar-vehiculo').disabled=false;document.getElementById('btn-guardar-vehiculo').textContent='Guardar';}
+  } catch(e){console.error('[guardarvehiculo]',e);alert('Error: '+e.message);} finally {document.getElementById('btn-guardar-vehiculo').disabled=false;document.getElementById('btn-guardar-vehiculo').textContent='Guardar';}
 }
 
 async function guardarRepuesto(){
@@ -1892,7 +1900,7 @@ async function guardarRepuesto(){
     ['rp-codigo','rp-nombre','rp-stock','rp-minimo','rp-costo','rp-venta','rp-ubic','rp-desc'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
     document.getElementById('rp-proveedor').value='';
     btn.disabled=false; btn.textContent='Guardar';
-  }catch(e){alert('Error al guardar. Intente de nuevo.');console.error(e);document.getElementById('btn-guardar-repuesto').disabled=false;document.getElementById('btn-guardar-repuesto').textContent='Guardar';}
+  } catch(e){console.error('[guardarrepuesto]',e);alert('Error: '+e.message);} finally {document.getElementById('btn-guardar-repuesto').disabled=false;document.getElementById('btn-guardar-repuesto').textContent='Guardar';}
 }
 
 async function guardarCita(){
@@ -1927,8 +1935,7 @@ async function guardarCita(){
     hora: document.getElementById('cita-hora').value,
     notas: document.getElementById('cita-notas').value,
     estado: document.getElementById('cita-estado').value,
-    creadoPor: currentUser?.nombre || '—',
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    creadoPor: currentUser?.nombre || '—'
   };
 
   try{
@@ -1950,8 +1957,7 @@ async function guardarCita(){
           cedula: '',
           direccion: '',
           notas: 'Agregado automáticamente desde Agenda',
-          creadoPor: currentUser?.nombre||'—',
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          creadoPor: currentUser?.nombre||'—'
         };
         const docRef = await dbAdd('clientes', nuevoCliente);
         data.clienteId = docRef.id;
@@ -1991,7 +1997,7 @@ async function guardarFactura(){
     document.getElementById('fac-cliente').value='';
     document.getElementById('fac-estado').value='pendiente';
     btn.disabled=false; btn.textContent='Guardar';
-  }catch(e){alert('Error al guardar. Intente de nuevo.');console.error(e);document.getElementById('btn-guardar-factura').disabled=false;document.getElementById('btn-guardar-factura').textContent='Guardar';}
+  } catch(e){console.error('[guardarfactura]',e);alert('Error: '+e.message);} finally {document.getElementById('btn-guardar-factura').disabled=false;document.getElementById('btn-guardar-factura').textContent='Guardar';}
 }
 
 async function guardarProveedor(){
@@ -2005,7 +2011,7 @@ async function guardarProveedor(){
     closeModal('modal-proveedor');
     ['prov-nombre','prov-contacto','prov-tel','prov-correo','prov-dir','prov-notas'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
     btn.disabled=false; btn.textContent='Guardar';
-  }catch(e){alert('Error al guardar. Intente de nuevo.');console.error(e);document.getElementById('btn-guardar-proveedor').disabled=false;document.getElementById('btn-guardar-proveedor').textContent='Guardar';}
+  } catch(e){console.error('[guardarproveedor]',e);alert('Error: '+e.message);} finally {document.getElementById('btn-guardar-proveedor').disabled=false;document.getElementById('btn-guardar-proveedor').textContent='Guardar';}
 }
 
 // =================== ESTADÍSTICAS ===================
@@ -2507,14 +2513,12 @@ async function confirmarResetPass(){
       await dbAdd('usuarios', {
         usuario: resetUserTarget,
         pass: nueva,
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
         updatedBy: currentUser?.nombre || 'Jose'
       });
     } else {
       // Actualizar doc existente
       await dbUpdate('usuarios', snap.docs[0].id, {
         pass: nueva,
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
         updatedBy: currentUser?.nombre || 'Jose'
       });
     }
@@ -2644,8 +2648,7 @@ async function guardarOrden(){
     danosEntrada: document.getElementById('ord-danos-entrada').value.trim(),
     checklistEntrada: getChecklist(),
     checklistSalida: {},
-    creadoPor: currentUser?.nombre || '—',
-    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    creadoPor: currentUser?.nombre || '—'
   };
 
   try{
@@ -2957,11 +2960,17 @@ function abrirEditCliente(id){
   openModal('modal-edit-cliente');
 }
 async function guardarEditCliente(){
-  const data={nombre:document.getElementById('ec-nombre').value.trim(),tel:document.getElementById('ec-tel').value.trim(),correo:document.getElementById('ec-correo').value.trim(),cedula:document.getElementById('ec-cedula').value.trim(),direccion:document.getElementById('ec-dir').value.trim(),notas:document.getElementById('ec-notas').value.trim(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
+  try{
+
+  const data={nombre:document.getElementById('ec-nombre').value.trim(),tel:document.getElementById('ec-tel').value.trim(),correo:document.getElementById('ec-correo').value.trim(),cedula:document.getElementById('ec-cedula').value.trim(),direccion:document.getElementById('ec-dir').value.trim(),notas:document.getElementById('ec-notas').value.trim()};
   if(!data.nombre){alert('El nombre es requerido.');return;}
   await dbUpdate('clientes', editId, data);
   registrarMovimiento('editar','clientes',`Cliente editado: ${data.nombre}`,'');
   closeModal('modal-edit-cliente');
+  }catch(e){
+    console.error('[guardarEditCliente]',e);
+    alert('Error al guardar. Intente de nuevo.');
+  }
 }
 
 // =================== EDITAR VEHÍCULO ===================
@@ -2979,10 +2988,16 @@ function abrirEditVehiculo(id){
   openModal('modal-edit-vehiculo');
 }
 async function guardarEditVehiculo(){
-  const data={placa:document.getElementById('ev-placa').value.trim().toUpperCase(),marca:document.getElementById('ev-marca').value.trim(),modelo:document.getElementById('ev-modelo').value.trim(),anio:document.getElementById('ev-anio').value,color:document.getElementById('ev-color').value.trim(),motor:document.getElementById('ev-motor').value.trim(),combustible:document.getElementById('ev-combustible').value,km:parseInt(document.getElementById('ev-km').value)||0,observaciones:document.getElementById('ev-obs').value.trim(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
+  try{
+
+  const data={placa:document.getElementById('ev-placa').value.trim().toUpperCase(),marca:document.getElementById('ev-marca').value.trim(),modelo:document.getElementById('ev-modelo').value.trim(),anio:document.getElementById('ev-anio').value,color:document.getElementById('ev-color').value.trim(),motor:document.getElementById('ev-motor').value.trim(),combustible:document.getElementById('ev-combustible').value,km:parseInt(document.getElementById('ev-km').value)||0,observaciones:document.getElementById('ev-obs').value.trim()};
   await dbUpdate('vehiculos', editId, data);
   registrarMovimiento('editar','vehiculos',`Vehículo editado: ${data.placa}`,'');
   closeModal('modal-edit-vehiculo');
+  }catch(e){
+    console.error('[guardarEditVehiculo]',e);
+    alert('Error al guardar. Intente de nuevo.');
+  }
 }
 
 // =================== EDITAR REPUESTO ===================
@@ -2999,10 +3014,16 @@ function abrirEditRepuesto(id){
   openModal('modal-edit-repuesto');
 }
 async function guardarEditRepuesto(){
-  const data={codigo:document.getElementById('er-codigo').value.trim(),nombre:document.getElementById('er-nombre').value.trim(),stock:parseInt(document.getElementById('er-stock').value)||0,minimo:parseInt(document.getElementById('er-minimo').value)||1,costo:parseFloat(document.getElementById('er-costo').value)||0,venta:parseFloat(document.getElementById('er-venta').value)||0,ubicacion:document.getElementById('er-ubic').value.trim(),descripcion:document.getElementById('er-desc').value.trim(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
+  try{
+
+  const data={codigo:document.getElementById('er-codigo').value.trim(),nombre:document.getElementById('er-nombre').value.trim(),stock:parseInt(document.getElementById('er-stock').value)||0,minimo:parseInt(document.getElementById('er-minimo').value)||1,costo:parseFloat(document.getElementById('er-costo').value)||0,venta:parseFloat(document.getElementById('er-venta').value)||0,ubicacion:document.getElementById('er-ubic').value.trim(),descripcion:document.getElementById('er-desc').value.trim()};
   await dbUpdate('repuestos', editId, data);
   registrarMovimiento('editar','repuestos',`Repuesto editado: ${data.nombre}`,'');
   closeModal('modal-edit-repuesto');
+  }catch(e){
+    console.error('[guardarEditRepuesto]',e);
+    alert('Error al guardar. Intente de nuevo.');
+  }
 }
 
 // =================== EDITAR CITA ===================
@@ -3016,10 +3037,16 @@ function abrirEditCita(id){
   openModal('modal-edit-cita');
 }
 async function guardarEditCita(){
-  const data={servicio:document.getElementById('eci-servicio').value.trim(),fecha:document.getElementById('eci-fecha').value,hora:document.getElementById('eci-hora').value,notas:document.getElementById('eci-notas').value.trim(),estado:document.getElementById('eci-estado').value,updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
+  try{
+
+  const data={servicio:document.getElementById('eci-servicio').value.trim(),fecha:document.getElementById('eci-fecha').value,hora:document.getElementById('eci-hora').value,notas:document.getElementById('eci-notas').value.trim(),estado:document.getElementById('eci-estado').value};
   await dbUpdate('citas', editId, data);
   registrarMovimiento('editar','agenda',`Cita editada: ${data.servicio}`,'');
   closeModal('modal-edit-cita');
+  }catch(e){
+    console.error('[guardarEditCita]',e);
+    alert('Error al guardar. Intente de nuevo.');
+  }
 }
 
 // =================== EDITAR FACTURA ===================
@@ -3035,10 +3062,16 @@ function abrirEditFactura(id){
   openModal('modal-edit-factura');
 }
 async function guardarEditFactura(){
-  const data={descripcion:document.getElementById('ef-desc').value.trim(),manoObra:parseFloat(document.getElementById('ef-mano').value)||0,repuestos:parseFloat(document.getElementById('ef-repuestos').value)||0,otros:parseFloat(document.getElementById('ef-otros').value)||0,total:parseFloat(document.getElementById('ef-total').value)||0,estado:document.getElementById('ef-estado').value,notas:document.getElementById('ef-notas').value.trim(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
+  try{
+
+  const data={descripcion:document.getElementById('ef-desc').value.trim(),manoObra:parseFloat(document.getElementById('ef-mano').value)||0,repuestos:parseFloat(document.getElementById('ef-repuestos').value)||0,otros:parseFloat(document.getElementById('ef-otros').value)||0,total:parseFloat(document.getElementById('ef-total').value)||0,estado:document.getElementById('ef-estado').value,notas:document.getElementById('ef-notas').value.trim()};
   await dbUpdate('facturas', editId, data);
   registrarMovimiento('editar','facturas',`Factura editada`,'');
   closeModal('modal-edit-factura');
+  }catch(e){
+    console.error('[guardarEditFactura]',e);
+    alert('Error al guardar. Intente de nuevo.');
+  }
 }
 function calcTotalEdit(){
   const m=parseFloat(document.getElementById('ef-mano').value)||0;
@@ -3059,10 +3092,16 @@ function abrirEditProveedor(id){
   openModal('modal-edit-proveedor');
 }
 async function guardarEditProveedor(){
-  const data={nombre:document.getElementById('ep-nombre').value.trim(),contacto:document.getElementById('ep-contacto').value.trim(),tel:document.getElementById('ep-tel').value.trim(),correo:document.getElementById('ep-correo').value.trim(),direccion:document.getElementById('ep-dir').value.trim(),notas:document.getElementById('ep-notas').value.trim(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
+  try{
+
+  const data={nombre:document.getElementById('ep-nombre').value.trim(),contacto:document.getElementById('ep-contacto').value.trim(),tel:document.getElementById('ep-tel').value.trim(),correo:document.getElementById('ep-correo').value.trim(),direccion:document.getElementById('ep-dir').value.trim(),notas:document.getElementById('ep-notas').value.trim()};
   await dbUpdate('proveedores', editId, data);
   registrarMovimiento('editar','proveedores',`Proveedor editado: ${data.nombre}`,'');
   closeModal('modal-edit-proveedor');
+  }catch(e){
+    console.error('[guardarEditProveedor]',e);
+    alert('Error al guardar. Intente de nuevo.');
+  }
 }
 
 // =================== EDITAR ORDEN ===================
@@ -3076,10 +3115,16 @@ function abrirEditOrden(id){
   openModal('modal-edit-orden');
 }
 async function guardarEditOrden(){
-  const data={servicio:document.getElementById('eo-servicio').value.trim(),trabajos:document.getElementById('eo-trabajos').value.trim(),estado:document.getElementById('eo-estado').value,mecanico:document.getElementById('eo-mecanico').value,obsSalida:document.getElementById('eo-obs-salida').value.trim(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
+  try{
+
+  const data={servicio:document.getElementById('eo-servicio').value.trim(),trabajos:document.getElementById('eo-trabajos').value.trim(),estado:document.getElementById('eo-estado').value,mecanico:document.getElementById('eo-mecanico').value,obsSalida:document.getElementById('eo-obs-salida').value.trim()};
   await dbUpdate('ordenes', editId, data);
   registrarMovimiento('editar','ordenes',`Orden editada: ${data.servicio}`,'');
   closeModal('modal-edit-orden');
+  }catch(e){
+    console.error('[guardarEditOrden]',e);
+    alert('Error al guardar. Intente de nuevo.');
+  }
 }
 
 // =================== RESTAURAR SESIÓN ===================
