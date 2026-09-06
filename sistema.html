@@ -1268,29 +1268,27 @@ function limpiarParaLocal(datos){
 // ── dbAdd: guardar con fallback local ────────────────────────────────────
 async function dbAdd(col, datos){
   const datosLimpios = limpiarParaLocal(datos);
-
-  // Intentar Firebase con timeout de 5 segundos
-  if(IS_ONLINE){
-    try{
-      const firebasePromise = db.collection(col).add({
-        ...datosLimpios
-      });
-      const timeout = new Promise((_,reject) => setTimeout(()=>reject(new Error('timeout')), 5000));
-      const r = await Promise.race([firebasePromise, timeout]);
-      await cacheGuardar(col, r.id, datosLimpios);
-      return r;
-    } catch(e){
-      console.warn('[dbAdd] Firebase falló ('+e.message+'), guardando local');
-      updateConnectionBadge(false); // marcar offline
-      if(IS_ELECTRON) return dbAddLocal(col, datosLimpios);
-      throw new Error('Sin conexión — datos no guardados');
-    }
-  } else if(IS_ELECTRON){
-    return dbAddLocal(col, datosLimpios);
-  } else {
+  // Sin internet → guardar local INMEDIATAMENTE
+  if(!IS_ONLINE){
+    if(IS_ELECTRON) return dbAddLocal(col, datosLimpios);
     throw new Error('Sin conexión a internet');
   }
+  // Con internet → Firebase con timeout 4s
+  try{
+    const r = await Promise.race([
+      db.collection(col).add({...datosLimpios, createdAt: firebase.firestore.FieldValue.serverTimestamp()}),
+      new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),4000))
+    ]);
+    await cacheGuardar(col, r.id, datosLimpios);
+    return r;
+  } catch(e){
+    console.warn('[dbAdd] Firebase falló ('+e.message+'), guardando local');
+    updateConnectionBadge(false);
+    if(IS_ELECTRON) return dbAddLocal(col, datosLimpios);
+    throw new Error('Error al guardar. Verifique su conexión.');
+  }
 }
+
 
 async function dbAddLocal(col, datosLimpios){
   const lid = 'local_' + Date.now() + '_' + Math.random().toString(36).substr(2,5);
@@ -1315,37 +1313,44 @@ async function dbUpdate(col, id, datos){
   const datosLimpios = limpiarParaLocal(datos);
   if(!datosLimpios.updatedAt) datosLimpios.updatedAt = new Date().toISOString();
   const esLocal = id && id.startsWith('local_');
-  if(IS_ONLINE && !esLocal){
-    try{
-      await db.collection(col).doc(id).update({
-        ...datosLimpios
-      });
-      await cacheGuardar(col, id, datosLimpios);
-      return;
-    } catch(e){
-      console.warn('[dbUpdate] Firebase falló, guardando local:', e.message);
-    }
-  }
-  if(IS_ELECTRON){
-    await cacheGuardar(col, id, datosLimpios);
-    await queueAdd(col, id, 'update', datosLimpios);
-  } else {
+  // Sin internet o doc local → guardar inmediatamente en local
+  if(!IS_ONLINE || esLocal){
+    if(IS_ELECTRON){ await cacheGuardar(col,id,datosLimpios); await queueAdd(col,id,'update',datosLimpios); return; }
     throw new Error('Sin conexión');
   }
+  // Con internet → Firebase con timeout 4s
+  try{
+    await Promise.race([
+      db.collection(col).doc(id).update({...datosLimpios, updatedAt: firebase.firestore.FieldValue.serverTimestamp()}),
+      new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),4000))
+    ]);
+    await cacheGuardar(col, id, datosLimpios);
+  } catch(e){
+    console.warn('[dbUpdate] Firebase falló ('+e.message+'), guardando local');
+    updateConnectionBadge(false);
+    if(IS_ELECTRON){ await cacheGuardar(col,id,datosLimpios); await queueAdd(col,id,'update',datosLimpios); }
+    else throw new Error('Error al guardar. Verifique su conexión.');
+  }
 }
+
 
 // ── dbDelete ─────────────────────────────────────────────────────────────
 async function dbDelete(col, id){
   const esLocal = id && id.startsWith('local_');
   await cacheEliminar(col, id);
-  if(IS_ONLINE && !esLocal){
-    try{
-      await db.collection(col).doc(id).delete();
-      return;
-    } catch(e){ console.warn('[dbDelete] Firebase falló:', e.message); }
+  if(!IS_ONLINE || esLocal){
+    if(IS_ELECTRON && !esLocal) await queueAdd(col,id,'delete',{});
+    return;
   }
-  if(IS_ELECTRON && !esLocal){
-    await queueAdd(col, id, 'delete', {});
+  try{
+    await Promise.race([
+      db.collection(col).doc(id).delete(),
+      new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),4000))
+    ]);
+  } catch(e){
+    console.warn('[dbDelete] Firebase falló, encolando:', e.message);
+    updateConnectionBadge(false);
+    if(IS_ELECTRON) await queueAdd(col,id,'delete',{});
   }
 }
 
@@ -1674,6 +1679,9 @@ function abrirEditRep(id){
 }
 
 async function guardarEditRep(){
+  const _btn=document.getElementById('btn-edit-rep');
+  if(_btn){_btn.disabled=true;_btn.textContent='Guardando...';_btn.style.opacity='0.7';}
+  try{
   try{
 
   if(!editRepId)return;
@@ -1692,6 +1700,12 @@ async function guardarEditRep(){
   }catch(e){
     console.error('[guardarEditRep]',e);
     alert('Error al guardar. Intente de nuevo.');
+  }
+  }catch(e){
+    console.error("[guardarEditRep]",e);
+    alert("Error al guardar: "+(e.message||"Intente de nuevo."));
+  }finally{
+  if(_btn){_btn.disabled=false;_btn.textContent='Guardar';_btn.style.opacity='1';}
   }
 }
 
@@ -2617,6 +2631,9 @@ function getChecklist(){
 }
 
 async function guardarOrden(){
+  const _btn=document.getElementById('btn-guardar-orden');
+  if(_btn){_btn.disabled=true;_btn.textContent='Guardando...';_btn.style.opacity='0.7';}
+  try{
   const cli = clientes.find(c => c.id === document.getElementById('ord-cliente').value);
   const servicio = document.getElementById('ord-servicio').value.trim();
   if(!servicio){ alert('El servicio es requerido.'); return; }
@@ -2663,6 +2680,12 @@ async function guardarOrden(){
     console.error(e);
     document.getElementById('btn-guardar-orden').disabled = false;
     document.getElementById('btn-guardar-orden').textContent = 'Guardar orden';
+  }
+  }catch(e){
+    console.error("[guardarOrden]",e);
+    alert("Error al guardar: "+(e.message||"Intente de nuevo."));
+  }finally{
+  if(_btn){_btn.disabled=false;_btn.textContent='Guardar';_btn.style.opacity='1';}
   }
 }
 
@@ -2960,6 +2983,9 @@ function abrirEditCliente(id){
   openModal('modal-edit-cliente');
 }
 async function guardarEditCliente(){
+  const _btn=document.getElementById('btn-edit-cliente');
+  if(_btn){_btn.disabled=true;_btn.textContent='Guardando...';_btn.style.opacity='0.7';}
+  try{
   try{
 
   const data={nombre:document.getElementById('ec-nombre').value.trim(),tel:document.getElementById('ec-tel').value.trim(),correo:document.getElementById('ec-correo').value.trim(),cedula:document.getElementById('ec-cedula').value.trim(),direccion:document.getElementById('ec-dir').value.trim(),notas:document.getElementById('ec-notas').value.trim()};
@@ -2970,6 +2996,12 @@ async function guardarEditCliente(){
   }catch(e){
     console.error('[guardarEditCliente]',e);
     alert('Error al guardar. Intente de nuevo.');
+  }
+  }catch(e){
+    console.error("[guardarEditCliente]",e);
+    alert("Error al guardar: "+(e.message||"Intente de nuevo."));
+  }finally{
+  if(_btn){_btn.disabled=false;_btn.textContent='Guardar';_btn.style.opacity='1';}
   }
 }
 
@@ -2988,6 +3020,9 @@ function abrirEditVehiculo(id){
   openModal('modal-edit-vehiculo');
 }
 async function guardarEditVehiculo(){
+  const _btn=document.getElementById('btn-edit-vehiculo');
+  if(_btn){_btn.disabled=true;_btn.textContent='Guardando...';_btn.style.opacity='0.7';}
+  try{
   try{
 
   const data={placa:document.getElementById('ev-placa').value.trim().toUpperCase(),marca:document.getElementById('ev-marca').value.trim(),modelo:document.getElementById('ev-modelo').value.trim(),anio:document.getElementById('ev-anio').value,color:document.getElementById('ev-color').value.trim(),motor:document.getElementById('ev-motor').value.trim(),combustible:document.getElementById('ev-combustible').value,km:parseInt(document.getElementById('ev-km').value)||0,observaciones:document.getElementById('ev-obs').value.trim()};
@@ -2997,6 +3032,12 @@ async function guardarEditVehiculo(){
   }catch(e){
     console.error('[guardarEditVehiculo]',e);
     alert('Error al guardar. Intente de nuevo.');
+  }
+  }catch(e){
+    console.error("[guardarEditVehiculo]",e);
+    alert("Error al guardar: "+(e.message||"Intente de nuevo."));
+  }finally{
+  if(_btn){_btn.disabled=false;_btn.textContent='Guardar';_btn.style.opacity='1';}
   }
 }
 
@@ -3014,6 +3055,9 @@ function abrirEditRepuesto(id){
   openModal('modal-edit-repuesto');
 }
 async function guardarEditRepuesto(){
+  const _btn=document.getElementById('btn-edit-repuesto');
+  if(_btn){_btn.disabled=true;_btn.textContent='Guardando...';_btn.style.opacity='0.7';}
+  try{
   try{
 
   const data={codigo:document.getElementById('er-codigo').value.trim(),nombre:document.getElementById('er-nombre').value.trim(),stock:parseInt(document.getElementById('er-stock').value)||0,minimo:parseInt(document.getElementById('er-minimo').value)||1,costo:parseFloat(document.getElementById('er-costo').value)||0,venta:parseFloat(document.getElementById('er-venta').value)||0,ubicacion:document.getElementById('er-ubic').value.trim(),descripcion:document.getElementById('er-desc').value.trim()};
@@ -3023,6 +3067,12 @@ async function guardarEditRepuesto(){
   }catch(e){
     console.error('[guardarEditRepuesto]',e);
     alert('Error al guardar. Intente de nuevo.');
+  }
+  }catch(e){
+    console.error("[guardarEditRepuesto]",e);
+    alert("Error al guardar: "+(e.message||"Intente de nuevo."));
+  }finally{
+  if(_btn){_btn.disabled=false;_btn.textContent='Guardar';_btn.style.opacity='1';}
   }
 }
 
@@ -3037,6 +3087,9 @@ function abrirEditCita(id){
   openModal('modal-edit-cita');
 }
 async function guardarEditCita(){
+  const _btn=document.getElementById('btn-edit-cita');
+  if(_btn){_btn.disabled=true;_btn.textContent='Guardando...';_btn.style.opacity='0.7';}
+  try{
   try{
 
   const data={servicio:document.getElementById('eci-servicio').value.trim(),fecha:document.getElementById('eci-fecha').value,hora:document.getElementById('eci-hora').value,notas:document.getElementById('eci-notas').value.trim(),estado:document.getElementById('eci-estado').value};
@@ -3046,6 +3099,12 @@ async function guardarEditCita(){
   }catch(e){
     console.error('[guardarEditCita]',e);
     alert('Error al guardar. Intente de nuevo.');
+  }
+  }catch(e){
+    console.error("[guardarEditCita]",e);
+    alert("Error al guardar: "+(e.message||"Intente de nuevo."));
+  }finally{
+  if(_btn){_btn.disabled=false;_btn.textContent='Guardar';_btn.style.opacity='1';}
   }
 }
 
@@ -3062,6 +3121,9 @@ function abrirEditFactura(id){
   openModal('modal-edit-factura');
 }
 async function guardarEditFactura(){
+  const _btn=document.getElementById('btn-edit-factura');
+  if(_btn){_btn.disabled=true;_btn.textContent='Guardando...';_btn.style.opacity='0.7';}
+  try{
   try{
 
   const data={descripcion:document.getElementById('ef-desc').value.trim(),manoObra:parseFloat(document.getElementById('ef-mano').value)||0,repuestos:parseFloat(document.getElementById('ef-repuestos').value)||0,otros:parseFloat(document.getElementById('ef-otros').value)||0,total:parseFloat(document.getElementById('ef-total').value)||0,estado:document.getElementById('ef-estado').value,notas:document.getElementById('ef-notas').value.trim()};
@@ -3071,6 +3133,12 @@ async function guardarEditFactura(){
   }catch(e){
     console.error('[guardarEditFactura]',e);
     alert('Error al guardar. Intente de nuevo.');
+  }
+  }catch(e){
+    console.error("[guardarEditFactura]",e);
+    alert("Error al guardar: "+(e.message||"Intente de nuevo."));
+  }finally{
+  if(_btn){_btn.disabled=false;_btn.textContent='Guardar';_btn.style.opacity='1';}
   }
 }
 function calcTotalEdit(){
@@ -3092,6 +3160,9 @@ function abrirEditProveedor(id){
   openModal('modal-edit-proveedor');
 }
 async function guardarEditProveedor(){
+  const _btn=document.getElementById('btn-edit-proveedor');
+  if(_btn){_btn.disabled=true;_btn.textContent='Guardando...';_btn.style.opacity='0.7';}
+  try{
   try{
 
   const data={nombre:document.getElementById('ep-nombre').value.trim(),contacto:document.getElementById('ep-contacto').value.trim(),tel:document.getElementById('ep-tel').value.trim(),correo:document.getElementById('ep-correo').value.trim(),direccion:document.getElementById('ep-dir').value.trim(),notas:document.getElementById('ep-notas').value.trim()};
@@ -3101,6 +3172,12 @@ async function guardarEditProveedor(){
   }catch(e){
     console.error('[guardarEditProveedor]',e);
     alert('Error al guardar. Intente de nuevo.');
+  }
+  }catch(e){
+    console.error("[guardarEditProveedor]",e);
+    alert("Error al guardar: "+(e.message||"Intente de nuevo."));
+  }finally{
+  if(_btn){_btn.disabled=false;_btn.textContent='Guardar';_btn.style.opacity='1';}
   }
 }
 
@@ -3115,6 +3192,9 @@ function abrirEditOrden(id){
   openModal('modal-edit-orden');
 }
 async function guardarEditOrden(){
+  const _btn=document.getElementById('btn-edit-orden');
+  if(_btn){_btn.disabled=true;_btn.textContent='Guardando...';_btn.style.opacity='0.7';}
+  try{
   try{
 
   const data={servicio:document.getElementById('eo-servicio').value.trim(),trabajos:document.getElementById('eo-trabajos').value.trim(),estado:document.getElementById('eo-estado').value,mecanico:document.getElementById('eo-mecanico').value,obsSalida:document.getElementById('eo-obs-salida').value.trim()};
@@ -3124,6 +3204,12 @@ async function guardarEditOrden(){
   }catch(e){
     console.error('[guardarEditOrden]',e);
     alert('Error al guardar. Intente de nuevo.');
+  }
+  }catch(e){
+    console.error("[guardarEditOrden]",e);
+    alert("Error al guardar: "+(e.message||"Intente de nuevo."));
+  }finally{
+  if(_btn){_btn.disabled=false;_btn.textContent='Guardar';_btn.style.opacity='1';}
   }
 }
 
