@@ -1,7 +1,7 @@
 const CACHE = 'taller-diaz-v4';
-const ASSETS = ['/sistema.html', '/manifest.json', '/logo.jpeg', '/logo-negro.jpg'];
+const ASSETS = ['/sistema.html', '/manifest.json', '/logo.jpeg', '/logo-negro.jpg', '/angel-motors-landing.html'];
 
-const NETWORK_FIRST = ['/sistema.html'];
+const NETWORK_FIRST = ['/sistema.html', '/angel-motors-landing.html'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
