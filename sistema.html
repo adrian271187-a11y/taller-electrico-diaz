@@ -280,7 +280,7 @@ tr:hover td{background:rgba(255,255,255,0.03);color:var(--blanco);}
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>Clientes
       </div>
       <div class="nav-item" onclick="goTo('vehiculos')">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99z"/></svg>Vehículos
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99z"/></svg>Vehículos / Motos
       </div>
       <div class="nav-item" onclick="goTo('reparaciones')">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z"/></svg>Reparaciones
@@ -333,7 +333,7 @@ tr:hover td{background:rgba(255,255,255,0.03);color:var(--blanco);}
         <div class="stat-card"><div class="stat-label">Reparaciones activas</div><div class="stat-val dorado" id="st-activas">—</div></div>
         <div class="stat-card"><div class="stat-label">Listas para entregar</div><div class="stat-val verde" id="st-listas">—</div></div>
         <div class="stat-card"><div class="stat-label">Clientes registrados</div><div class="stat-val" id="st-clientes">—</div></div>
-        <div class="stat-card"><div class="stat-label">Vehículos en sistema</div><div class="stat-val" id="st-vehiculos">—</div></div>
+        <div class="stat-card"><div class="stat-label">Vehículos y motos</div><div class="stat-val" id="st-vehiculos">—</div></div>
       </div>
       <div class="panel">
         <div class="panel-header"><span class="panel-title">Reparaciones recientes</span><button class="btn btn-primary btn-sm" onclick="goTo('reparaciones')">Ver todas</button></div>
@@ -374,11 +374,19 @@ tr:hover td{background:rgba(255,255,255,0.03);color:var(--blanco);}
     <div class="screen" id="screen-vehiculos">
       <div class="topbar">
         <h2 class="page-title">Vehículos</h2>
-        <button class="btn btn-primary" onclick="openModal('modal-vehiculo')">+ Nuevo vehículo</button>
+        <button class="btn btn-primary" onclick="openModal('modal-vehiculo');toggleVehTipo()">+ Nuevo vehículo / moto</button>
       </div>
       <div class="panel">
-        <div class="search-bar"><input type="text" id="veh-search" placeholder="Buscar por placa, marca, modelo o cliente..." oninput="renderVehiculos()"></div>
-        <div class="tbl-wrap"><table><thead><tr><th>Placa</th><th>Marca</th><th>Modelo</th><th>Año</th><th>Color</th><th>Cliente</th><th>Acciones</th></tr></thead><tbody id="vehiculos-body"></tbody></table></div>
+        <div class="search-bar" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+          <input type="text" id="veh-search" placeholder="Buscar por placa, marca, modelo o cliente..." oninput="renderVehiculos()" style="flex:1;min-width:200px;">
+          <select id="veh-filtro-tipo" onchange="renderVehiculos()" style="padding:9px 12px;background:var(--negro3);border:1px solid var(--line3);border-radius:8px;color:var(--blanco);font-size:0.85rem;cursor:pointer;">
+            <option value="">Todos los tipos</option>
+            <option value="carro">🚗 Automóviles</option>
+            <option value="moto">🏍️ Motocicletas</option>
+            <option value="cuadraciclo">🏎️ Cuadraciclos</option>
+          </select>
+        </div>
+        <div class="tbl-wrap"><table><thead><tr><th>Tipo</th><th>Placa / Serie</th><th>Marca</th><th>Modelo</th><th>Año</th><th>Color</th><th>Cliente</th><th>Acciones</th></tr></thead><tbody id="vehiculos-body"></tbody></table></div>
       </div>
     </div>
 
@@ -603,24 +611,52 @@ tr:hover td{background:rgba(255,255,255,0.03);color:var(--blanco);}
 <div class="modal-wrap" id="modal-vehiculo">
   <div class="modal">
     <div class="modal-header">
-      <span class="modal-title" id="modal-vehiculo-title">Nuevo Vehículo</span>
+      <span class="modal-title" id="modal-vehiculo-title">Nuevo Vehículo / Moto</span>
       <button class="modal-close" onclick="closeModal('modal-vehiculo')">✕</button>
     </div>
     <div class="form-grid">
+      <div class="form-group form-full">
+        <label>Tipo de unidad</label>
+        <div style="display:flex;gap:10px;">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:10px 18px;border-radius:8px;border:1px solid var(--line3);background:rgba(255,255,255,0.03);flex:1;justify-content:center;transition:all 0.2s;" id="label-veh-tipo-carro">
+            <input type="radio" name="veh-tipo-unidad" value="carro" id="veh-tipo-carro" onchange="toggleVehTipo()" checked style="accent-color:var(--dorado);"> 🚗 Automóvil
+          </label>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:10px 18px;border-radius:8px;border:1px solid var(--line3);background:rgba(255,255,255,0.03);flex:1;justify-content:center;transition:all 0.2s;" id="label-veh-tipo-moto">
+            <input type="radio" name="veh-tipo-unidad" value="moto" id="veh-tipo-moto" onchange="toggleVehTipo()" style="accent-color:var(--dorado);"> 🏍️ Motocicleta
+          </label>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:10px 18px;border-radius:8px;border:1px solid var(--line3);background:rgba(255,255,255,0.03);flex:1;justify-content:center;transition:all 0.2s;" id="label-veh-tipo-cuadra">
+            <input type="radio" name="veh-tipo-unidad" value="cuadraciclo" id="veh-tipo-cuadra" onchange="toggleVehTipo()" style="accent-color:var(--dorado);"> 🏎️ Cuadraciclo
+          </label>
+        </div>
+      </div>
       <div class="form-group"><label>Cliente propietario</label><select id="veh-cliente"><option value="">Seleccionar...</option></select></div>
-      <div class="form-group"><label>Placa</label><input type="text" id="veh-placa" placeholder="ABC-123"></div>
-      <div class="form-group"><label>Marca</label><input type="text" id="veh-marca" placeholder="Toyota"></div>
-      <div class="form-group"><label>Modelo</label><input type="text" id="veh-modelo" placeholder="Corolla"></div>
+      <div class="form-group"><label>Placa / N° Serie</label><input type="text" id="veh-placa" placeholder="ABC-123"></div>
+      <div class="form-group"><label>Marca</label><input type="text" id="veh-marca" placeholder="Toyota / Honda / Yamaha"></div>
+      <div class="form-group"><label>Modelo</label><input type="text" id="veh-modelo" placeholder="Corolla / CBR / Raptor"></div>
       <div class="form-group"><label>Año</label><input type="number" id="veh-anio" placeholder="2020"></div>
       <div class="form-group"><label>Color</label><input type="text" id="veh-color" placeholder="Blanco"></div>
-      <div class="form-group"><label>Motor / Cilindrada</label><input type="text" id="veh-motor" placeholder="1.8L 4 cil."></div>
-      <div class="form-group"><label>Combustible</label>
+      <div class="form-group"><label>Motor / Cilindrada</label><input type="text" id="veh-motor" placeholder="1.8L / 150cc / 450cc"></div>
+      <div class="form-group" id="veh-campo-combustible"><label>Combustible</label>
         <select id="veh-combustible">
           <option value="gasolina">Gasolina</option><option value="diesel">Diésel</option><option value="hibrido">Híbrido</option><option value="electrico">Eléctrico</option>
         </select>
       </div>
-      <div class="form-group"><label>VIN / Chasis</label><input type="text" id="veh-vin" placeholder="VIN (opcional)"></div>
-      <div class="form-group"><label>Km actuales</label><input type="number" id="veh-km" placeholder="0"></div>
+      <!-- Campos solo para motos/cuadraciclos -->
+      <div class="form-group" id="veh-campo-chasis" style="display:none;"><label>N° Chasis / VIN</label><input type="text" id="veh-chasis" placeholder="Número de chasis"></div>
+      <div class="form-group" id="veh-campo-motor-num" style="display:none;"><label>N° Motor</label><input type="text" id="veh-motor-num" placeholder="Número de motor"></div>
+      <div class="form-group" id="veh-campo-tipo-moto" style="display:none;"><label>Tipo de moto</label>
+        <select id="veh-tipo-moto-cat">
+          <option value="sport">Sport / Naked</option>
+          <option value="enduro">Enduro / Trail / Motocross</option>
+          <option value="scooter">Scooter / Automática</option>
+          <option value="ruta">Ruta / Touring</option>
+          <option value="trabajo">Trabajo / Cargo</option>
+          <option value="atv">ATV / Cuadraciclo</option>
+          <option value="otro">Otro</option>
+        </select>
+      </div>
+      <div class="form-group" id="veh-campo-vin" style="display:block;"><label>VIN / Chasis</label><input type="text" id="veh-vin" placeholder="VIN (opcional)"></div>
+      <div class="form-group"><label>Km / Horas actuales</label><input type="number" id="veh-km" placeholder="0"></div>
       <div class="form-group form-full"><label>Observaciones</label><textarea id="veh-obs" placeholder="Estado general, problemas conocidos..."></textarea></div>
     </div>
     <div class="modal-footer">
@@ -1421,9 +1457,16 @@ function renderClientes(){
 
 function renderVehiculos(){
   const q=(document.getElementById('veh-search')||{value:''}).value.toLowerCase();
-  let data=vehiculos.filter(v=>!q||(v.placa||'').toLowerCase().includes(q)||(v.marca||'').toLowerCase().includes(q)||(v.modelo||'').toLowerCase().includes(q)||(v.clienteNombre||'').toLowerCase().includes(q));
+  const filtroTipo=(document.getElementById('veh-filtro-tipo')||{value:''}).value;
+  const iconoTipo={carro:'🚗',moto:'🏍️',cuadraciclo:'🏎️'};
+  let data=vehiculos.filter(v=>{
+    const matchQ=!q||(v.placa||'').toLowerCase().includes(q)||(v.marca||'').toLowerCase().includes(q)||(v.modelo||'').toLowerCase().includes(q)||(v.clienteNombre||'').toLowerCase().includes(q);
+    const matchTipo=!filtroTipo||(v.tipoUnidad||'carro')===filtroTipo;
+    return matchQ && matchTipo;
+  });
   const tbody=document.getElementById('vehiculos-body');
   tbody.innerHTML=data.length?data.map(v=>`<tr>
+    <td><span style="font-size:1.1rem;">${iconoTipo[v.tipoUnidad||'carro']||'🚗'}</span></td>
     <td><span class="tag">${v.placa||'—'}</span></td>
     <td class="fw700">${v.marca||'—'}</td>
     <td>${v.modelo||'—'}</td>
@@ -1431,7 +1474,7 @@ function renderVehiculos(){
     <td>${v.color||'—'}</td>
     <td class="text-gris">${v.clienteNombre||'—'}</td>
     <td>${botonesAccion('vehiculos',v.id,v.placa||'vehículo')}</td>
-  </tr>`).join(''):'<tr><td colspan="7"><div class="empty-state">Sin vehículos registrados</div></td></tr>';
+  </tr>`).join(''):'<tr><td colspan="8"><div class="empty-state">Sin vehículos registrados</div></td></tr>';
 }
 
 function renderRepuestos(){
@@ -1527,17 +1570,40 @@ async function guardarCliente(){
 
 async function guardarVehiculo(){
   const cli=clientes.find(c=>c.id===document.getElementById('veh-cliente').value);
-  const data={clienteId:cli?.id||'',clienteNombre:cli?.nombre||'—',placa:document.getElementById('veh-placa').value.trim().toUpperCase(),marca:document.getElementById('veh-marca').value.trim(),modelo:document.getElementById('veh-modelo').value.trim(),anio:document.getElementById('veh-anio').value,color:document.getElementById('veh-color').value.trim(),motor:document.getElementById('veh-motor').value.trim(),combustible:document.getElementById('veh-combustible').value,vin:document.getElementById('veh-vin').value.trim(),km:parseInt(document.getElementById('veh-km').value)||0,observaciones:document.getElementById('veh-obs').value.trim(),creadoPor:currentUser?.nombre||'—',createdAt:firebase.firestore.FieldValue.serverTimestamp()};
-  if(!data.placa){alert('La placa es requerida.');return;}
+  const tipoUnidad=document.querySelector('input[name="veh-tipo-unidad"]:checked')?.value||'carro';
+  const esMotoOCuadra=tipoUnidad==='moto'||tipoUnidad==='cuadraciclo';
+  const data={
+    clienteId:cli?.id||'',clienteNombre:cli?.nombre||'—',
+    tipoUnidad,
+    placa:document.getElementById('veh-placa').value.trim().toUpperCase(),
+    marca:document.getElementById('veh-marca').value.trim(),
+    modelo:document.getElementById('veh-modelo').value.trim(),
+    anio:document.getElementById('veh-anio').value,
+    color:document.getElementById('veh-color').value.trim(),
+    motor:document.getElementById('veh-motor').value.trim(),
+    combustible:document.getElementById('veh-combustible').value,
+    vin:document.getElementById('veh-vin').value.trim(),
+    km:parseInt(document.getElementById('veh-km').value)||0,
+    observaciones:document.getElementById('veh-obs').value.trim(),
+    ...(esMotoOCuadra&&{
+      chasis:document.getElementById('veh-chasis').value.trim(),
+      motorNum:document.getElementById('veh-motor-num').value.trim(),
+      tipoMoto:document.getElementById('veh-tipo-moto-cat').value
+    }),
+    creadoPor:currentUser?.nombre||'—',createdAt:firebase.firestore.FieldValue.serverTimestamp()
+  };
+  if(!data.placa){alert('La placa o número de serie es requerido.');return;}
   if(!data.marca){alert('La marca es requerida.');return;}
   try{
     const btn=document.getElementById('btn-guardar-vehiculo');
     btn.disabled=true; btn.textContent='Guardando...';
     await db.collection('vehiculos').add(data);
-    await registrarMovimiento('crear','vehiculos',`Nuevo vehículo: ${data.placa}`,`${data.marca} ${data.modelo} · ${data.clienteNombre}`);
+    await registrarMovimiento('crear','vehiculos',`Nuevo ${tipoUnidad}: ${data.placa}`,`${data.marca} ${data.modelo} · ${data.clienteNombre}`);
     closeModal('modal-vehiculo');
-    ['veh-placa','veh-marca','veh-modelo','veh-anio','veh-color','veh-motor','veh-vin','veh-km','veh-obs'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+    ['veh-placa','veh-marca','veh-modelo','veh-anio','veh-color','veh-motor','veh-vin','veh-km','veh-obs','veh-chasis','veh-motor-num'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
     document.getElementById('veh-cliente').value='';
+    document.getElementById('veh-tipo-carro').checked=true;
+    toggleVehTipo();
     btn.disabled=false; btn.textContent='Guardar';
   }catch(e){alert('Error al guardar. Intente de nuevo.');console.error(e);document.getElementById('btn-guardar-vehiculo').disabled=false;document.getElementById('btn-guardar-vehiculo').textContent='Guardar';}
 }
@@ -2169,6 +2235,18 @@ async function confirmarResetPass(){
 
 // =================== ÓRDENES DE TRABAJO ===================
 let ordenes = [];
+
+function toggleVehTipo(){
+  const tipo=document.querySelector('input[name="veh-tipo-unidad"]:checked')?.value||'carro';
+  const esMotoOCuadra=tipo==='moto'||tipo==='cuadraciclo';
+  document.getElementById('veh-campo-chasis').style.display=esMotoOCuadra?'block':'none';
+  document.getElementById('veh-campo-motor-num').style.display=esMotoOCuadra?'block':'none';
+  document.getElementById('veh-campo-tipo-moto').style.display=esMotoOCuadra?'block':'none';
+  document.getElementById('veh-campo-vin').style.display=esMotoOCuadra?'none':'block';
+  document.getElementById('veh-motor').placeholder=esMotoOCuadra?'150cc / 450cc / 1000cc':'1.8L 4 cil.';
+  document.getElementById('veh-marca').placeholder=esMotoOCuadra?'Honda / Yamaha / KTM':'Toyota / Hyundai';
+  document.getElementById('veh-modelo').placeholder=esMotoOCuadra?'CBR / MT-07 / Raptor':'Corolla / Tucson';
+}
 
 function toggleTipoVehiculo(){
   const tipo = document.querySelector('input[name="ord-tipo-vehiculo"]:checked')?.value;
