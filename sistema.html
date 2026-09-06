@@ -1140,6 +1140,98 @@ firebase.initializeApp(FB);
 // App Check desactivado temporalmente
 const db=firebase.firestore();
 
+// =================== CAPA OFFLINE ===================
+const IS_ELECTRON = !!(window.electronAPI);
+let IS_ONLINE = navigator.onLine;
+
+function updateConnectionBadge(online){
+  const dot=document.getElementById('conn-dot');
+  const txt=document.getElementById('conn-text');
+  const badge=document.getElementById('conn-badge-sidebar');
+  if(!badge) return;
+  IS_ONLINE = online;
+  if(online){
+    badge.style.cssText='display:flex;align-items:center;gap:7px;padding:7px 10px;border-radius:8px;margin-bottom:8px;font-size:0.72rem;font-weight:600;letter-spacing:0.04em;transition:all 0.3s;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);color:#22c55e;';
+    if(dot){dot.style.cssText='width:8px;height:8px;border-radius:50%;flex-shrink:0;background:#22c55e;box-shadow:0 0 6px rgba(34,197,94,0.6);';}
+    if(txt) txt.textContent='En línea';
+  } else {
+    badge.style.cssText='display:flex;align-items:center;gap:7px;padding:7px 10px;border-radius:8px;margin-bottom:8px;font-size:0.72rem;font-weight:600;letter-spacing:0.04em;transition:all 0.3s;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.25);color:#f59e0b;';
+    if(dot){dot.style.cssText='width:8px;height:8px;border-radius:50%;flex-shrink:0;background:#f59e0b;box-shadow:0 0 6px rgba(245,158,11,0.6);';}
+    if(txt) txt.textContent='Sin conexión — modo local';
+  }
+}
+window.addEventListener('online',  ()=>{ IS_ONLINE=true;  updateConnectionBadge(true);  if(IS_ELECTRON) syncPendingQueue(); });
+window.addEventListener('offline', ()=>{ IS_ONLINE=false; updateConnectionBadge(false); });
+setTimeout(()=>updateConnectionBadge(navigator.onLine), 1200);
+setInterval(()=>{
+  fetch('https://www.gstatic.com/generate_204',{method:'HEAD',mode:'no-cors',cache:'no-store'})
+    .then(()=>updateConnectionBadge(true)).catch(()=>updateConnectionBadge(false));
+}, 15000);
+
+// Habilitar persistencia Firestore (cache local del navegador también)
+db.enablePersistence({synchronizeTabs:true}).catch(()=>{});
+
+// Cache y cola (solo Electron con SQLite)
+async function cacheGuardar(col,id,datos){ if(IS_ELECTRON) await window.electronAPI.setCacheDoc(col,id,datos); }
+async function cacheEliminar(col,id){ if(IS_ELECTRON) await window.electronAPI.deleteCacheDoc(col,id); }
+async function cacheObtener(col){ if(!IS_ELECTRON) return null; return window.electronAPI.getCacheColeccion(col); }
+async function queueAdd(col,id,op,datos){ if(IS_ELECTRON) await window.electronAPI.queuePush(col,id,op,datos); }
+
+async function syncPendingQueue(){
+  if(!IS_ELECTRON||!IS_ONLINE) return;
+  try{
+    const pending = await window.electronAPI.queueGetPending();
+    for(const item of pending){
+      try{
+        if(item.operacion==='add'){ const r=await db.collection(item.coleccion).add({...item.datos,createdAt:firebase.firestore.FieldValue.serverTimestamp()}); await cacheGuardar(item.coleccion,r.id,item.datos); }
+        else if(item.operacion==='update'){ await db.collection(item.coleccion).doc(item.docId).update({...item.datos,updatedAt:firebase.firestore.FieldValue.serverTimestamp()}); await cacheGuardar(item.coleccion,item.docId,item.datos); }
+        else if(item.operacion==='delete'){ await db.collection(item.coleccion).doc(item.docId).delete(); await cacheEliminar(item.coleccion,item.docId); }
+        await window.electronAPI.queueMarkSynced(item.id);
+      }catch(e){ console.warn('[SYNC] item error:',e); }
+    }
+    await window.electronAPI.clearSynced();
+    if(pending.length) console.log('[SYNC]',pending.length,'operaciones sincronizadas');
+  }catch(e){ console.error('[SYNC]',e); }
+}
+if(IS_ELECTRON){ setInterval(()=>{ if(IS_ONLINE) syncPendingQueue(); },30000); setTimeout(syncPendingQueue,3000); }
+
+// Wrappers de escritura con fallback offline
+async function dbAdd(col,datos){
+  const payload={...datos, createdAt:firebase.firestore.FieldValue.serverTimestamp()};
+  if(IS_ONLINE){
+    try{ const r=await db.collection(col).add(payload); await cacheGuardar(col,r.id,datos); return r; }
+    catch(e){ if(IS_ELECTRON){ const lid='local_'+Date.now(); await cacheGuardar(col,lid,datos); await queueAdd(col,null,'add',datos); return{id:lid}; } throw e; }
+  } else if(IS_ELECTRON){
+    const lid='local_'+Date.now(); await cacheGuardar(col,lid,datos); await queueAdd(col,null,'add',datos); return{id:lid};
+  } else { throw new Error('Sin conexión'); }
+}
+async function dbUpdate(col,id,datos){
+  if(IS_ONLINE){
+    try{ await db.collection(col).doc(id).update({...datos,updatedAt:firebase.firestore.FieldValue.serverTimestamp()}); await cacheGuardar(col,id,datos); }
+    catch(e){ if(IS_ELECTRON) await queueAdd(col,id,'update',datos); else throw e; }
+  } else if(IS_ELECTRON){ await cacheGuardar(col,id,datos); await queueAdd(col,id,'update',datos); }
+  else throw new Error('Sin conexión');
+}
+async function dbDelete(col,id){
+  if(IS_ONLINE){
+    try{ await db.collection(col).doc(id).delete(); await cacheEliminar(col,id); }
+    catch(e){ if(IS_ELECTRON) await queueAdd(col,id,'delete',{}); else throw e; }
+  } else if(IS_ELECTRON){ await cacheEliminar(col,id); await queueAdd(col,id,'delete',{}); }
+  else throw new Error('Sin conexión');
+}
+function dbListen(col,callback){
+  if(IS_ONLINE){
+    return db.collection(col).onSnapshot(snap=>{
+      const docs=[]; snap.forEach(d=>{ const data={id:d.id,...d.data()}; docs.push(data); if(IS_ELECTRON) cacheGuardar(col,d.id,d.data()); }); callback(docs);
+    }, async()=>{ if(IS_ELECTRON){ const cached=await cacheObtener(col); if(cached) callback(cached); } });
+  } else if(IS_ELECTRON){
+    cacheObtener(col).then(cached=>{ if(cached&&cached.length) callback(cached); });
+    return ()=>{};
+  }
+  callback([]); return ()=>{};
+}
+// =================== FIN CAPA OFFLINE ===================
+
 // =================== INDICADOR CONEXIÓN ===================
 function updateConnectionBadge(online){
   const badge = document.getElementById('conn-badge-sidebar');
@@ -1281,7 +1373,7 @@ async function registrarMovimiento(tipo, modulo, descripcion, detalle=''){
     timestamp: firebase.firestore.FieldValue.serverTimestamp(),
     fechaLocal: new Date().toLocaleString('es-CR')
   };
-  try{ await db.collection('movimientos').add(data); }catch(e){ console.warn('Error registrando movimiento',e); }
+  try{ await dbAdd('movimientos', data); }catch(e){ console.warn('Error registrando movimiento',e); }
 }
 
 function renderHistorial(){
@@ -1363,15 +1455,15 @@ async function initApp(){
   // Limpiar historial si es domingo
   limpiarHistorialSemanal();
 
-  db.collection('reparaciones').orderBy('createdAt','desc').onSnapshot(s=>{reps=[];s.forEach(d=>reps.push({id:d.id,...d.data()}));loadDash();if(document.getElementById('screen-reparaciones').classList.contains('active'))renderReps();});
-  db.collection('clientes').orderBy('nombre').onSnapshot(s=>{clientes=[];s.forEach(d=>clientes.push({id:d.id,...d.data()}));if(document.getElementById('screen-clientes').classList.contains('active'))renderClientes();const elC=document.getElementById('est-clientes-total');if(elC)elC.textContent=clientes.length;});
-  db.collection('vehiculos').onSnapshot(s=>{vehiculos=[];s.forEach(d=>vehiculos.push({id:d.id,...d.data()}));if(document.getElementById('screen-vehiculos').classList.contains('active'))renderVehiculos();});
-  db.collection('repuestos').onSnapshot(s=>{repuestos=[];s.forEach(d=>repuestos.push({id:d.id,...d.data()}));if(document.getElementById('screen-repuestos').classList.contains('active'))renderRepuestos();});
-  db.collection('citas').orderBy('fecha').onSnapshot(s=>{citas=[];s.forEach(d=>citas.push({id:d.id,...d.data()}));if(document.getElementById('screen-agenda').classList.contains('active'))renderCitas();});
-  db.collection('facturas').orderBy('createdAt','desc').onSnapshot(s=>{facturas=[];s.forEach(d=>facturas.push({id:d.id,...d.data()}));if(document.getElementById('screen-facturacion').classList.contains('active'))renderFacturas();if(document.getElementById('screen-estadisticas').classList.contains('active'))renderEstadisticas();const elC=document.getElementById('est-clientes-total');if(elC)elC.textContent=clientes.length;});
-  db.collection('proveedores').orderBy('nombre').onSnapshot(s=>{proveedores=[];s.forEach(d=>proveedores.push({id:d.id,...d.data()}));if(document.getElementById('screen-proveedores').classList.contains('active'))renderProveedores();});
-  db.collection('ordenes').orderBy('createdAt','desc').onSnapshot(s=>{ordenes=[];s.forEach(d=>ordenes.push({id:d.id,...d.data()}));if(document.getElementById('screen-ordenes').classList.contains('active'))renderOrdenes();});
-  db.collection('movimientos').orderBy('timestamp','desc').limit(200).onSnapshot(s=>{movimientos=[];s.forEach(d=>movimientos.push({id:d.id,...d.data()}));if(document.getElementById('screen-historial').classList.contains('active'))renderHistorial();});
+  dbListen('reparaciones', docs=>{reps=docs;loadDash();if(document.getElementById('screen-reparaciones').classList.contains('active'))renderReps();});
+  dbListen('clientes', docs=>{clientes=docs;if(document.getElementById('screen-clientes').classList.contains('active'))renderClientes();const elC=document.getElementById('est-clientes-total');if(elC)elC.textContent=clientes.length;});
+  dbListen('vehiculos', docs=>{vehiculos=docs;if(document.getElementById('screen-vehiculos').classList.contains('active'))renderVehiculos();});
+  dbListen('repuestos', docs=>{repuestos=docs;if(document.getElementById('screen-repuestos').classList.contains('active'))renderRepuestos();});
+  dbListen('citas', docs=>{citas=docs;if(document.getElementById('screen-agenda').classList.contains('active'))renderCitas();});
+  dbListen('facturas', docs=>{facturas=docs;if(document.getElementById('screen-facturacion').classList.contains('active'))renderFacturas();if(document.getElementById('screen-estadisticas').classList.contains('active'))renderEstadisticas();});
+  dbListen('proveedores', docs=>{proveedores=docs;if(document.getElementById('screen-proveedores').classList.contains('active'))renderProveedores();});
+  dbListen('ordenes', docs=>{ordenes=docs;if(document.getElementById('screen-ordenes').classList.contains('active'))renderOrdenes();});
+  dbListen('movimientos', docs=>{movimientos=docs;if(document.getElementById('screen-historial').classList.contains('active'))renderHistorial();});
 }
 
 // Cargar contraseñas de mecánicos desde Firestore
@@ -1414,7 +1506,7 @@ function accionEliminar(col, id, nombre){
   pedirAuth(
     `eliminar "${nombre}" de ${col}`,
     async ()=>{
-      await db.collection(col).doc(id).delete();
+      await dbDelete(col, id);
       registrarMovimiento('eliminar', col, `Eliminado: ${nombre}`, `ID: ${id}`);
     }
   );
@@ -1462,7 +1554,7 @@ async function guardarEditRep(){
     updatedAt:firebase.firestore.FieldValue.serverTimestamp()
   };
   const rep=reps.find(r=>r.id===editRepId);
-  await db.collection('reparaciones').doc(editRepId).update(data);
+  await dbUpdate('reparaciones', editRepId, data);
   registrarMovimiento('editar','reparaciones',`Editada reparación de ${rep?rep.clienteNombre:'cliente'}`,`Estado: ${data.estado}`);
   closeModal('modal-edit-rep');
   editRepId=null;
@@ -1591,7 +1683,7 @@ async function guardarRep(){
   try{
     const btn=document.getElementById('btn-guardar-rep');
     btn.disabled=true; btn.textContent='Guardando...';
-    await db.collection('reparaciones').add(data);
+    await dbAdd('reparaciones', data);
     await registrarMovimiento('crear','reparaciones',`Nueva reparación: ${data.servicio}`,`Cliente: ${data.clienteNombre}`);
     closeModal('modal-rep');
     ['rep-servicio','rep-desc','rep-mano','rep-notas'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
@@ -1608,7 +1700,7 @@ async function guardarCliente(){
   try{
     const btn=document.getElementById('btn-guardar-cliente');
     btn.disabled=true; btn.textContent='Guardando...';
-    await db.collection('clientes').add(data);
+    await dbAdd('clientes', data);
     await registrarMovimiento('crear','clientes',`Nuevo cliente: ${data.nombre}`,`Tel: ${data.tel||'—'}`);
     closeModal('modal-cliente');
     ['cli-nombre','cli-tel','cli-correo','cli-cedula','cli-dir','cli-notas'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
@@ -1645,7 +1737,7 @@ async function guardarVehiculo(){
   try{
     const btn=document.getElementById('btn-guardar-vehiculo');
     btn.disabled=true; btn.textContent='Guardando...';
-    await db.collection('vehiculos').add(data);
+    await dbAdd('vehiculos', data);
     await registrarMovimiento('crear','vehiculos',`Nuevo ${tipoUnidad}: ${data.placa}`,`${data.marca} ${data.modelo} · ${data.clienteNombre}`);
     closeModal('modal-vehiculo');
     ['veh-placa','veh-marca','veh-modelo','veh-anio','veh-color','veh-motor','veh-vin','veh-km','veh-obs','veh-chasis','veh-motor-num'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
@@ -1663,7 +1755,7 @@ async function guardarRepuesto(){
   try{
     const btn=document.getElementById('btn-guardar-repuesto');
     btn.disabled=true; btn.textContent='Guardando...';
-    await db.collection('repuestos').add(data);
+    await dbAdd('repuestos', data);
     await registrarMovimiento('crear','repuestos',`Nuevo repuesto: ${data.nombre}`,`Stock: ${data.stock}`);
     closeModal('modal-repuesto');
     ['rp-codigo','rp-nombre','rp-stock','rp-minimo','rp-costo','rp-venta','rp-ubic','rp-desc'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
@@ -1730,7 +1822,7 @@ async function guardarCita(){
           creadoPor: currentUser?.nombre||'—',
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
         };
-        const docRef = await db.collection('clientes').add(nuevoCliente);
+        const docRef = await dbAdd('clientes', nuevoCliente);
         data.clienteId = docRef.id;
         await registrarMovimiento('crear','clientes',`Cliente creado desde Agenda: ${data.clienteNombre}`,`Tel: ${data.clienteTel||'—'}`);
       } else {
@@ -1738,7 +1830,7 @@ async function guardarCita(){
       }
     }
 
-    await db.collection('citas').add(data);
+    await dbAdd('citas', data);
     await registrarMovimiento('crear','agenda',`Nueva cita: ${data.servicio}`,`Cliente: ${data.clienteNombre} · ${data.fecha}`);
     closeModal('modal-cita');
     ['cita-servicio','cita-notas','cita-cli-nombre','cita-cli-tel','cita-cli-correo'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
@@ -1761,7 +1853,7 @@ async function guardarFactura(){
   try{
     const btn=document.getElementById('btn-guardar-factura');
     btn.disabled=true; btn.textContent='Guardando...';
-    await db.collection('facturas').add(data);
+    await dbAdd('facturas', data);
     await registrarMovimiento('crear','facturas',`Nueva factura: ${data.clienteNombre}`,`Total: ₡${data.total.toLocaleString()}`);
     closeModal('modal-factura');
     ['fac-desc','fac-mano','fac-repuestos','fac-otros','fac-total','fac-notas'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
@@ -1777,7 +1869,7 @@ async function guardarProveedor(){
   try{
     const btn=document.getElementById('btn-guardar-proveedor');
     btn.disabled=true; btn.textContent='Guardando...';
-    await db.collection('proveedores').add(data);
+    await dbAdd('proveedores', data);
     await registrarMovimiento('crear','proveedores',`Nuevo proveedor: ${data.nombre}`,`Tel: ${data.tel||'—'}`);
     closeModal('modal-proveedor');
     ['prov-nombre','prov-contacto','prov-tel','prov-correo','prov-dir','prov-notas'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
@@ -2281,7 +2373,7 @@ async function confirmarResetPass(){
     const snap = await db.collection('usuarios').where('usuario','==',resetUserTarget).get();
     if(snap.empty){
       // Crear nuevo doc
-      await db.collection('usuarios').add({
+      await dbAdd('usuarios', {
         usuario: resetUserTarget,
         pass: nueva,
         updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -2289,7 +2381,7 @@ async function confirmarResetPass(){
       });
     } else {
       // Actualizar doc existente
-      await db.collection('usuarios').doc(snap.docs[0].id).update({
+      await dbUpdate('usuarios', snap.docs[0].id, {
         pass: nueva,
         updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
         updatedBy: currentUser?.nombre || 'Jose'
@@ -2428,7 +2520,7 @@ async function guardarOrden(){
   try{
     const btn = document.getElementById('btn-guardar-orden');
     btn.disabled = true; btn.textContent = 'Guardando...';
-    await db.collection('ordenes').add(data);
+    await dbAdd('ordenes', data);
     await registrarMovimiento('crear','ordenes',`Nueva OT: ${data.servicio}`,`${data.clienteNombre} · ${data.placa}`);
     closeModal('modal-orden');
     btn.disabled = false; btn.textContent = 'Guardar orden';
@@ -2736,7 +2828,7 @@ function abrirEditCliente(id){
 async function guardarEditCliente(){
   const data={nombre:document.getElementById('ec-nombre').value.trim(),tel:document.getElementById('ec-tel').value.trim(),correo:document.getElementById('ec-correo').value.trim(),cedula:document.getElementById('ec-cedula').value.trim(),direccion:document.getElementById('ec-dir').value.trim(),notas:document.getElementById('ec-notas').value.trim(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
   if(!data.nombre){alert('El nombre es requerido.');return;}
-  await db.collection('clientes').doc(editId).update(data);
+  await dbUpdate('clientes', editId, data);
   registrarMovimiento('editar','clientes',`Cliente editado: ${data.nombre}`,'');
   closeModal('modal-edit-cliente');
 }
@@ -2757,7 +2849,7 @@ function abrirEditVehiculo(id){
 }
 async function guardarEditVehiculo(){
   const data={placa:document.getElementById('ev-placa').value.trim().toUpperCase(),marca:document.getElementById('ev-marca').value.trim(),modelo:document.getElementById('ev-modelo').value.trim(),anio:document.getElementById('ev-anio').value,color:document.getElementById('ev-color').value.trim(),motor:document.getElementById('ev-motor').value.trim(),combustible:document.getElementById('ev-combustible').value,km:parseInt(document.getElementById('ev-km').value)||0,observaciones:document.getElementById('ev-obs').value.trim(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
-  await db.collection('vehiculos').doc(editId).update(data);
+  await dbUpdate('vehiculos', editId, data);
   registrarMovimiento('editar','vehiculos',`Vehículo editado: ${data.placa}`,'');
   closeModal('modal-edit-vehiculo');
 }
@@ -2777,7 +2869,7 @@ function abrirEditRepuesto(id){
 }
 async function guardarEditRepuesto(){
   const data={codigo:document.getElementById('er-codigo').value.trim(),nombre:document.getElementById('er-nombre').value.trim(),stock:parseInt(document.getElementById('er-stock').value)||0,minimo:parseInt(document.getElementById('er-minimo').value)||1,costo:parseFloat(document.getElementById('er-costo').value)||0,venta:parseFloat(document.getElementById('er-venta').value)||0,ubicacion:document.getElementById('er-ubic').value.trim(),descripcion:document.getElementById('er-desc').value.trim(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
-  await db.collection('repuestos').doc(editId).update(data);
+  await dbUpdate('repuestos', editId, data);
   registrarMovimiento('editar','repuestos',`Repuesto editado: ${data.nombre}`,'');
   closeModal('modal-edit-repuesto');
 }
@@ -2794,7 +2886,7 @@ function abrirEditCita(id){
 }
 async function guardarEditCita(){
   const data={servicio:document.getElementById('eci-servicio').value.trim(),fecha:document.getElementById('eci-fecha').value,hora:document.getElementById('eci-hora').value,notas:document.getElementById('eci-notas').value.trim(),estado:document.getElementById('eci-estado').value,updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
-  await db.collection('citas').doc(editId).update(data);
+  await dbUpdate('citas', editId, data);
   registrarMovimiento('editar','agenda',`Cita editada: ${data.servicio}`,'');
   closeModal('modal-edit-cita');
 }
@@ -2813,7 +2905,7 @@ function abrirEditFactura(id){
 }
 async function guardarEditFactura(){
   const data={descripcion:document.getElementById('ef-desc').value.trim(),manoObra:parseFloat(document.getElementById('ef-mano').value)||0,repuestos:parseFloat(document.getElementById('ef-repuestos').value)||0,otros:parseFloat(document.getElementById('ef-otros').value)||0,total:parseFloat(document.getElementById('ef-total').value)||0,estado:document.getElementById('ef-estado').value,notas:document.getElementById('ef-notas').value.trim(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
-  await db.collection('facturas').doc(editId).update(data);
+  await dbUpdate('facturas', editId, data);
   registrarMovimiento('editar','facturas',`Factura editada`,'');
   closeModal('modal-edit-factura');
 }
@@ -2837,7 +2929,7 @@ function abrirEditProveedor(id){
 }
 async function guardarEditProveedor(){
   const data={nombre:document.getElementById('ep-nombre').value.trim(),contacto:document.getElementById('ep-contacto').value.trim(),tel:document.getElementById('ep-tel').value.trim(),correo:document.getElementById('ep-correo').value.trim(),direccion:document.getElementById('ep-dir').value.trim(),notas:document.getElementById('ep-notas').value.trim(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
-  await db.collection('proveedores').doc(editId).update(data);
+  await dbUpdate('proveedores', editId, data);
   registrarMovimiento('editar','proveedores',`Proveedor editado: ${data.nombre}`,'');
   closeModal('modal-edit-proveedor');
 }
@@ -2854,7 +2946,7 @@ function abrirEditOrden(id){
 }
 async function guardarEditOrden(){
   const data={servicio:document.getElementById('eo-servicio').value.trim(),trabajos:document.getElementById('eo-trabajos').value.trim(),estado:document.getElementById('eo-estado').value,mecanico:document.getElementById('eo-mecanico').value,obsSalida:document.getElementById('eo-obs-salida').value.trim(),updatedAt:firebase.firestore.FieldValue.serverTimestamp()};
-  await db.collection('ordenes').doc(editId).update(data);
+  await dbUpdate('ordenes', editId, data);
   registrarMovimiento('editar','ordenes',`Orden editada: ${data.servicio}`,'');
   closeModal('modal-edit-orden');
 }
